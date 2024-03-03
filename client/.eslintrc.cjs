@@ -6,11 +6,13 @@ module.exports = {
     'plugin:react/recommended',
     'plugin:react/jsx-runtime',
     'plugin:react-hooks/recommended',
+    'plugin:flowtype/recommended',
+    'plugin:import/recommended'
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
   settings: { react: { version: '18.2' } },
-  plugins: ['react-refresh', 'prettier'],
+  plugins: ['react-refresh', 'prettier', 'flowtype', 'import'],
   rules: {
     'react/jsx-no-target-blank': 'off',
     'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
