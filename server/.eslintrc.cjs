@@ -1,13 +1,12 @@
 /**
- * Updated by trungquandev.com's author on August 17 2023
- * YouTube: https://youtube.com/@trungquandev
  * "A bit of fragrance clings to the hand that gives flowers!"
  * Sample Eslint config for NodeJS ExpressJS MongoDB project
  */
 module.exports = {
-  env: { es2020: true, node: true },
+  env: { es2020: true, node: true, jest: true },
   extends: [
-    'eslint:recommended'
+    'eslint:recommended',
+    'plugin:prettier/recommended',
   ],
   parser: '@babel/eslint-parser',
   parserOptions: {
@@ -16,10 +15,11 @@ module.exports = {
     requireConfigFile: false,
     allowImportExportEverywhere: true
   },
-  plugins: [],
+  ignorePatterns: ['dist', '.eslintrc.cjs'],
+  plugins: ['prettier'],
   rules: {
     // Common
-    'no-console': 1,
+    'no-console': 0, //
     'no-extra-boolean-cast': 0,
     'no-lonely-if': 1,
     'no-unused-vars': 1,
@@ -29,7 +29,7 @@ module.exports = {
     'space-before-blocks': ['error', 'always'],
     'object-curly-spacing': [1, 'always'],
     'indent': ['warn', 2],
-    'semi': [1, 'never'],
+    'semi': [0, 'never'], //
     'quotes': ['error', 'single'],
     'array-bracket-spacing': 1,
     'linebreak-style': 0,
@@ -37,6 +37,14 @@ module.exports = {
     'keyword-spacing': 1,
     'comma-dangle': 1,
     'comma-spacing': 1,
-    'arrow-spacing': 1
+    'arrow-spacing': 1,
+    'prettier/prettier': [
+      'warn',
+      {
+        "singleQuote": true,
+        "trailingComma": "none",
+        "endOfLine": "auto"
+      }
+    ]
   }
 }
