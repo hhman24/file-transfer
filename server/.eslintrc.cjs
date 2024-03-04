@@ -1,35 +1,42 @@
+/**
+ * Updated by trungquandev.com's author on August 17 2023
+ * YouTube: https://youtube.com/@trungquandev
+ * "A bit of fragrance clings to the hand that gives flowers!"
+ * Sample Eslint config for NodeJS ExpressJS MongoDB project
+ */
 module.exports = {
-  root: true,
-  env: { browser: true, es2020: true },
-  extends: ['eslint:recommended'],
-  ignorePatterns: ['dist', '.eslintrc.cjs'],
-  parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
-  plugins: ['prettier'],
-  rules: {
-    "no-console": "off",
-    'prettier/prettier': [
-      'warn',
-      {
-        arrowParens: 'always',
-        bracketSameLine: false,
-        bracketSpacing: true,
-        semi: true,
-        experimentalTernaries: false,
-        singleQuote: true,
-        jsxSingleQuote: true,
-        quoteProps: 'as-needed',
-        trailingComma: 'all',
-        singleAttributePerLine: false,
-        htmlWhitespaceSensitivity: 'css',
-        vueIndentScriptAndStyle: false,
-        proseWrap: 'preserve',
-        insertPragma: false,
-        requirePragma: false,
-        tabWidth: 2,
-        useTabs: false,
-        embeddedLanguageFormatting: 'auto',
-        printWidth: 120,
-      },
-    ],
+  env: { es2020: true, node: true },
+  extends: [
+    'eslint:recommended'
+  ],
+  parser: '@babel/eslint-parser',
+  parserOptions: {
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+    requireConfigFile: false,
+    allowImportExportEverywhere: true
   },
-};
+  plugins: [],
+  rules: {
+    // Common
+    'no-console': 1,
+    'no-extra-boolean-cast': 0,
+    'no-lonely-if': 1,
+    'no-unused-vars': 1,
+    'no-trailing-spaces': 1,
+    'no-multi-spaces': 1,
+    'no-multiple-empty-lines': 1,
+    'space-before-blocks': ['error', 'always'],
+    'object-curly-spacing': [1, 'always'],
+    'indent': ['warn', 2],
+    'semi': [1, 'never'],
+    'quotes': ['error', 'single'],
+    'array-bracket-spacing': 1,
+    'linebreak-style': 0,
+    'no-unexpected-multiline': 'warn',
+    'keyword-spacing': 1,
+    'comma-dangle': 1,
+    'comma-spacing': 1,
+    'arrow-spacing': 1
+  }
+}
