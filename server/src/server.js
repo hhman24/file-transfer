@@ -3,26 +3,26 @@
 /**
  * "A bit of fragrance clings to the hand that gives flowers!"
  */
-import dotenv from 'dotenv';
+import { env } from '~/config/environment';
 import exitHook from 'async-exit-hook';
 import express from 'express';
-import { CONNECT_DB, GET_DB, CLOSE_DB } from '~/config/mongodb';
-
-dotenv.config();
+import { CONNECT_DB, CLOSE_DB } from '~/config/mongodb';
+import { errorHandlingMiddleware } from '~/middlewares/errorHandler.middleware';
+import { API_v1 } from '~/routes/v1';
 
 const START_SERVER = () => {
   const app = express();
 
-  app.get('/', async (req, res) => {
-    console.log(await GET_DB().listCollections().toArray());
+  app.use(express.json());
 
-    res.end('<h1>Hello World!</h1><hr>');
-  });
+  // use API v1
+  app.use('/v1', API_v1);
 
-  app.listen(process.env.APP_PORT, () => {
-    console.log(
-      `3. Server is running on ${process.env.APP_HOST}:${process.env.APP_PORT}/`
-    );
+  // Middlewares xử lý tập trung lỗi
+  app.use(errorHandlingMiddleware);
+
+  app.listen(env.APP_PORT, env.APP_HOST, () => {
+    console.log(`3. Server is running on ${env.APP_HOST}:${env.APP_PORT}/`);
   });
 
   // thực hiện các tác vụ cleanup trk khi dừng server
