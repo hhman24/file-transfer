@@ -34,7 +34,6 @@ export const CLOSE_DB = async () => {
 // Function Get_DB không async này có nhiệm vụ export ra cái chattingSystemInstance sau khi đã connect thành công tới mongodb để tái sử dụng nhìu nơi khác nhau trong code.
 // Note: lưu ý phải đảm bảo chỉ luôn gọi cái GET_DB này sau khi đã kết nối thành công tới mongodb
 export const GET_DB = () => {
-  if (!chattingSystemInstance)
-    throw new Error('Must connect to Database first');
+  if (!chattingSystemInstance) throw new Error('Must connect to Database first');
   return chattingSystemInstance;
 };
