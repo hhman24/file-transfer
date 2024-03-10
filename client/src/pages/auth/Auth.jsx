@@ -12,13 +12,44 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Divider from '@mui/material/Divider';
 import Checkbox from '@mui/material/Checkbox';
 import { grey } from '@mui/material/colors';
-import ModeToggle from '~/components/toggle/ModeToggle';
 import GoogleIcon from '~/components/Svg/GoogleIcon';
-import Inputv1 from '~/components/input/Inputv1';
+import ModeToggle from '~/components/toggle/ModeToggle';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 import './Auth.scss';
+import { FormHelperText } from '@mui/material';
+import Inputv1 from '~/components/input/Inputv1';
+
+const schema = yup.object().shape({
+  email: yup.string().required('email is required').email(),
+  password: yup
+    .string()
+    .required('No password provided.')
+    .min(8, 'Password is too short - should be 8 chars minimum.')
+    .matches(/^[a-zA-Z0-9]{8,30}$/, 'Password can only contain Latin letters, numbers.')
+});
 
 function Auth() {
   const { mode, setMode } = useColorScheme();
+
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
+    defaultValues: {
+      email: '',
+      password: ''
+    },
+    shouldUnregister: true,
+    resolver: yupResolver(schema)
+  });
+
+  const onSubmit = async (data) => {
+    console.log(data);
+  };
 
   return (
     <>
@@ -133,13 +164,45 @@ function Auth() {
               <Stack gap={2} sx={{ mt: 2 }}>
                 <form>
                   <FormControl required>
-                    <FormLabel sx={{ fontWeight: 500 }}>Email</FormLabel>
-                    <Inputv1 type="email" name="email" id="email" autoFocus={true} />
+                    <FormLabel sx={{ fontWeight: 500 }} error={!!errors['email']}>
+                      Email
+                    </FormLabel>
+                    <Controller
+                      name="email"
+                      control={control}
+                      render={({ field }) => (
+                        <>
+                          <Inputv1
+                            name={'email'}
+                            type={''}
+                            id={'email'}
+                            autoFocus={true}
+                            register={register}
+                            errors={errors}
+                          />
+                        </>
+                      )}
+                    />
+                    <FormHelperText error>{errors['email'] ? errors['email']?.message : ' '}</FormHelperText>
                   </FormControl>
-                  <FormControl required>
-                    <FormLabel sx={{ fontWeight: 500 }}>Password</FormLabel>
-                    <Inputv1 id="password" type="password" name="password" />
-                  </FormControl>
+
+                  <Controller
+                    name="password"
+                    control={control}
+                    render={({ field }) => (
+                      <>
+                        <Inputv1
+                          name={'password'}
+                          type={'password'}
+                          id={'password'}
+                          autoFocus={true}
+                          register={register}
+                          errors={errors}
+                        />
+                      </>
+                    )}
+                  />
+                  <FormHelperText error>{errors['password'] ? errors['password']?.message : ' '}</FormHelperText>
                   <Stack gap={4} sx={{ mt: 2 }}>
                     <Box
                       sx={{
@@ -151,7 +214,7 @@ function Auth() {
                       <FormControlLabel control={<Checkbox />} label="Remember me" />
                       <Link>Forgot your password?</Link>
                     </Box>
-                    <Button type="submit" fullWidth variant="contained">
+                    <Button type="submit" fullWidth variant="contained" onClick={handleSubmit(onSubmit)}>
                       Sign in
                     </Button>
                   </Stack>
@@ -183,11 +246,12 @@ function Auth() {
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
-            backgroundImage: mode == 'dark' ? 'url(https://images.unsplash.com/photo-1572072393749-3ca9c8ea0831?auto=format&w=1000&dpr=2)' : 'url(https://images.unsplash.com/photo-1527181152855-fc03fc7949c8?auto=format&w=1000&dpr=2)',
+            backgroundImage:
+              mode == 'dark'
+                ? 'url(https://images.unsplash.com/photo-1572072393749-3ca9c8ea0831?auto=format&w=1000&dpr=2)'
+                : 'url(https://images.unsplash.com/photo-1527181152855-fc03fc7949c8?auto=format&w=1000&dpr=2)'
           }}
-        >
-
-        </Box>
+        ></Box>
       </Container>
     </>
   );
