@@ -27,10 +27,11 @@ const schema = yup.object().shape({
     .string()
     .required('No password provided.')
     .min(8, 'Password is too short - should be 8 chars minimum.')
-    .matches(/^[a-zA-Z0-9]{8,30}$/, 'Password can only contain Latin letters, numbers.')
+    .matches(/^[a-zA-Z0-9]{8,30}$/, 'Password can only contain Latin letters, numbers.'),
+  username: yup.string().max(10, 'User name is so long').required('User name is required')
 });
 
-function Auth() {
+function Register() {
   const { mode, setMode } = useColorScheme();
 
   const {
@@ -41,8 +42,8 @@ function Auth() {
   } = useForm({
     defaultValues: {
       email: '',
-      password: '',
-      rememberMe: false
+      username: '',
+      password: ''
     },
     shouldUnregister: true,
     resolver: yupResolver(schema)
@@ -57,10 +58,36 @@ function Auth() {
       <Container disableGutters maxWidth={false} sx={{ height: '100vh' }}>
         <Box
           sx={{
+            height: '100%',
+            position: 'fixed',
+            left: 0,
+            top: 0,
+            bottom: 0,
+            right: { xs: 0, md: '50vw' },
+            borderRadius: '0% 39% 36% 0% / 0% 48% 50% 10% ',
+            transition: 'background-image var(--Transition-duration), left var(--Transition-duration) !important',
+            transitionDelay: 'calc(var(--Transition-duration) + 0.1s)',
+            backgroundColor: 'background.level1',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundImage:
+              mode == 'dark'
+                ? 'url(https://images.unsplash.com/photo-1572072393749-3ca9c8ea0831?auto=format&w=1000&dpr=2)'
+                : 'url(https://images.unsplash.com/photo-1527181152855-fc03fc7949c8?auto=format&w=1000&dpr=2)'
+          }}
+        ></Box>
+
+        <Box
+          sx={{
             width: { xs: '100%', md: '50%' },
             transition: 'width var(--Transition-duration)',
             transitionDelay: 'calc(var(--Transition-duration) + 0.1s)',
-            position: 'relative',
+            position: 'fixed',
+            right: 0,
+            top: 0,
+            bottom: 0,
+            left: { xs: 0, md: '50vw' },
             zIndex: 1,
             display: 'flex',
             justifyContent: 'flex-end',
@@ -116,20 +143,16 @@ function Auth() {
                 '& form': {
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: 2
                 },
                 [`& .MuiFormLabel-asterisk`]: {
                   visibility: 'hidden'
                 }
               }}
             >
-              <Stack gap={2} sx={{ mb: 2 }}>
+              <Stack gap={2} >
                 <Stack gap={1}>
                   <Typography variant="h4" fontWeight={400}>
-                    Sign in
-                  </Typography>
-                  <Typography variant="body2">
-                    New to Chatting ? <Link to={'/auth-reg'}>Sign up !</Link>
+                    Create New Account
                   </Typography>
                 </Stack>
                 <Button
@@ -152,18 +175,33 @@ function Auth() {
                 </Button>
               </Stack>
 
-              <Divider
-              // sx={(theme) => ({
-              //   [theme.getColorSchemeSelector('light')]: {
-              //     color: { xs: '#FFF', md: 'text.tertiary' }
-              //   }
-              // })}
-              >
-                or
-              </Divider>
+              <Divider>or</Divider>
 
-              <Stack gap={2} sx={{ mt: 2 }}>
+              <Stack gap={2}>
                 <form onSubmit={handleSubmit(onSubmit)}>
+                  <FormControl required>
+                    <FormLabel sx={{ fontWeight: 500 }} error={!!errors['username']}>
+                      User Name
+                    </FormLabel>
+                    <Controller
+                      name="username"
+                      control={control}
+                      render={({ field }) => (
+                        <>
+                          <Inputv1
+                            name={'username'}
+                            type={''}
+                            id={'username'}
+                            autoFocus={true}
+                            register={register}
+                            errors={errors}
+                          />
+                        </>
+                      )}
+                    />
+                    <FormHelperText error>{errors['username'] ? errors['username']?.message : ' '}</FormHelperText>
+                  </FormControl>
+
                   <FormControl required>
                     <FormLabel sx={{ fontWeight: 500 }} error={!!errors['email']}>
                       Email
@@ -210,24 +248,14 @@ function Auth() {
                     <FormHelperText error>{errors['password'] ? errors['password']?.message : ' '}</FormHelperText>
                   </FormControl>
 
-                  <Stack gap={4} sx={{ mt: 2 }}>
+                  <Stack gap={2} sx={{ mt: 2 }}>
                     <Box
                       sx={{
                         display: 'flex',
-                        justifyContent: 'space-between',
+                        justifyContent: 'center',
                         alignItems: 'center'
                       }}
                     >
-                      <FormControlLabel
-                        control={
-                          <Controller
-                            name="rememberMe"
-                            control={control}
-                            render={({ field }) => <Checkbox {...field} />}
-                          />
-                        }
-                        label="Remember me"
-                      />
                       <Link href="/auth-forgot-password">Forgot your password?</Link>
                     </Box>
                     <Button type="submit" fullWidth variant="contained">
@@ -239,38 +267,16 @@ function Auth() {
             </Box>
 
             {/* footer */}
-            <Box component="footer" sx={{ py: 3 }}>
+            <Box component="footer" sx={{ mb: 3 }}>
               <Typography variant="body2" textAlign="center">
                 © Your company {new Date().getFullYear()}
               </Typography>
             </Box>
           </Box>
         </Box>
-
-        <Box
-          sx={{
-            height: '100%',
-            position: 'fixed',
-            right: 0,
-            top: 0,
-            bottom: 0,
-            borderRadius: '23% 0% 0% 24% / 27% 10% 10% 30%',
-            left: { xs: 0, md: '50vw' },
-            transition: 'background-image var(--Transition-duration), left var(--Transition-duration) !important',
-            transitionDelay: 'calc(var(--Transition-duration) + 0.1s)',
-            backgroundColor: 'background.level1',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            backgroundImage:
-              mode == 'dark'
-                ? 'url(https://images.unsplash.com/photo-1572072393749-3ca9c8ea0831?auto=format&w=1000&dpr=2)'
-                : 'url(https://images.unsplash.com/photo-1527181152855-fc03fc7949c8?auto=format&w=1000&dpr=2)'
-          }}
-        ></Box>
       </Container>
     </>
   );
 }
 
-export default Auth;
+export default Register;

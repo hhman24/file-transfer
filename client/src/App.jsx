@@ -1,6 +1,7 @@
 import Container from "@mui/material/Container";
 import Box from '@mui/material/Box';
 import Auth from "~/pages/auth/Auth";
+import Register from "./pages/auth/Register";
 
 function App() {
 
@@ -11,7 +12,8 @@ function App() {
 
         </Box>
       </Container> */}
-      <Auth />
+      {/* <Auth /> */}
+      <Register />
     </>
   );
 }
