@@ -44,10 +44,25 @@ const findOneById = async (id) => {
     throw new Error(error);
   }
 };
+const findOneByUsername = async (user) => {
+  try {
+    return await GET_DB()
+      .collection(USER_COLLECTION_NAME)
+      .findOne({
+        username : (user)
+      });
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+
+
 
 export const UserModel = {
   USER_COLLECTION_NAME,
   USER_COLLECTION_SCHEMA,
   saveModel,
-  findOneById
+  findOneById,
+  findOneByUsername,
 };
