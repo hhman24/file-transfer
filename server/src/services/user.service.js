@@ -3,6 +3,8 @@
  * "A bit of fragrance clings to the hand that gives flowers!"
  */
 import { UserModel } from '~/models/UserModel';
+import bcrypt from "bcryptjs";
+import { boolean } from 'joi';
 const createNew = async (body) => {
   try {
     const createdUser = await UserModel.saveModel(body);
@@ -25,7 +27,34 @@ const getAll = async () => {
 
 const getOne = async (id) => {
   try {
-    return await UserModel.get_user(id);
+    return await UserModel.findOneById(id);
+  } catch (error) {
+    throw error;
+  }
+}
+
+const login = async (body) => {
+	try {
+		const { username, password } = body;
+		const user = await UserModel.findOneByUsername(username);
+		let isPasswordCorrect =true;
+		if (password == user.password)
+		{
+			isPasswordCorrect = true;
+		}
+		else
+		isPasswordCorrect = false;
+		//const isPasswordCorrect = await bcrypt.compare(password, user?.password || "");
+		if (user && isPasswordCorrect) 
+			return user;
+	} catch (error) {
+    throw error;
+	}
+};
+
+const remove = async (id) => {
+  try {
+    return await UserModel.removeModel(id);
   } catch (error) {
     throw error;
   }
@@ -34,5 +63,7 @@ const getOne = async (id) => {
 export const userService = {
   createNew,
   getAll,
-  getOne
+  getOne,
+  login,
+  remove
 };

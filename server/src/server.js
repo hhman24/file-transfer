@@ -10,11 +10,15 @@ import { CONNECT_DB, CLOSE_DB } from '~/config/mongodb';
 import { errorHandlingMiddleware } from '~/middlewares/errorHandler.middleware';
 import { API_v1 } from '~/routes/v1';
 
+const cookie = require('cookie-parser');
+
+
 const START_SERVER = () => {
   const app = express();
-
+  
   app.use(express.json());
-
+  app.use(express.urlencoded({ extended: true }));
+  app.use(cookie());
   // use API v1
   app.use('/v1', API_v1);
 
