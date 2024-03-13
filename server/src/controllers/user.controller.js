@@ -31,6 +31,26 @@ const createNew = async (req, res, next) => {
   }
 };
 
+const  getAll = async (req, res) => {
+  try {
+    const users = await userService.getAll();
+    res.status(StatusCodes.OK).json(users);
+  } catch (error) {
+  }
+}
+
+const getOne = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const user = await userService.getOne(id);
+    res.status(StatusCodes.OK).json(user);
+  } catch (error) {
+    next(error);
+  }
+}
+
 export const userController = {
-  createNew
+  createNew,
+  getAll,
+  getOne
 };

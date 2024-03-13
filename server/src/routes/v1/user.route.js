@@ -14,4 +14,10 @@ Router.route('/')
   })
   .post(userValidation.createNew, userController.createNew);
 
+Router.route('/user/:id')
+  .get(userController.getOne);
+
+Router.route('/getAll')
+  .get(userController.getAll);
+
 export const userRoute = Router;

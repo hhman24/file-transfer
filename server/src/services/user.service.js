@@ -15,6 +15,24 @@ const createNew = async (body) => {
   }
 };
 
+const getAll = async () => {
+  try {
+    return await UserModel.get_all_users();
+  } catch (error) {
+    throw error;
+  }
+}
+
+const getOne = async (id) => {
+  try {
+    return await UserModel.get_user(id);
+  } catch (error) {
+    throw error;
+  }
+}
+
 export const userService = {
-  createNew
+  createNew,
+  getAll,
+  getOne
 };
