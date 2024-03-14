@@ -44,10 +44,63 @@ const findOneById = async (id) => {
     throw new Error(error);
   }
 };
+const findOneByUsername = async (user) => {
+  try {
+    return await GET_DB()
+      .collection(USER_COLLECTION_NAME)
+      .findOne({
+        username : (user)
+      });
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+const get_all_users = async () => {
+  try {
+    //get all id and username only from users (check properties _destroy = false)
+    return await GET_DB()
+      .collection(USER_COLLECTION_NAME)
+      .find({
+        _destroy: false
+      })
+      .project({
+        _id: 1,
+        username: 1
+      })
+      .toArray();
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+//remove yourself
+const removeModel = async (id) => {
+  try {
+    return await GET_DB()
+      .collection(USER_COLLECTION_NAME)
+      .updateOne(
+        {
+          _id: new ObjectId(id)
+        },
+        {
+          $set: {
+            _destroy: true
+          }
+        }
+      );
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 
 export const UserModel = {
   USER_COLLECTION_NAME,
   USER_COLLECTION_SCHEMA,
   saveModel,
-  findOneById
+  findOneById,
+  get_all_users,
+  findOneByUsername,
+  removeModel
 };
