@@ -15,7 +15,7 @@ const createNew = async (req, res, next) => {
 
     const data = { ...req.body };
 
-    // get data
+    // create data
     const createdUser = await userService.createNew(data);
 
     if (!createdUser) {

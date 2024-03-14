@@ -3,6 +3,7 @@
  * "A bit of fragrance clings to the hand that gives flowers!"
  */
 import { UserModel } from '~/models/UserModel';
+
 const createNew = async (body) => {
   try {
     const createdUser = await UserModel.saveModel(body);
