@@ -8,16 +8,13 @@ import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import Divider from '@mui/material/Divider';
-import Checkbox from '@mui/material/Checkbox';
 import { grey } from '@mui/material/colors';
 import GoogleIcon from '~/components/Svg/GoogleIcon';
 import ModeToggle from '~/components/toggle/ModeToggle';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import './Auth.scss';
 import { FormHelperText } from '@mui/material';
 import Inputv1 from '~/components/input/Inputv1';
 
@@ -115,15 +112,24 @@ function Register() {
               }}
             >
               <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-                <div className="icon_container">
-                  <SendIcon className="svg__icon" />
-                </div>
+                <Box>
+                  <SendIcon
+                    color="primary"
+                    sx={{
+                      margin: '0 0 2px 0',
+                      transform: 'rotate(-25deg)',
+                      fontSize: 'xx-large'
+                    }}
+                  />
+                </Box>
                 <Typography fontSize="24px" fontWeight="500">
                   Capstone 2024 Chat
                 </Typography>
               </Box>
               {/* <ColorSchemaToggle /> */}
-              <ModeToggle />
+              <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                <ModeToggle />
+              </Box>
             </Box>
 
             {/* body */}
@@ -142,14 +148,14 @@ function Register() {
                 borderRadius: 'sm',
                 '& form': {
                   display: 'flex',
-                  flexDirection: 'column',
+                  flexDirection: 'column'
                 },
-                [`& .MuiFormLabel-asterisk`]: {
+                ['& .MuiFormLabel-asterisk']: {
                   visibility: 'hidden'
                 }
               }}
             >
-              <Stack gap={2} >
+              <Stack gap={2}>
                 <Stack gap={1}>
                   <Typography variant="h4" fontWeight={400}>
                     Create New Account
@@ -186,7 +192,7 @@ function Register() {
                     <Controller
                       name="username"
                       control={control}
-                      render={({ field }) => (
+                      render={() => (
                         <>
                           <Inputv1
                             name={'username'}
@@ -209,7 +215,7 @@ function Register() {
                     <Controller
                       name="email"
                       control={control}
-                      render={({ field }) => (
+                      render={() => (
                         <>
                           <Inputv1
                             name={'email'}
@@ -232,7 +238,7 @@ function Register() {
                     <Controller
                       name="password"
                       control={control}
-                      render={({ field }) => (
+                      render={() => (
                         <>
                           <Inputv1
                             name={'password'}

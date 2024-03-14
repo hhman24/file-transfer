@@ -8,7 +8,6 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
-import Logout from '@mui/icons-material/Logout';
 import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
@@ -103,16 +102,16 @@ function AvatarCus() {
         </MenuItem>
         <Divider sx={{ my: 0.5, mx: -1 }} />
         <MenuItem>
-          <HelpRoundedIcon sx={{fontSize: '20px' }}/>
+          <HelpRoundedIcon sx={{ fontSize: '20px' }} />
           Help
         </MenuItem>
         <MenuItem>
-          <SettingsRoundedIcon sx={{fontSize: '20px' }}/>
+          <SettingsRoundedIcon sx={{ fontSize: '20px' }} />
           Settings
         </MenuItem>
         <Divider sx={{ my: 0.5, mx: -1 }} />
         <MenuItem>
-          <LogoutRoundedIcon sx={{fontSize: '20px' }}/>
+          <LogoutRoundedIcon sx={{ fontSize: '20px' }} />
           Log out
         </MenuItem>
       </Menu>

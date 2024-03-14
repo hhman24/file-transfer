@@ -1,6 +1,6 @@
 import SvgIcon from '@mui/material/SvgIcon';
 
-export default function GoogleIcon({size = "small"}) {
+export default function GoogleIcon({ size = 'small' }) {
   return (
     <SvgIcon fontSize={size}>
       <g transform="matrix(1, 0, 0, 1, 27.009001, -39.238998)">

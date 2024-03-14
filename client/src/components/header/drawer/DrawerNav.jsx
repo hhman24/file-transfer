@@ -53,9 +53,7 @@ function DrawerNav() {
       </IconButton>
       <Drawer sx={{ display: { xs: 'inline-flex', sm: 'none' } }} open={open} onClose={() => setOpen(false)}>
         <DialogTitle>Acme Co.</DialogTitle>
-        <Box sx={{ px: 1 }}>
-            {DrawerList}
-        </Box>
+        <Box sx={{ px: 1 }}>{DrawerList}</Box>
       </Drawer>
     </Box>
   );

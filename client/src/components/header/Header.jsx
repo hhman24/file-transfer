@@ -26,7 +26,7 @@ function Header() {
         flexGrow: 1,
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: (theme) => mode === 'light' ? theme.devSchema.bgColorHeader : ''
+        backgroundColor: (theme) => (mode === 'light' ? theme.devSchema.bgColorHeader : '')
       }}
     >
       {/* left */}
@@ -40,9 +40,16 @@ function Header() {
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-          <div className="icon_container">
-            <SendIcon className="svg__icon" color="primary" />
-          </div>
+          <Box>
+            <SendIcon
+              color="primary"
+              sx={{
+                margin: '0 0 2px 0',
+                transform: 'rotate(-25deg)',
+                fontSize: 'xx-large'
+              }}
+            />
+          </Box>
           <Typography fontSize="1.2rem" fontWeight="bold" variant="span">
             Capstone 2024 Chat
           </Typography>

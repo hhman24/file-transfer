@@ -17,7 +17,6 @@ import ModeToggle from '~/components/toggle/ModeToggle';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import './Auth.scss';
 import { FormHelperText } from '@mui/material';
 import Inputv1 from '~/components/input/Inputv1';
 
@@ -88,15 +87,24 @@ function Auth() {
               }}
             >
               <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-                <div className="icon_container">
-                  <SendIcon className="svg__icon" />
-                </div>
+                <Box>
+                  <SendIcon
+                    color="primary"
+                    sx={{
+                      margin: '0 0 2px 0',
+                      transform: 'rotate(-25deg)',
+                      fontSize: 'xx-large'
+                    }}
+                  />
+                </Box>
                 <Typography fontSize="24px" fontWeight="500">
                   Capstone 2024 Chat
                 </Typography>
               </Box>
               {/* <ColorSchemaToggle /> */}
-              <ModeToggle />
+              <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                <ModeToggle />
+              </Box>
             </Box>
 
             {/* body */}
@@ -118,7 +126,7 @@ function Auth() {
                   flexDirection: 'column',
                   gap: 2
                 },
-                [`& .MuiFormLabel-asterisk`]: {
+                ['& .MuiFormLabel-asterisk']: {
                   visibility: 'hidden'
                 }
               }}
@@ -171,7 +179,7 @@ function Auth() {
                     <Controller
                       name="email"
                       control={control}
-                      render={({ field }) => (
+                      render={() => (
                         <>
                           <Inputv1
                             name={'email'}
@@ -194,7 +202,7 @@ function Auth() {
                     <Controller
                       name="password"
                       control={control}
-                      render={({ field }) => (
+                      render={() => (
                         <>
                           <Inputv1
                             name={'password'}
