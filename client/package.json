@@ -19,12 +19,14 @@
     "@hookform/resolvers": "^3.3.4",
     "@mui/icons-material": "^5.15.12",
     "@mui/material": "^5.15.12",
+    "@reduxjs/toolkit": "^2.2.1",
     "axios": "^1.6.7",
     "dotenv": "^16.4.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.51.0",
     "react-router-dom": "^6.22.3",
+    "vite-plugin-svgr": "^4.2.0",
     "yup": "^1.4.0"
   },
   "devDependencies": {
