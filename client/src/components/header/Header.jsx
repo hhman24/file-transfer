@@ -5,10 +5,12 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import SendIcon from '@mui/icons-material/Send';
 import IconButton from '@mui/material/IconButton';
-import LanguageRoundedIcon from '@mui/icons-material/LanguageRounded';
+import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import Input from '@mui/material/Input';
 import InputAdornment from '@mui/material/InputAdornment';
+import Tooltip from '@mui/material/Tooltip';
+import Badge from '@mui/material/Badge';
 import ModeToggle from '~/components/toggle/ModeToggle';
 import Workspaces from './menus/workspaces';
 import DrawerNav from './drawer/DrawerNav';
@@ -82,14 +84,7 @@ function Header() {
           <Button variant="plain" color="neutral" component="a" href="/team/" size="small" sx={{ alignSelf: 'center' }}>
             Team
           </Button>
-          <Button
-            variant="plain"
-            color="neutral"
-            component="a"
-            href="/files/"
-            // size="small"
-            sx={{ alignSelf: 'center' }}
-          >
+          <Button variant="plain" color="neutral" component="a" href="/files/" sx={{ alignSelf: 'center' }}>
             Files
           </Button>
 
@@ -159,21 +154,34 @@ function Header() {
             },
           }}
         />
+        <Tooltip title="Notification">
+          <IconButton
+            color="inherit"
+            size="small"
+            sx={{
+              borderRadius: '10px',
+              '& svg': {
+                transition: '0.2s',
+                transform: 'translateX(0) rotate(0)',
+              },
+              '&:hover, &:focus': {
+                color: 'primary.main',
+              },
+              '& .MuiTouchRipple-child': { borderRadius: 'inherit' },
+              transition: (theme) => theme.transitions.create(['color']),
+            }}
+          >
+            <Badge
+              anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+              variant="dot"
+              overlap="circular"
+              color="error"
+            >
+              <NotificationsNoneOutlinedIcon fontSize="inherit" />
+            </Badge>
+          </IconButton>
+        </Tooltip>
 
-        <IconButton
-          color="inherit"
-          size="small"
-          sx={{
-            borderRadius: '10px',
-            '& .MuiTouchRipple-child': { borderRadius: 'inherit' },
-            transition: (theme) => theme.transitions.create(['color']),
-            '&:hover': {
-              color: 'primary.main',
-            },
-          }}
-        >
-          <LanguageRoundedIcon fontSize="inherit" />
-        </IconButton>
         <ModeToggle border="none" radius="10px" />
 
         <AvatarCus />

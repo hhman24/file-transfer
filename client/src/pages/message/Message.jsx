@@ -14,6 +14,7 @@ function Message() {
         },
         gridTemplateRows: '64px 1fr',
         minHeight: '100vh',
+        overflow: 'hidden',
       }}
     >
       <Header />

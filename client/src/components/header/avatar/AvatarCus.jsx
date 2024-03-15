@@ -31,7 +31,6 @@ function AvatarCus() {
           onClick={handleClick}
           size="small"
           sx={{
-            ml: 2,
             maxWidth: '32px',
             maxHeight: '32px',
             borderRadius: '9999999px',

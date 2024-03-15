@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Box from '@mui/material/Box';
 import ChatsPane from './chatsPane/ChatsPane';
 import { chats } from '~/data/messagesData';
+import MessagePane from './messagePane/MessagePane';
 
 function BodyMessage() {
   const [selectedChat, setSelectedChat] = useState(chats[0]);
@@ -21,10 +22,9 @@ function BodyMessage() {
           height: 'calc(100dvh - var(--Header-height))',
           overflowY: 'auto',
           position: { xs: 'fixed', sm: 'sticky' },
-          zIndex: 100,
           top: 200,
           right: 0,
-          mt: '52px',
+          mt: '58px',
         }}
       >
         <ChatsPane chats={chats} selectedChatId={selectedChat.id} setSelectedChat={setSelectedChat} />
@@ -34,9 +34,13 @@ function BodyMessage() {
           bgcolor: 'background.surface',
           borderRight: '1px solid',
           borderColor: 'divider',
+          height: 'calc(100dvh - var(--Header-height))',
+          display: 'flex',
+          flexDirection: 'column',
+          mt: '58px',
         }}
       >
-        <div>ga2</div>
+        <MessagePane chat={selectedChat} />
       </Box>
 
       <Box
@@ -48,6 +52,7 @@ function BodyMessage() {
             xs: 'none',
             md: 'initial',
           },
+          mt: '58px',
         }}
       >
         <div>ga3</div>

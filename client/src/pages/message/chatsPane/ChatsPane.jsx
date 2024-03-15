@@ -19,13 +19,13 @@ function ChatsPane({ chats, setSelectedChat, selectedChatId }) {
     <>
       <Box
         sx={{
-          bgcolor: (theme) => theme.devSchema.bgColorHeader,
           position: 'sticky',
           zIndex: 100,
           top: 0,
           left: 0,
           borderBottom: '1px solid',
           borderColor: 'divider',
+          bgcolor: (theme) => (mode === 'light' ? theme.devSchema.mainLight : theme.devSchema.mainDark),
         }}
       >
         {/* header */}
@@ -59,7 +59,7 @@ function ChatsPane({ chats, setSelectedChat, selectedChatId }) {
               label={`4`}
               size="small"
               sx={{
-                bgcolor: '#E3EFFB',
+                bgcolor: (theme) => (mode === 'light' ? theme.devSchema.secondaryLight : theme.devSchema.secondaryDark),
                 '& .MuiChip-label': {
                   fontWeight: '500',
                 },
