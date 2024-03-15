@@ -25,7 +25,7 @@ const schema = yup.object().shape({
     .required('No password provided.')
     .min(8, 'Password is too short - should be 8 chars minimum.')
     .matches(/^[a-zA-Z0-9]{8,30}$/, 'Password can only contain Latin letters, numbers.'),
-  username: yup.string().max(10, 'User name is so long').required('User name is required')
+  username: yup.string().max(10, 'User name is so long').required('User name is required'),
 });
 
 function Register() {
@@ -35,15 +35,15 @@ function Register() {
     register,
     control,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
   } = useForm({
     defaultValues: {
       email: '',
       username: '',
-      password: ''
+      password: '',
     },
     shouldUnregister: true,
-    resolver: yupResolver(schema)
+    resolver: yupResolver(schema),
   });
 
   const onSubmit = async (data) => {
@@ -71,7 +71,7 @@ function Register() {
             backgroundImage:
               mode == 'dark'
                 ? 'url(https://images.unsplash.com/photo-1572072393749-3ca9c8ea0831?auto=format&w=1000&dpr=2)'
-                : 'url(https://images.unsplash.com/photo-1527181152855-fc03fc7949c8?auto=format&w=1000&dpr=2)'
+                : 'url(https://images.unsplash.com/photo-1527181152855-fc03fc7949c8?auto=format&w=1000&dpr=2)',
           }}
         ></Box>
 
@@ -90,7 +90,7 @@ function Register() {
             justifyContent: 'flex-end',
             backdropFilter: 'blur(12px)',
             backgroundColor: (theme) =>
-              mode === 'dark' ? theme.devSchema.darkBgBoxColor : theme.devSchema.lightBgBoxColor
+              mode === 'dark' ? theme.devSchema.darkBgBoxColor : theme.devSchema.lightBgBoxColor,
           }}
         >
           <Box
@@ -99,7 +99,7 @@ function Register() {
               flexDirection: 'column',
               minHeight: '100dvh',
               width: '100%',
-              px: 2
+              px: 2,
             }}
           >
             {/* header */}
@@ -108,7 +108,7 @@ function Register() {
               sx={{
                 py: 3,
                 display: 'flex',
-                justifyContent: 'space-between'
+                justifyContent: 'space-between',
               }}
             >
               <Box sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
@@ -118,7 +118,7 @@ function Register() {
                     sx={{
                       margin: '0 0 2px 0',
                       transform: 'rotate(-25deg)',
-                      fontSize: 'xx-large'
+                      fontSize: 'xx-large',
                     }}
                   />
                 </Box>
@@ -148,11 +148,11 @@ function Register() {
                 borderRadius: 'sm',
                 '& form': {
                   display: 'flex',
-                  flexDirection: 'column'
+                  flexDirection: 'column',
                 },
                 ['& .MuiFormLabel-asterisk']: {
-                  visibility: 'hidden'
-                }
+                  visibility: 'hidden',
+                },
               }}
             >
               <Stack gap={2}>
@@ -169,9 +169,9 @@ function Register() {
                     backgroundColor: mode === 'dark' ? grey[900] : grey[200],
                     '&:hover': {
                       backgroundColor: mode === 'dark' ? grey[800] : grey[300],
-                      boxShadow: 'none'
+                      boxShadow: 'none',
                     },
-                    boxShadow: 'none'
+                    boxShadow: 'none',
                   }}
                   fullWidth
                   variant="contained"
@@ -259,7 +259,7 @@ function Register() {
                       sx={{
                         display: 'flex',
                         justifyContent: 'center',
-                        alignItems: 'center'
+                        alignItems: 'center',
                       }}
                     >
                       <Link href="/auth-forgot-password">Forgot your password?</Link>

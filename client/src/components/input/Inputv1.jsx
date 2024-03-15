@@ -10,7 +10,7 @@ function Inputv1({
   disabled = false,
   placeholder = '',
   register,
-  errors
+  errors,
 }) {
   const { mode, setMode } = useColorScheme();
 
@@ -19,7 +19,7 @@ function Inputv1({
       <InputBase
         sx={{
           'label + &': {
-            marginTop: 1
+            marginTop: 1,
           },
           '& .MuiInputBase-input': {
             borderRadius: 2,
@@ -31,9 +31,9 @@ function Inputv1({
             padding: '10px 12px',
             transition: (theme) => theme.transitions.create(['border-color', 'background-color', 'box-shadow']),
             '&:focus': {
-              borderColor: errors[id] ? 'error.main' : 'primary.main'
-            }
-          }
+              borderColor: errors[id] ? 'error.main' : 'primary.main',
+            },
+          },
         }}
         placeholder={placeholder}
         type={type}

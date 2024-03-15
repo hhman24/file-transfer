@@ -6,7 +6,7 @@ const theme = extendTheme({
     lightBgBoxColor: 'rgba(255 255 255 / 0.2)',
     darkBgBoxColor: 'rgba(19 19 24 / 0.4)',
     heightHeader: 72,
-    bgColorHeader: '#FBFCFE'
+    bgColorHeader: '#FBFCFE',
   },
   colorSchemes: {
     light: {
@@ -14,16 +14,22 @@ const theme = extendTheme({
         // primary: {
         //   main: pink[600],
         // },
-      }
+      },
+      background: {
+        surface: '#FBFCFE',
+      },
     },
     dark: {
       palette: {
         // primary: {
         //   main: pink[400],
         // },
-      }
-    }
-  }
+      },
+      background: {
+        surface: '',
+      },
+    },
+  },
   // ...other properties
 });
 

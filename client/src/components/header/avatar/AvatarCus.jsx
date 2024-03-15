@@ -34,7 +34,7 @@ function AvatarCus() {
             ml: 2,
             maxWidth: '32px',
             maxHeight: '32px',
-            borderRadius: '9999999px'
+            borderRadius: '9999999px',
           }}
           aria-controls={open ? 'account-menu' : undefined}
           aria-haspopup="true"
@@ -71,17 +71,17 @@ function AvatarCus() {
               '& .MuiMenuItem-root': {
                 display: 'flex',
                 gap: 2,
-                borderRadius: '6px'
-              }
-            }
-          }
+                borderRadius: '6px',
+              },
+            },
+          },
         }}
       >
         <MenuItem>
           <Box
             sx={{
               display: 'flex',
-              alignItems: 'center'
+              alignItems: 'center',
             }}
           >
             <Avatar

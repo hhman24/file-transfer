@@ -12,14 +12,15 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
       <CssBaseline />
       <GlobalStyles
-        styles={{
+        styles={(theme) => ({
           ':root': {
             '--Form-maxWidth': '800px',
-            '--Transition-duration': '0.4s' // set to `none` to disable transition
-          }
-        }}
+            '--Transition-duration': '0.4s', // set to `none` to disable transition
+            '--Header-height': '52px',
+          },
+        })}
       />
       <App />
     </CssVarsProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

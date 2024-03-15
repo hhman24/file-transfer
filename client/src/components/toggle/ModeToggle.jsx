@@ -23,13 +23,12 @@ function ModeToggle({ border = '0.5px solid', radius = '50%', fontSize = 'small'
           localStorage.setItem('mode', newMode);
         }}
         sx={{
-          display: { xs: 'none', sm: 'inline-flex' },
           borderRadius: radius,
           '& .MuiTouchRipple-child': { borderRadius: 'inherit' },
           transition: (theme) => theme.transitions.create(['color']),
           '&:hover': {
-            color: 'primary.main'
-          }
+            color: 'primary.main',
+          },
         }}
       >
         {mode === 'dark' ? <LightModeRoundedIcon fontSize="inherit" /> : <DarkModeRoundedIcon fontSize="inherit" />}

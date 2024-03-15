@@ -31,12 +31,12 @@ module.exports = {
     'object-curly-spacing': [1, 'always'],
     'indent': ['warn', 2],
     'semi': [0, 'never'], //
-    'quotes': ['error', 'single'],
+    // 'quotes': ['error', 'single'],
     'array-bracket-spacing': 1,
     'linebreak-style': 0,
     'no-unexpected-multiline': 'warn',
     'keyword-spacing': 1,
-    'comma-dangle': 1,
+    'comma-dangle': 0, //
     'comma-spacing': 1,
     'arrow-spacing': 1,
 
@@ -45,7 +45,7 @@ module.exports = {
       'warn',
       {
         singleQuote: true,
-        trailingComma: 'none',
+        trailingComma: 'all',
         endOfLine: 'auto',
         printWidth: 120
       }
