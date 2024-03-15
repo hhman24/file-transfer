@@ -22,8 +22,9 @@ function BodyMessage() {
           height: 'calc(100dvh - var(--Header-height))',
           overflowY: 'auto',
           position: { xs: 'fixed', sm: 'sticky' },
-          top: 200,
+          top: 0,
           right: 0,
+          zIndex: 9999,
           mt: '58px',
         }}
       >
@@ -32,30 +33,14 @@ function BodyMessage() {
       <Box
         sx={{
           bgcolor: 'background.surface',
-          borderRight: '1px solid',
-          borderColor: 'divider',
           height: 'calc(100dvh - var(--Header-height))',
           display: 'flex',
-          flexDirection: 'column',
+          flexDirection: 'row',
+          width: '100%',
           mt: '58px',
         }}
       >
         <MessagePane chat={selectedChat} />
-      </Box>
-
-      <Box
-        sx={{
-          bgcolor: 'background.surface',
-          borderRight: '1px solid',
-          borderColor: 'divider',
-          display: {
-            xs: 'none',
-            md: 'initial',
-          },
-          mt: '58px',
-        }}
-      >
-        <div>ga3</div>
       </Box>
     </>
   );
