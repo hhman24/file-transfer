@@ -33,7 +33,6 @@ function BodyMessage() {
       </Box>
       <Box
         sx={{
-          bgcolor: 'background.surface',
           height: 'calc(100dvh - var(--Header-height))',
           display: 'flex',
           flexDirection: 'column',

@@ -17,7 +17,7 @@ function ChatsPane({ chats, setSelectedChat, selectedChatId }) {
   const { mode, setMode } = useColorScheme();
 
   return (
-    <>
+    <Box sx={{ bgcolor: 'background.paper' }}>
       <Box
         sx={{
           position: 'sticky',
@@ -140,7 +140,7 @@ function ChatsPane({ chats, setSelectedChat, selectedChatId }) {
           <ChatsListItem key={chat.id} {...chat} setSelectedChat={setSelectedChat} selectedChatId={selectedChatId} />
         ))}
       </List>
-    </>
+    </Box>
   );
 }
 

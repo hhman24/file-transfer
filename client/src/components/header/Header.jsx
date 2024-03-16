@@ -107,6 +107,8 @@ function Header() {
           id="input-with-icon-adornment"
           placeholder="Search anything"
           disableUnderline
+          minRows={3}
+          maxRows={10}
           startAdornment={
             <InputAdornment position="start">
               <SearchRoundedIcon color="primary" fontSize="small" />

@@ -13,7 +13,6 @@ function ChatsListItem(props) {
   return (
     <>
       <ListItemButton
-        color="neutral"
         selected={selected}
         onClick={() => {
           setSelectedChat({ id, sender, messages });
