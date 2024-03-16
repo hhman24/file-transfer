@@ -15,9 +15,12 @@ import ModeToggle from '~/components/toggle/ModeToggle';
 import Workspaces from './menus/workspaces';
 import DrawerNav from './drawer/DrawerNav';
 import AvatarCus from './avatar/AvatarCus';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function Header() {
   const { mode, setMode } = useColorScheme();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <Box
@@ -72,19 +75,45 @@ function Header() {
           }}
         >
           <Button
-            variant="plain"
+            variant={'plain'}
             aria-pressed="true"
-            component="a"
-            href="/email/"
             size="small"
-            sx={{ alignSelf: 'center' }}
+            sx={{
+              alignSelf: 'center',
+              bgcolor: location.pathname === '/messages/t' ? (mode === 'light' ? 'grey.300' : 'grey.800') : 'none',
+            }}
+            onClick={() => {
+              navigate('/messages/t');
+            }}
           >
-            Email
+            Message
           </Button>
-          <Button variant="plain" color="neutral" component="a" href="/team/" size="small" sx={{ alignSelf: 'center' }}>
+
+          <Button
+            variant="plain"
+            color="neutral"
+            size="small"
+            sx={{
+              alignSelf: 'center',
+              bgcolor: location.pathname === '/team/t' ? (mode === 'light' ? 'grey.300' : 'grey.800') : 'none',
+            }}
+            onClick={() => {
+              navigate('/team/t');
+            }}
+          >
             Team
           </Button>
-          <Button variant="plain" color="neutral" component="a" href="/files/" sx={{ alignSelf: 'center' }}>
+          <Button
+            variant="plain"
+            color="neutral"
+            sx={{
+              alignSelf: 'center',
+              bgcolor: location.pathname === '/file/t' ? (mode === 'light' ? 'grey.300' : 'grey.800') : 'none',
+            }}
+            onClick={() => {
+              navigate('/file/t');
+            }}
+          >
             Files
           </Button>
 
