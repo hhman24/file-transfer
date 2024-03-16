@@ -1,8 +1,9 @@
 import Badge from '@mui/material/Badge';
 import Avatar from '@mui/material/Avatar';
+import { stringAvatar, stringToColor } from '~/utils/stringAvatar';
 
 function AvatarWithStatus(props) {
-  const { online = false, ...other } = props;
+  const { online = false, senderName } = props;
 
   return (
     <div>
@@ -19,10 +20,11 @@ function AvatarWithStatus(props) {
         }}
       >
         <Avatar
-          {...other}
+          {...stringAvatar(senderName)}
           sx={{
             width: 44,
             height: 44,
+            bgcolor: stringToColor(senderName),
           }}
         />
       </Badge>

@@ -25,7 +25,7 @@ function ChatsListItem(props) {
         }}
       >
         <Stack direction={'row'} spacing={1.5} sx={{ flex: 1 }}>
-          <AvatarWithStatus online={sender.online} src={sender.avatar} />
+          <AvatarWithStatus online={sender.online} senderName={sender.name} />
           <Box sx={{ flex: 1 }}>
             <Typography variant="subtitile2" fontSize={'14px'} fontWeight={500}>
               {sender.name}

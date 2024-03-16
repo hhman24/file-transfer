@@ -11,6 +11,7 @@ import PhoneInTalkRoundedIcon from '@mui/icons-material/PhoneInTalkRounded';
 import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
 import CircleIcon from '@mui/icons-material/Circle';
 import { toggleMessagesPane } from '~/utils/toggleMessagePane';
+import { stringAvatar, stringToColor } from '~/utils/stringAvatar';
 
 function HeaderMessagePane(props) {
   const { sender } = props;
@@ -43,10 +44,11 @@ function HeaderMessagePane(props) {
         </IconButton>
         <Avatar
           alt="avtar"
-          src={sender.avatar}
+          {...stringAvatar(sender.name)}
           sx={{
             height: 64,
             width: 64,
+            bgcolor: stringToColor(sender.name),
           }}
         />
         <div>
