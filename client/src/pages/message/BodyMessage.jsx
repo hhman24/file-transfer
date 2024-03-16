@@ -1,3 +1,4 @@
+import { useColorScheme } from '@mui/material/styles';
 import { useState } from 'react';
 import Box from '@mui/material/Box';
 import ChatsPane from './chatsPane/ChatsPane';
@@ -6,6 +7,7 @@ import MessagePane from './messagePane/MessagePane';
 
 function BodyMessage() {
   const [selectedChat, setSelectedChat] = useState(chats[0]);
+  const { mode, setMode } = useColorScheme();
 
   return (
     <>
@@ -34,9 +36,13 @@ function BodyMessage() {
           bgcolor: 'background.surface',
           height: 'calc(100dvh - var(--Header-height))',
           display: 'flex',
-          flexDirection: 'row',
+          flexDirection: 'column',
           width: '100%',
           mt: '58px',
+          borderRight: '1px solid',
+          borderColor: 'divider',
+          backgroundColor: (theme) =>
+            mode === 'light' ? theme.devSchema.backgroundLevel1Light : theme.devSchema.backgroundLevel1Dark,
         }}
       >
         <MessagePane chat={selectedChat} />
