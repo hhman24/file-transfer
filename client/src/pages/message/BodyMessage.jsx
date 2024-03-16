@@ -18,7 +18,6 @@ function BodyMessage() {
             sm: 'none',
           },
           transition: 'transform 0.4s, width 0.4s',
-          width: '100%',
           height: 'calc(100dvh - var(--Header-height))',
           overflowY: 'auto',
           position: { xs: 'fixed', sm: 'sticky' },

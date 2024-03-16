@@ -11,6 +11,7 @@ import EditNoteRoundedIcon from '@mui/icons-material/EditNoteRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ChatsListItem from './ChatsListItem';
+import { toggleMessagesPane } from '~/utils/toggleMessagePane';
 
 function ChatsPane({ chats, setSelectedChat, selectedChatId }) {
   const { mode, setMode } = useColorScheme();
@@ -49,7 +50,7 @@ function ChatsPane({ chats, setSelectedChat, selectedChatId }) {
               component={'h1'}
               sx={{
                 mr: 'auto',
-                fontSize: { xs: '0.75rem', md: '1.25rem' },
+                fontSize: { xs: '1.25rem', md: '1.25rem' },
                 fontWeight: '600',
               }}
             >
@@ -89,6 +90,7 @@ function ChatsPane({ chats, setSelectedChat, selectedChatId }) {
               '& .MuiTouchRipple-child': { borderRadius: 'inherit' },
               display: { sm: 'none' },
             }}
+            onClick={() => toggleMessagesPane()}
           >
             <CloseRoundedIcon />
           </IconButton>
