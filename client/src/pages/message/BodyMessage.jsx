@@ -1,3 +1,4 @@
+import { useColorScheme } from '@mui/material/styles';
 import { useState } from 'react';
 import Box from '@mui/material/Box';
 import ChatsPane from './chatsPane/ChatsPane';
@@ -6,6 +7,7 @@ import MessagePane from './messagePane/MessagePane';
 
 function BodyMessage() {
   const [selectedChat, setSelectedChat] = useState(chats[0]);
+  const { mode, setMode } = useColorScheme();
 
   return (
     <>
@@ -18,12 +20,12 @@ function BodyMessage() {
             sm: 'none',
           },
           transition: 'transform 0.4s, width 0.4s',
-          width: '100%',
           height: 'calc(100dvh - var(--Header-height))',
           overflowY: 'auto',
           position: { xs: 'fixed', sm: 'sticky' },
-          top: 200,
+          top: 0,
           right: 0,
+          zIndex: 9999,
           mt: '58px',
         }}
       >
@@ -31,31 +33,18 @@ function BodyMessage() {
       </Box>
       <Box
         sx={{
-          bgcolor: 'background.surface',
-          borderRight: '1px solid',
-          borderColor: 'divider',
           height: 'calc(100dvh - var(--Header-height))',
           display: 'flex',
           flexDirection: 'column',
+          width: '100%',
           mt: '58px',
+          borderRight: '1px solid',
+          borderColor: 'divider',
+          backgroundColor: (theme) =>
+            mode === 'light' ? theme.devSchema.backgroundLevel1Light : theme.devSchema.backgroundLevel1Dark,
         }}
       >
         <MessagePane chat={selectedChat} />
-      </Box>
-
-      <Box
-        sx={{
-          bgcolor: 'background.surface',
-          borderRight: '1px solid',
-          borderColor: 'divider',
-          display: {
-            xs: 'none',
-            md: 'initial',
-          },
-          mt: '58px',
-        }}
-      >
-        <div>ga3</div>
       </Box>
     </>
   );
