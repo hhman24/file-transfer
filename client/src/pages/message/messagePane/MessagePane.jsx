@@ -1,4 +1,3 @@
-import { useColorScheme } from '@mui/material/styles';
 import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import HeaderMessagePane from './HeaderMessagePane';
@@ -9,7 +8,6 @@ import MessageInput from './MessageInput';
 
 function MessagePane(props) {
   const { chat } = props;
-  const { mode, setMode } = useColorScheme();
   const [chatMessages, setChatMessages] = useState(chat.messages);
   const [textAreaValue, setTextAreaValue] = useState('');
 
