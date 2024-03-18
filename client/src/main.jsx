@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Experimental_CssVarsProvider as CssVarsProvider } from '@mui/material/styles';
+import { RouterProvider } from 'react-router-dom';
+import { router } from '~/routes/routes.jsx';
 import GlobalStyles from '@mui/material/GlobalStyles';
 import themes from '~/themes/index.js';
 import App from './App.jsx';
@@ -20,7 +22,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           },
         })}
       />
-      <App />
+      <RouterProvider router={router} />
     </CssVarsProvider>
   </React.StrictMode>,
 );

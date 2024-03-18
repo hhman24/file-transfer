@@ -85,7 +85,7 @@ function Workspaces() {
           },
         })}
       >
-        <MenuItem onClick={handleClose} disableRipple>
+        <MenuItem onClick={handleClose} disableRipple selected>
           <EditIcon />
           Edit
         </MenuItem>
