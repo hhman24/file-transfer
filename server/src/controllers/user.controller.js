@@ -4,7 +4,7 @@
 import { StatusCodes } from 'http-status-codes';
 import ApiError from '~/utils/ApiError';
 import { userService } from '~/services/user.service';
-import generateTokenAndSetCookie from "../utils/generateToken.js";
+import generateTokenAndSetCookie from '../utils/generateToken.js';
 const createNew = async (req, res, next) => {
   try {
     // console.log(req.body);
@@ -56,24 +56,22 @@ const login = async (req, res, next) => {
   }
 };
 
-
 const logout = (req, res) => {
-	try {
-		res.cookie("jwt", "", { maxAge: 0 });
-		res.status(200).json({ message: "Logged out successfully" });
-	} catch (error) {
-		console.log("Error in logout controller", error.message);
-		res.status(500).json({ error: "Internal Server Error" });
-	}
+  try {
+    res.cookie('jwt', '', { maxAge: 0 });
+    res.status(200).json({ message: 'Logged out successfully' });
+  } catch (error) {
+    console.log('Error in logout controller', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 };
 
-const  getAll = async (req, res) => {
+const getAll = async (req, res) => {
   try {
     const users = await userService.getAll();
     res.status(StatusCodes.OK).json(users);
-  } catch (error) {
-  }
-}
+  } catch (error) {}
+};
 
 const getOne = async (req, res, next) => {
   try {
@@ -83,12 +81,12 @@ const getOne = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}
+};
 
 const remove = async (req, res, next) => {
   try {
     const removedUser = await userService.remove(req.user._id);
-    if(!removedUser) {
+    if (!removedUser) {
       next(ApiError(StatusCodes.BAD_REQUEST, 'User not removed'));
     }
     res.status(StatusCodes.OK).json({
@@ -98,10 +96,12 @@ const remove = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}
+};
 
 export const userController = {
-  createNew,login,logout,
+  createNew,
+  login,
+  logout,
   createNew,
   getAll,
   getOne,
