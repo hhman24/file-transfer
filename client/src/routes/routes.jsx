@@ -4,7 +4,6 @@ import Auth from '~/pages/auth/Auth';
 import Register from '~/pages/auth/Register';
 import ErrorPage from '~/pages/error/ErrorPage';
 import Home from '~/pages/hone/Home';
-import Message from '~/pages/message/Message';
 import Loadable from '~/components/load/Loadable';
 
 const MessageElement = Loadable(lazy(() => import('~/pages/message/Message')));

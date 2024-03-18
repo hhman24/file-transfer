@@ -100,6 +100,7 @@ export const chats = [
           fileName: 'Tech requirements.pdf',
           type: 'pdf',
           size: '1.2 MB',
+          url: '',
         },
       },
       {
