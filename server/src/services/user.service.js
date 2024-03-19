@@ -1,9 +1,9 @@
 /* eslint-disable no-useless-catch */
-/**
- * "A bit of fragrance clings to the hand that gives flowers!"
- */
+import { StatusCodes } from 'http-status-codes';
 import { UserModel } from '~/models/UserModel';
+import ApiError from '~/utils/ApiError';
 
+// create new user
 const createNew = async (body) => {
   try {
     const createdUser = await UserModel.saveModel(body);
@@ -16,6 +16,7 @@ const createNew = async (body) => {
   }
 };
 
+// Get all user
 const getAll = async () => {
   try {
     return await UserModel.get_all_users();
@@ -24,13 +25,22 @@ const getAll = async () => {
   }
 };
 
+//  Get user by id
 const getOne = async (id) => {
   try {
-    return await UserModel.findOneById(id);
+    // hhman - update: check user exist
+    const user = UserModel.getDetailsUser(id);
+    if (!user) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
+    }
+
+    return user;
   } catch (error) {
     throw error;
   }
 };
+
+//  Get user by email
 
 const login = async (body) => {
   try {

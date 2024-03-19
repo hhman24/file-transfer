@@ -1,6 +1,3 @@
-/**
- * "A bit of fragrance clings to the hand that gives flowers!"
- */
 import Joi from 'joi';
 import { ObjectId } from 'mongodb';
 // import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/patternValidator';
@@ -10,13 +7,13 @@ const USER_COLLECTION_NAME = 'users';
 const USER_COLLECTION_SCHEMA = Joi.object({
   //   _id: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
   username: Joi.string().email().required().trim().strict(),
-  password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{8,30}$')).trim().strict(),
-
-  //   access_token: [Joi.string(), Joi.number()],
+  password: Joi.string().strict(),
 
   createAt: Joi.date().timestamp('javascript').default(Date.now),
   updatedAt: Joi.date().timestamp('javascript').default(null),
   _destroy: Joi.boolean().default(false)
+
+  //   access_token: [Joi.string(), Joi.number()],
 });
 
 const validateSchema = async (schema) => {
@@ -33,6 +30,7 @@ const saveModel = async (data) => {
   }
 };
 
+// Find user by id
 const findOneById = async (id) => {
   try {
     return await GET_DB()
@@ -45,16 +43,30 @@ const findOneById = async (id) => {
   }
 };
 
-const findOneByUsername = async (user) => {
+const getDetailsUser = async (id) => {
+  try {
+    return await GET_DB()
+      .collection(USER_COLLECTION_NAME)
+      .findOne({
+        _id: new ObjectId(id)
+      });
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+// Find user by email
+const findOneByEmail = async (email) => {
   try {
     return await GET_DB().collection(USER_COLLECTION_NAME).findOne({
-      username: user
+      email: email
     });
   } catch (error) {
     throw new Error(error);
   }
 };
 
+// get all user
 const get_all_users = async () => {
   try {
     //get all id and username only from users (check properties _destroy = false)
@@ -99,6 +111,7 @@ export const UserModel = {
   saveModel,
   findOneById,
   get_all_users,
-  findOneByUsername,
-  removeModel
+  findOneByEmail,
+  removeModel,
+  getDetailsUser
 };

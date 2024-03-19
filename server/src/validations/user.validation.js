@@ -5,12 +5,15 @@ import Joi from 'joi';
 import { StatusCodes } from 'http-status-codes';
 import ApiError from '~/utils/ApiError';
 
-const createNew = async (req, res, next) => {
+const register = async (req, res, next) => {
   const correctCondition = Joi.object({
-    username: Joi.string().email().required().trim().strict().messages({
+    usename: Joi.string().min(3).max(30).required().trim().strict().messages({
       'any.required': 'username is required (hhman)'
     }),
-    password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{8,30}$')).trim().strict()
+    email: Joi.string().email().required().trim().strict().messages({
+      'any.required': 'email is required (hhman)'
+    }),
+    password: Joi.string().trim().strict()
   });
 
   try {
@@ -24,5 +27,5 @@ const createNew = async (req, res, next) => {
 };
 
 export const userValidation = {
-  createNew
+  register
 };

@@ -3,10 +3,12 @@
 /**
  * "A bit of fragrance clings to the hand that gives flowers!"
  */
-import { env } from '~/config/environment';
 import exitHook from 'async-exit-hook';
 import express from 'express';
+import cors from 'cors';
 import cookie from 'cookie-parser';
+import { corsOptions } from './config/cors';
+import { env } from '~/config/environment';
 import { Loggers } from '~/middlewares/logger.middleware';
 import { CONNECT_DB, CLOSE_DB } from '~/config/mongodb';
 import { errorHandlingMiddleware } from '~/middlewares/errorHandler.middleware';
@@ -14,6 +16,8 @@ import { API_v1 } from '~/routes/v1';
 
 const START_SERVER = () => {
   const app = express();
+
+  app.use(cors(corsOptions));
 
   app.use(Loggers.logger);
   app.use(express.urlencoded({ extended: true }));
