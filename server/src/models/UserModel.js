@@ -48,7 +48,7 @@ const findOneById = async (id) => {
 
 const getDetailsUser = async (id) => {
   try {
-    return await GET_DB()
+    const res = await GET_DB()
       .collection(USER_COLLECTION_NAME)
       .aggregate([
         {
@@ -57,9 +57,20 @@ const getDetailsUser = async (id) => {
             _destroy: false,
           },
         },
-        {},
-        {},
-      ]);
+        // {
+        //   $lookup: {
+        //     from: USER_COLLECTION_SCHEMA,
+        //     localField: 'friends',
+        //     foreignField: '_id',
+        //     as: 'friendsDetails',
+        //   },
+        // },
+      ])
+      .toArray();
+
+    console.log('from user model ', res);
+
+    return res[0] || {};
   } catch (error) {
     throw new Error(error);
   }
