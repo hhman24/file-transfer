@@ -5,6 +5,7 @@
 import express from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { userRoute } from './user.route';
+import { authRoute } from './auth.route';
 
 const Router = express.Router();
 
@@ -15,5 +16,6 @@ Router.get('/status', (req, res) => {
 });
 
 Router.use('/users', userRoute);
+Router.use('/auth', authRoute);
 
 export const API_v1 = Router;

@@ -5,14 +5,9 @@ import { StatusCodes } from 'http-status-codes';
 import ApiError from '~/utils/ApiError';
 import { userService } from '~/services/user.service';
 import generateTokenAndSetCookie from '../utils/generateToken.js';
+
 const createNew = async (req, res, next) => {
   try {
-    // console.log(req.body);
-    // throw new ApiError(StatusCodes.BAD_GATEWAY, 'hhman');
-    // res
-    //   .status(StatusCodes.CREATED)
-    //   .json({ message: 'Note: API create user for validation' });
-
     const data = { ...req.body };
 
     // create data
@@ -30,14 +25,9 @@ const createNew = async (req, res, next) => {
     next(error);
   }
 };
+
 const login = async (req, res, next) => {
   try {
-    // console.log(req.body);
-    // throw new ApiError(StatusCodes.BAD_GATEWAY, 'hhman');
-    // res
-    //   .status(StatusCodes.CREATED)
-    //   .json({ message: 'Note: API create user for validation' });
-
     const data = { ...req.body };
 
     // get data
@@ -66,11 +56,13 @@ const logout = (req, res) => {
   }
 };
 
-const getAll = async (req, res) => {
+const getAll = async (req, res, next) => {
   try {
     const users = await userService.getAll();
     res.status(StatusCodes.OK).json(users);
-  } catch (error) {}
+  } catch (error) {
+    next(error);
+  }
 };
 
 const getOne = async (req, res, next) => {
@@ -102,7 +94,6 @@ export const userController = {
   createNew,
   login,
   logout,
-  createNew,
   getAll,
   getOne,
   remove

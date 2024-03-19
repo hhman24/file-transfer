@@ -6,18 +6,18 @@
 import { env } from '~/config/environment';
 import exitHook from 'async-exit-hook';
 import express from 'express';
+import cookie from 'cookie-parser';
+import { Loggers } from '~/middlewares/logger.middleware';
 import { CONNECT_DB, CLOSE_DB } from '~/config/mongodb';
 import { errorHandlingMiddleware } from '~/middlewares/errorHandler.middleware';
 import { API_v1 } from '~/routes/v1';
 
-const cookie = require('cookie-parser');
-
-
 const START_SERVER = () => {
   const app = express();
-  
-  app.use(express.json());
+
+  app.use(Loggers.logger);
   app.use(express.urlencoded({ extended: true }));
+  app.use(express.json());
   app.use(cookie());
   // use API v1
   app.use('/v1', API_v1);
@@ -51,13 +51,3 @@ const START_SERVER = () => {
     process.exit(0);
   }
 })();
-
-// console.log('1. Connecting to MongoDB ...');
-// // Chỉ khi kết nối tới mongodb thành công thì mới START_SERVER lên
-// CONNECT_DB()
-//   .then(() => console.log('2. Connected to MongoDB Cloud Atlas'))
-//   .then(() => START_SERVER())
-//   .catch((error) => {
-//     console.log(error);
-//     process.exit(0);
-//   });

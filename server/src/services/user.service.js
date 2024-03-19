@@ -3,8 +3,6 @@
  * "A bit of fragrance clings to the hand that gives flowers!"
  */
 import { UserModel } from '~/models/UserModel';
-import bcrypt from 'bcryptjs';
-import { boolean } from 'joi';
 
 const createNew = async (body) => {
   try {
