@@ -14,8 +14,8 @@ const mongoClientInstance = new MongoClient(process.env.MONGODB_URI, {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
-    deprecationErrors: true
-  }
+    deprecationErrors: true,
+  },
 });
 
 // kết nối database

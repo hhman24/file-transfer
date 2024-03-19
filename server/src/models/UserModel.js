@@ -1,19 +1,22 @@
 import Joi from 'joi';
 import { ObjectId } from 'mongodb';
-// import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/patternValidator';
+import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/patternValidator';
 import { GET_DB } from '~/config/mongodb';
 
 const USER_COLLECTION_NAME = 'users';
 const USER_COLLECTION_SCHEMA = Joi.object({
-  //   _id: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
   username: Joi.string().email().required().trim().strict(),
   password: Joi.string().strict(),
 
   createAt: Joi.date().timestamp('javascript').default(Date.now),
   updatedAt: Joi.date().timestamp('javascript').default(null),
-  _destroy: Joi.boolean().default(false)
-
+  friends: Joi.array()
+    .items(Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE))
+    .default([]),
+  _destroy: Joi.boolean().default(false),
   //   access_token: [Joi.string(), Joi.number()],
+  // enums
+  // type: Joi.string().valid('public', 'private').required();
 });
 
 const validateSchema = async (schema) => {
@@ -36,7 +39,7 @@ const findOneById = async (id) => {
     return await GET_DB()
       .collection(USER_COLLECTION_NAME)
       .findOne({
-        _id: new ObjectId(id)
+        _id: new ObjectId(id),
       });
   } catch (error) {
     throw new Error(error);
@@ -47,9 +50,16 @@ const getDetailsUser = async (id) => {
   try {
     return await GET_DB()
       .collection(USER_COLLECTION_NAME)
-      .findOne({
-        _id: new ObjectId(id)
-      });
+      .aggregate([
+        {
+          $match: {
+            _id: new ObjectId(id),
+            _destroy: false,
+          },
+        },
+        {},
+        {},
+      ]);
   } catch (error) {
     throw new Error(error);
   }
@@ -59,7 +69,7 @@ const getDetailsUser = async (id) => {
 const findOneByEmail = async (email) => {
   try {
     return await GET_DB().collection(USER_COLLECTION_NAME).findOne({
-      email: email
+      email: email,
     });
   } catch (error) {
     throw new Error(error);
@@ -73,11 +83,11 @@ const get_all_users = async () => {
     return await GET_DB()
       .collection(USER_COLLECTION_NAME)
       .find({
-        _destroy: false
+        _destroy: false,
       })
       .project({
         _id: 1,
-        username: 1
+        username: 1,
       })
       .toArray();
   } catch (error) {
@@ -92,13 +102,13 @@ const removeModel = async (id) => {
       .collection(USER_COLLECTION_NAME)
       .updateOne(
         {
-          _id: new ObjectId(id)
+          _id: new ObjectId(id),
         },
         {
           $set: {
-            _destroy: true
-          }
-        }
+            _destroy: true,
+          },
+        },
       );
   } catch (error) {
     throw new Error(error);
@@ -113,5 +123,5 @@ export const UserModel = {
   get_all_users,
   findOneByEmail,
   removeModel,
-  getDetailsUser
+  getDetailsUser,
 };

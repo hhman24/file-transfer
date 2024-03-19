@@ -19,7 +19,7 @@ const createNew = async (req, res, next) => {
     generateTokenAndSetCookie(createdUser._id, res);
     res.status(StatusCodes.CREATED).json({
       message: 'Create User successfully',
-      data: createdUser
+      data: createdUser,
     });
   } catch (error) {
     next(error);
@@ -39,7 +39,7 @@ const login = async (req, res, next) => {
     generateTokenAndSetCookie(loginUser._id, res);
     res.status(StatusCodes.OK).json({
       message: 'loginUser successfully',
-      data: loginUser
+      data: loginUser,
     });
   } catch (error) {
     next(error);
@@ -83,7 +83,7 @@ const remove = async (req, res, next) => {
     }
     res.status(StatusCodes.OK).json({
       message: 'Remove user successfully',
-      data: removedUser
+      data: removedUser,
     });
   } catch (error) {
     next(error);
@@ -96,5 +96,5 @@ export const userController = {
   logout,
   getAll,
   getOne,
-  remove
+  remove,
 };

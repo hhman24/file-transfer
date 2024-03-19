@@ -26,5 +26,5 @@ const logger = (req, res, next) => {
 
 export const Loggers = {
   logEvent,
-  logger
+  logger,
 };

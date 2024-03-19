@@ -26,5 +26,5 @@ const verifyJWT = async (req, res, next) => {
 };
 
 export const JWT = {
-  verifyJWT
+  verifyJWT,
 };

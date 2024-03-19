@@ -26,5 +26,5 @@ export const corsOptions = {
   optionsSuccessStatus: 200,
 
   // CORS sẽ cho phép nhận cookies từ request, (đính kèm jwt access token và refresh token vào httpOnly Cookies)
-  credentials: true
+  credentials: true,
 };

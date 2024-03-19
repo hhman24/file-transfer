@@ -8,12 +8,12 @@ import ApiError from '~/utils/ApiError';
 const register = async (req, res, next) => {
   const correctCondition = Joi.object({
     usename: Joi.string().min(3).max(30).required().trim().strict().messages({
-      'any.required': 'username is required (hhman)'
+      'any.required': 'username is required (hhman)',
     }),
     email: Joi.string().email().required().trim().strict().messages({
-      'any.required': 'email is required (hhman)'
+      'any.required': 'email is required (hhman)',
     }),
-    password: Joi.string().trim().strict()
+    password: Joi.string().trim().strict(),
   });
 
   try {
@@ -27,5 +27,5 @@ const register = async (req, res, next) => {
 };
 
 export const userValidation = {
-  register
+  register,
 };

@@ -70,5 +70,5 @@ export const userService = {
   getAll,
   getOne,
   login,
-  remove
+  remove,
 };
