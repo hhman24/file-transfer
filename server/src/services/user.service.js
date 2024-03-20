@@ -13,7 +13,7 @@ const createNew = async (body) => {
 
     return getNewUser;
   } catch (error) {
-    throw error;
+    throw new Error(error);
   }
 };
 
@@ -22,7 +22,7 @@ const getAll = async () => {
   try {
     return await UserModel.get_all_users();
   } catch (error) {
-    throw error;
+    throw new Error(error);
   }
 };
 
@@ -40,7 +40,7 @@ const getOne = async (id) => {
 
     return user;
   } catch (error) {
-    throw error;
+    throw new Error(error);
   }
 };
 
@@ -50,7 +50,7 @@ const getOneUserByFilter = async (filter) => {
     const user = await UserModel.getOneUserDetailsByFilter(filter);
     return user;
   } catch (error) {
-    throw error;
+    throw new Error(error);
   }
 };
 
@@ -63,7 +63,7 @@ const getOneUserByEmail = async (email) => {
     });
     return user;
   } catch (error) {
-    throw error;
+    throw new Error(error);
   }
 };
 
@@ -78,7 +78,7 @@ const login = async (body) => {
     //const isPasswordCorrect = await bcrypt.compare(password, user?.password || "");
     if (user && isPasswordCorrect) return user;
   } catch (error) {
-    throw error;
+    throw new Error(error);
   }
 };
 
@@ -86,7 +86,7 @@ const remove = async (id) => {
   try {
     return await UserModel.removeModel(id);
   } catch (error) {
-    throw error;
+    throw new Error(error);
   }
 };
 

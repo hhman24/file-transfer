@@ -8,15 +8,16 @@ import { userService } from '~/services/user.service';
 
 const verifyToken = async (req, res, next) => {
   try {
-    const accessToken = req.cookies.access_token;
-    if (!accessToken) {
-      throw new ApiError(StatusCodes.UNAUTHORIZED, 'You not authentication');
+    if (!req.header.accessToken) {
+      next(new ApiError(StatusCodes.UNAUTHORIZED, 'You not authentication'));
     }
+
+    const accessToken = req.header.accessToken.split(' ')[1];
     const decoded = jwt.verify(accessToken, env.ACCESS_TOKEN_PRIVATE_KEY);
     const user = await userService.getOne(decoded.userId);
 
     if (!user) {
-      throw new ApiError(StatusCodes.FORBIDDEN, 'Token is not valid');
+      next(new ApiError(StatusCodes.FORBIDDEN, 'Token is not valid'));
     }
     req.user = user;
     next();
@@ -25,6 +26,6 @@ const verifyToken = async (req, res, next) => {
   }
 };
 
-export const VerifyTokenMiddleware = {
+export const verifyTokenMiddleware = {
   verifyToken,
 };

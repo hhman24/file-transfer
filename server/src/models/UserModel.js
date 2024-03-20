@@ -1,6 +1,5 @@
 import Joi from 'joi';
 import { ObjectId } from 'mongodb';
-import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/patternValidator';
 import { GET_DB } from '~/config/mongodb';
 
 const USER_COLLECTION_NAME = 'Users';
@@ -9,9 +8,9 @@ const USER_COLLECTION_SCHEMA = Joi.object({
   email: Joi.string().email().required().trim().strict(),
   password: Joi.string().strict(),
   PublicKeyCredential: Joi.string().strict().default(''),
-  friends: Joi.array()
-    .items(Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE))
-    .default([]),
+  // friends: Joi.array()
+  //   .items(Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE))
+  //   .default([]),
   _destroy: Joi.boolean().default(false),
   online: Joi.boolean().default(false),
   createAt: Joi.date().timestamp('javascript').default(Date.now),
@@ -31,7 +30,7 @@ const saveModel = async (data) => {
     // biến đổi về object id
     const newObj = {
       ...validatedSchema,
-      friends: validatedSchema.friends.map((u) => new ObjectId(u)),
+      // friends: validatedSchema.friends.map((u) => new ObjectId(u)),
     };
 
     return await GET_DB().collection(USER_COLLECTION_NAME).insertOne(newObj);
@@ -69,18 +68,18 @@ const getOneUserDetailsByFilter = async (filter) => {
         {
           $match: filter,
         },
-        {
-          $lookup: {
-            from: USER_COLLECTION_NAME,
-            localField: 'friends',
-            foreignField: '_id',
-            as: 'friendsInfo',
-          },
-        },
+        // {
+        //   $lookup: {
+        //     from: USER_COLLECTION_NAME,
+        //     localField: 'friends',
+        //     foreignField: '_id',
+        //     as: 'friendsInfo',
+        //   },
+        // },
         {
           $project: {
             password: 0,
-            'friendsInfo.password': 0,
+            // 'friendsInfo.password': 0,
           },
         },
         { $limit: 1 },

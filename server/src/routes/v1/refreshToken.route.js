@@ -1,10 +1,15 @@
 import express from 'express';
-import { authController } from '~/controllers/auth.controller';
-import { userValidation } from '~/validations/auth.validation';
+import { refreshTokenController } from '~/controllers/refreshToken.controller';
+import { verifyTokenMiddleware } from '~/middlewares/verifyToken.middleware';
+import { refreshValidation } from '~/validations/refresh.validation';
 
 const Router = express.Router();
 
-Router.route('/').post(userValidation.register, authController.register);
-// Router.route('/logout').post(userController.logout);
+Router.route('/').post(refreshValidation.refreshToken, refreshTokenController.refresh);
+Router.route('/logout').post(
+  refreshValidation.refreshToken,
+  verifyTokenMiddleware.verifyToken,
+  refreshTokenController.logout,
+);
 
 export const refreshRoute = Router;

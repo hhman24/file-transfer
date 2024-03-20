@@ -27,7 +27,19 @@ const saveModel = async (data) => {
       userId: new ObjectId(validatedSchema.userId),
     };
 
-    console.log(newObj);
+    // kiểm tra xem đã tồn tại chưa và còn active thì thu hồi
+    await GET_DB()
+      .collection(REFRESH_TOKEN_COLLECTION_NAME)
+      .updateMany(
+        {
+          userId: newObj.userId,
+          status: REFRESH_TOKEN_STATUS.ACTIVE, // Chỉ lấy các refresh token còn active
+          expireDate: { $gt: new Date() }, // Chỉ lấy các refresh token chưa hết hạn
+        },
+        {
+          $set: { status: REFRESH_TOKEN_STATUS.REVOKED }, // Cập nhật trạng thái của các refresh token thành "revoked"
+        },
+      );
 
     return await GET_DB().collection(REFRESH_TOKEN_COLLECTION_NAME).insertOne(newObj);
   } catch (error) {
@@ -55,6 +67,23 @@ const findOneByFilter = async (filter) => {
   }
 };
 
+const revokedToken = async (token) => {
+  try {
+    return await GET_DB()
+      .collection(REFRESH_TOKEN_COLLECTION_NAME)
+      .update(
+        { token: token },
+        {
+          $set: {
+            status: REFRESH_TOKEN_STATUS.REVOKED,
+          },
+        },
+      );
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 const deleteOneByFilter = async (filter) => {
   try {
     const userToken = await GET_DB().collection(REFRESH_TOKEN_COLLECTION_NAME).findOne(filter); // Tìm kiếm userToken dựa trên filter
@@ -76,4 +105,5 @@ export const RefreshTokenModule = {
   findOneByFilter,
   findOneById,
   deleteOneByFilter,
+  revokedToken,
 };

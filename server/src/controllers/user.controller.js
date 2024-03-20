@@ -1,5 +1,5 @@
 import ApiError from '~/utils/ApiError';
-import generateTokenAndSetCookie from '../utils/generateToken.js';
+import generateTokenAndSetCookie from '../utils/token.js';
 import { StatusCodes } from 'http-status-codes';
 import { userService } from '~/services/user.service';
 
@@ -11,7 +11,7 @@ const createNew = async (req, res, next) => {
     const createdUser = await userService.createNew(data);
 
     if (!createdUser) {
-      next(ApiError(StatusCodes.BAD_REQUEST, 'User not created'));
+      next(new ApiError(StatusCodes.BAD_REQUEST, 'User not created'));
     }
     generateTokenAndSetCookie(createdUser._id, res);
     res.status(StatusCodes.CREATED).json({
@@ -20,36 +20,6 @@ const createNew = async (req, res, next) => {
     });
   } catch (error) {
     next(error);
-  }
-};
-
-const login = async (req, res, next) => {
-  try {
-    const data = { ...req.body };
-
-    // get data
-    const loginUser = await userService.login(data);
-
-    if (!loginUser) {
-      next(ApiError(StatusCodes.BAD_REQUEST, 'User not loginUser'));
-    }
-    generateTokenAndSetCookie(loginUser._id, res);
-    res.status(StatusCodes.OK).json({
-      message: 'loginUser successfully',
-      data: loginUser,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-const logout = (req, res) => {
-  try {
-    res.cookie('jwt', '', { maxAge: 0 });
-    res.status(200).json({ message: 'Logged out successfully' });
-  } catch (error) {
-    console.log('Error in logout controller', error.message);
-    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
@@ -89,8 +59,6 @@ const remove = async (req, res, next) => {
 
 export const userController = {
   createNew,
-  login,
-  logout,
   getAll,
   getOne,
   remove,
