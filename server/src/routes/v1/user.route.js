@@ -4,7 +4,7 @@
 import express from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { userController } from '~/controllers/user.controller';
-import { JWT } from '~/middlewares/verifyJWT';
+import { JWT } from '~/middlewares/verifyToken.middleware';
 //import jwt from midleware
 
 const Router = express.Router();
@@ -20,6 +20,6 @@ Router.route('/u/:id')
   .put() // update
   .delete(); // delete
 
-Router.route('/remove').get(JWT.verifyJWT, userController.remove); // ?
+// Router.route('/remove').get(JWT.verifyJWT, userController.remove); // ?
 
 export const userRoute = Router;

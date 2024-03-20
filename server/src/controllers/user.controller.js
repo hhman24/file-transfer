@@ -1,10 +1,7 @@
-/**
- * "A bit of fragrance clings to the hand that gives flowers!"
- */
-import { StatusCodes } from 'http-status-codes';
 import ApiError from '~/utils/ApiError';
-import { userService } from '~/services/user.service';
 import generateTokenAndSetCookie from '../utils/generateToken.js';
+import { StatusCodes } from 'http-status-codes';
+import { userService } from '~/services/user.service';
 
 const createNew = async (req, res, next) => {
   try {

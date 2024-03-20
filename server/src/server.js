@@ -7,6 +7,7 @@ import exitHook from 'async-exit-hook';
 import express from 'express';
 import cors from 'cors';
 import cookie from 'cookie-parser';
+// import morgan from 'morgan';
 import { corsOptions } from './config/cors';
 import { env } from '~/config/environment';
 import { Loggers } from '~/middlewares/logger.middleware';

@@ -1,14 +1,11 @@
-/**
- * "A bit of fragrance clings to the hand that gives flowers!"
- */
 import express from 'express';
-import { userValidation } from '~/validations/user.validation';
-import { userController } from '~/controllers/user.controller';
+import { authController } from '~/controllers/auth.controller';
+import { authValidation } from '~/validations/auth.validation';
 
 const Router = express.Router();
 
-Router.route('/signup').post(userValidation.register, userController.createNew);
-Router.route('/login').post(userValidation.register, userController.login);
-Router.route('/logout').post(userController.logout);
+Router.route('/signup').post(authValidation.register, authController.register);
+Router.route('/login').post(authValidation.signin, authController.login);
+// Router.route('/logout').post(userController.logout);
 
 export const authRoute = Router;

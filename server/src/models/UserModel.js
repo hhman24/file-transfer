@@ -3,18 +3,19 @@ import { ObjectId } from 'mongodb';
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/patternValidator';
 import { GET_DB } from '~/config/mongodb';
 
-const USER_COLLECTION_NAME = 'users';
+const USER_COLLECTION_NAME = 'Users';
 const USER_COLLECTION_SCHEMA = Joi.object({
-  username: Joi.string().email().required().trim().strict(),
+  username: Joi.string().min(3).max(30).required().trim().strict(),
+  email: Joi.string().email().required().trim().strict(),
   password: Joi.string().strict(),
-
-  createAt: Joi.date().timestamp('javascript').default(Date.now),
-  updatedAt: Joi.date().timestamp('javascript').default(null),
+  PublicKeyCredential: Joi.string().strict().default(''),
   friends: Joi.array()
     .items(Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE))
     .default([]),
   _destroy: Joi.boolean().default(false),
-  //   access_token: [Joi.string(), Joi.number()],
+  online: Joi.boolean().default(false),
+  createAt: Joi.date().timestamp('javascript').default(Date.now),
+  updatedAt: Joi.date().timestamp('javascript').default(null),
   // enums
   // type: Joi.string().valid('public', 'private').required();
 });
@@ -27,13 +28,18 @@ const saveModel = async (data) => {
   try {
     const validatedSchema = await validateSchema(data);
 
-    return await GET_DB().collection(USER_COLLECTION_NAME).insertOne(validatedSchema);
+    // biến đổi về object id
+    const newObj = {
+      ...validatedSchema,
+      friends: validatedSchema.friends.map((u) => new ObjectId(u)),
+    };
+
+    return await GET_DB().collection(USER_COLLECTION_NAME).insertOne(newObj);
   } catch (error) {
     throw new Error(error);
   }
 };
 
-// Find user by id
 const findOneById = async (id) => {
   try {
     return await GET_DB()
@@ -46,42 +52,41 @@ const findOneById = async (id) => {
   }
 };
 
-const getDetailsUser = async (id) => {
+const getOneUserByFilter = async (filter) => {
   try {
-    const res = await GET_DB()
-      .collection(USER_COLLECTION_NAME)
-      .aggregate([
-        {
-          $match: {
-            _id: new ObjectId(id),
-            _destroy: false,
-          },
-        },
-        // {
-        //   $lookup: {
-        //     from: USER_COLLECTION_SCHEMA,
-        //     localField: 'friends',
-        //     foreignField: '_id',
-        //     as: 'friendsDetails',
-        //   },
-        // },
-      ])
-      .toArray();
-
-    console.log('from user model ', res);
-
-    return res[0] || {};
+    const res = await GET_DB().collection(USER_COLLECTION_NAME).findOne(filter);
+    return res;
   } catch (error) {
     throw new Error(error);
   }
 };
 
-// Find user by email
-const findOneByEmail = async (email) => {
+const getOneUserDetailsByFilter = async (filter) => {
   try {
-    return await GET_DB().collection(USER_COLLECTION_NAME).findOne({
-      email: email,
-    });
+    const res = await GET_DB()
+      .collection(USER_COLLECTION_NAME)
+      .aggregate([
+        {
+          $match: filter,
+        },
+        {
+          $lookup: {
+            from: USER_COLLECTION_NAME,
+            localField: 'friends',
+            foreignField: '_id',
+            as: 'friendsInfo',
+          },
+        },
+        {
+          $project: {
+            password: 0,
+            'friendsInfo.password': 0,
+          },
+        },
+        { $limit: 1 },
+      ])
+      .toArray();
+    return res[0] || {};
   } catch (error) {
     throw new Error(error);
   }
@@ -97,8 +102,7 @@ const get_all_users = async () => {
         _destroy: false,
       })
       .project({
-        _id: 1,
-        username: 1,
+        password: 0,
       })
       .toArray();
   } catch (error) {
@@ -132,7 +136,7 @@ export const UserModel = {
   saveModel,
   findOneById,
   get_all_users,
-  findOneByEmail,
   removeModel,
-  getDetailsUser,
+  getOneUserDetailsByFilter,
+  getOneUserByFilter,
 };

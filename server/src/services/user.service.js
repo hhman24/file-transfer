@@ -1,5 +1,6 @@
 /* eslint-disable no-useless-catch */
 import { StatusCodes } from 'http-status-codes';
+import { ObjectId } from 'mongodb';
 import { UserModel } from '~/models/UserModel';
 import ApiError from '~/utils/ApiError';
 
@@ -29,7 +30,10 @@ const getAll = async () => {
 const getOne = async (id) => {
   try {
     // hhman - update: check user exist
-    const user = UserModel.getDetailsUser(id);
+    const user = await UserModel.getOneUserDetailsByFilter({
+      _id: new ObjectId(id),
+      _destroy: false,
+    });
     if (!user) {
       throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
     }
@@ -40,7 +44,28 @@ const getOne = async (id) => {
   }
 };
 
-//  Get user by email
+// Get one user by aggregate and have friends list
+const getOneUserByFilter = async (filter) => {
+  try {
+    const user = await UserModel.getOneUserDetailsByFilter(filter);
+    return user;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// get one user by email but no detail
+const getOneUserByEmail = async (email) => {
+  try {
+    const user = await UserModel.getOneUserByFilter({
+      email: email,
+      _destroy: false,
+    });
+    return user;
+  } catch (error) {
+    throw error;
+  }
+};
 
 const login = async (body) => {
   try {
@@ -71,4 +96,6 @@ export const userService = {
   getOne,
   login,
   remove,
+  getOneUserByFilter,
+  getOneUserByEmail,
 };

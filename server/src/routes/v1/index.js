@@ -6,6 +6,7 @@ import express from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { userRoute } from './user.route';
 import { authRoute } from './auth.route';
+import { refreshRoute } from './refreshToken.route';
 
 const Router = express.Router();
 
@@ -17,5 +18,6 @@ Router.get('/status', (req, res) => {
 
 Router.use('/users', userRoute);
 Router.use('/auth', authRoute);
+Router.use('/refresh', refreshRoute);
 
 export const API_v1 = Router;
