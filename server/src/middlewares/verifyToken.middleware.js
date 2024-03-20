@@ -8,13 +8,14 @@ import { userService } from '~/services/user.service';
 
 const verifyToken = async (req, res, next) => {
   try {
-    if (!req.header.accessToken) {
+    const token = req.body.token || req.query.token || req.headers.accesstoken;
+    if (!token) {
       next(new ApiError(StatusCodes.UNAUTHORIZED, 'You not authentication'));
     }
 
-    const accessToken = req.header.accessToken.split(' ')[1];
+    const accessToken = token.split(' ')[1];
     const decoded = jwt.verify(accessToken, env.ACCESS_TOKEN_PRIVATE_KEY);
-    const user = await userService.getOne(decoded.userId);
+    const user = await userService.getOne(decoded._id);
 
     if (!user) {
       next(new ApiError(StatusCodes.FORBIDDEN, 'Token is not valid'));

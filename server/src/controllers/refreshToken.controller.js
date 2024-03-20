@@ -60,7 +60,23 @@ const refresh = async (req, res, next) => {
 };
 
 const logout = async (req, res, next) => {
-  
+  try {
+    const token = req.cookies.refresh_token;
+    const userToken = await RefreshTokenService.findRefreshTokenByToken(token);
+
+    if (!userToken) {
+      return res.status(StatusCodes.OK).json({
+        message: 'Logged Out Sucessfully',
+      });
+    }
+
+    await RefreshTokenService.revokedToken(userToken.token);
+    return res.status(StatusCodes.OK).json({
+      message: 'Logged Out Sucessfully',
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const refreshTokenController = {

@@ -34,6 +34,7 @@ const getOne = async (id) => {
       _id: new ObjectId(id),
       _destroy: false,
     });
+
     if (!user) {
       throw new ApiError(StatusCodes.NOT_FOUND, 'User not found');
     }
@@ -67,21 +68,6 @@ const getOneUserByEmail = async (email) => {
   }
 };
 
-const login = async (body) => {
-  try {
-    const { username, password } = body;
-    const user = await UserModel.findOneByUsername(username);
-    let isPasswordCorrect = true;
-    if (password == user.password) {
-      isPasswordCorrect = true;
-    } else isPasswordCorrect = false;
-    //const isPasswordCorrect = await bcrypt.compare(password, user?.password || "");
-    if (user && isPasswordCorrect) return user;
-  } catch (error) {
-    throw new Error(error);
-  }
-};
-
 const remove = async (id) => {
   try {
     return await UserModel.removeModel(id);
@@ -94,7 +80,6 @@ export const userService = {
   createNew,
   getAll,
   getOne,
-  login,
   remove,
   getOneUserByFilter,
   getOneUserByEmail,

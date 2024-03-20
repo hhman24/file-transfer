@@ -71,7 +71,7 @@ const revokedToken = async (token) => {
   try {
     return await GET_DB()
       .collection(REFRESH_TOKEN_COLLECTION_NAME)
-      .update(
+      .findOneAndUpdate(
         { token: token },
         {
           $set: {
