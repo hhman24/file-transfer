@@ -11,5 +11,11 @@ export const env = {
   APP_PORT: process.env.APP_PORT,
   APP_HOST: process.env.APP_HOST,
 
-  BUILD_MODE: process.env.BUILD_MODE
+  BUILD_MODE: process.env.BUILD_MODE,
+
+  SALT: process.env.SALT,
+  ACCESS_TOKEN_PRIVATE_KEY: process.env.ACCESS_TOKEN_PRIVATE_KEY,
+  REFRESH_TOKEN_PRIVATE_KEY: process.env.REFRESH_TOKEN_PRIVATE_KEY,
+  TOKEN_LIFE: 60 * 12,
+  REFRESH_TOKEN_LIFE: process.env.REFRESH_TOKEN_LIFE,
 };

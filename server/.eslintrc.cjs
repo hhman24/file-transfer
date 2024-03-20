@@ -35,16 +35,16 @@ module.exports = {
     'linebreak-style': 0,
     'no-unexpected-multiline': 'warn',
     'keyword-spacing': 1,
-    'comma-dangle': 1,
+    'comma-dangle': 0, //
     'comma-spacing': 1,
     'arrow-spacing': 1,
     'prettier/prettier': [
       'warn',
       {
         "singleQuote": true,
-        "trailingComma": "none",
+        "trailingComma": "all",
         "endOfLine": "auto",
-        "printWidth": 120
+        "printWidth": 100
       }
     ]
   }
