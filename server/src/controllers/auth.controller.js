@@ -10,11 +10,15 @@ const register = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
     const user = await userService.getOneUserByFilter({ email: email });
-    if (!user) next(new ApiError(StatusCodes.BAD_REQUEST, 'User with given email already exist'));
+    if (user) throw new ApiError(StatusCodes.BAD_REQUEST, 'User with given email already exist');
 
     const hashPassword = await Algorithms.hashPassword(password);
 
     await userService.createNew({ username: username, email: email, password: hashPassword });
+
+    res.status(StatusCodes.CREATED).json({
+      message: 'Account created sucessfully',
+    });
 
     res.status(StatusCodes.CREATED).json({
       message: 'Account created sucessfully',
@@ -30,12 +34,12 @@ const login = async (req, res, next) => {
 
     const existUser = await userService.getOneUserByEmail(email);
 
-    if (!existUser) next(new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid email or password'));
+    if (!existUser) throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid email or password');
 
     const verifiedPassword = await Algorithms.comparePasswords(password, existUser.password);
 
     if (!verifiedPassword)
-      next(new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid email or password'));
+      return new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid email or password');
 
     const accessToken = generateAccessToken({
       _id: existUser._id,

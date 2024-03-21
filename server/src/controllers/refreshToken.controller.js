@@ -11,13 +11,13 @@ const refresh = async (req, res, next) => {
     const storedRefreshToken =
       await RefreshTokenService.findRefreshTokenByToken(cookiesRefreshToken);
 
-    if (!storedRefreshToken) next(new ApiError(StatusCodes.UNAUTHORIZED, 'Unauthorized'));
+    if (!storedRefreshToken) throw new ApiError(StatusCodes.UNAUTHORIZED, 'Unauthorized');
 
     try {
       const valideUser = jwt.verify(cookiesRefreshToken, env.REFRESH_TOKEN_PRIVATE_KEY);
 
       if (valideUser._id.toString() !== storedRefreshToken.userId._id.toString()) {
-        next(new ApiError(StatusCodes.UNAUTHORIZED, 'Unauthorized'));
+        throw new ApiError(StatusCodes.UNAUTHORIZED, 'Unauthorized');
       }
 
       const newAccessToken = generateAccessToken({
