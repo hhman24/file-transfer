@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { registerUser } from './authAction';
+import { loginUser, registerUser } from './authAction';
 
 // ****** Type for data ******
 /*
@@ -39,6 +39,19 @@ const authSlice = createSlice({
       .addCase(registerUser.fulfilled, (state) => {
         state.loading = false;
         state.sRegister.success = true;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.sLogin.userInfo = action.payload.user;
+        state.sLogin.token = action.payload.accessToken;
+        state.sLogin.isLoginIn = true;
+        state.sLogin.isAuthenticated = true;
+      })
+      .addCase(loginUser.rejected, (state) => {
+        state.sLogin.userInfo = null;
+        state.sLogin.token = '';
+        state.sLogin.isLoginIn = false;
+        state.sLogin.isAuthenticated = false;
       })
       .addMatcher(
         // matcher can be defined inline as a type predicate function

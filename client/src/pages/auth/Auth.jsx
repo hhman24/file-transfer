@@ -13,6 +13,8 @@ import Divider from '@mui/material/Divider';
 import Checkbox from '@mui/material/Checkbox';
 import Alert from '@mui/material/Alert';
 import Collapse from '@mui/material/Collapse';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 import GoogleIcon from '~/components/Svg/GoogleIcon';
 import ModeToggle from '~/components/toggle/ModeToggle';
 import Inputv1 from '~/components/input/Inputv1';
@@ -21,6 +23,10 @@ import { grey } from '@mui/material/colors';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FormHelperText } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginUser } from '~/redux/feature/auth/authAction';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const schema = yup.object().shape({
   email: yup.string().required('email is required').email(),
@@ -33,6 +39,9 @@ const schema = yup.object().shape({
 
 function Auth() {
   const { mode, setMode } = useColorScheme();
+  const { sLogin, error, loading } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -49,8 +58,14 @@ function Auth() {
     resolver: yupResolver(schema),
   });
 
+  useEffect(() => {
+    if (sLogin.isLoginIn) navigate('/messages/t');
+  }, [sLogin.isLoginIn, navigate]);
+
   const onSubmit = async (data) => {
-    console.log(data);
+    const promise = await dispatch(loginUser({ email: data.email, password: data.password }));
+
+    promise.abort;
   };
 
   return (
@@ -172,8 +187,13 @@ function Auth() {
                 or
               </Divider>
 
-              <Stack gap={2} sx={{ mt: 2 }}>
-                <form onSubmit={handleSubmit(onSubmit)}>
+              <Stack sx={{ mt: 2 }}>
+                <Collapse in={error ? true : false}>
+                  <Alert severity="error" sx={{ mb: 2 }}>
+                    {error}
+                  </Alert>
+                </Collapse>
+                <form>
                   <FormControl required>
                     <FormLabel sx={{ fontWeight: 500 }} error={!!errors['email']}>
                       Email
@@ -240,7 +260,7 @@ function Auth() {
                       />
                       <Link href="/auth-forgot-password">Forgot your password?</Link>
                     </Box>
-                    <Button type="submit" fullWidth variant="contained">
+                    <Button type="submit" fullWidth variant="contained" onClick={handleSubmit(onSubmit)}>
                       Sign in
                     </Button>
                   </Stack>
@@ -278,6 +298,9 @@ function Auth() {
                 : 'url(https://images.unsplash.com/photo-1527181152855-fc03fc7949c8?auto=format&w=1000&dpr=2)',
           }}
         ></Box>
+        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </Container>
     </>
   );
