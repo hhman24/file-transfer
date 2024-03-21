@@ -10,15 +10,12 @@ const register = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
     const user = await userService.getOneUserByFilter({ email: email });
-    if (user) throw new ApiError(StatusCodes.BAD_REQUEST, 'User with given email already exist');
+    console.log(user);
+    if (!user) throw new ApiError(StatusCodes.BAD_REQUEST, 'User with given email already exist');
 
     const hashPassword = await Algorithms.hashPassword(password);
 
     await userService.createNew({ username: username, email: email, password: hashPassword });
-
-    res.status(StatusCodes.CREATED).json({
-      message: 'Account created sucessfully',
-    });
 
     res.status(StatusCodes.CREATED).json({
       message: 'Account created sucessfully',
