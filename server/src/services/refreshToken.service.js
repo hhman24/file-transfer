@@ -2,6 +2,8 @@
 import { RefreshTokenModule } from '~/models/RefreshTokenModel';
 import { REFRESH_TOKEN_STATUS } from '~/utils/constants';
 import { userService } from './user.service';
+import ApiError from '~/utils/ApiError';
+import { StatusCodes } from 'http-status-codes';
 
 const createNew = async ({ token, userId, expireDate }) => {
   try {
@@ -21,11 +23,13 @@ const findRefreshTokenByToken = async (token) => {
       expireDate: { $gt: new Date() },
     });
 
-    const user = await userService.getOneUserByFilter({ _id: refreshToken.userId });
+    if (refreshToken) {
+      const user = await userService.getOneUserByFilter({ _id: refreshToken.userId });
 
-    return { ...refreshToken, userId: user };
+      return { ...refreshToken, userId: user };
+    } else return null;
   } catch (error) {
-    throw new Error(error);
+    throw new ApiError(StatusCodes.UNAUTHORIZED, 'Unauthorized');
   }
 };
 

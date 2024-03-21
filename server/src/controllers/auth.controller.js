@@ -10,7 +10,8 @@ const register = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
     const user = await userService.getOneUserByFilter({ email: email });
-    if (!user) throw new ApiError(StatusCodes.BAD_REQUEST, 'User with given email already exist');
+    if (Object.keys(user).length !== 0)
+      throw new ApiError(StatusCodes.BAD_REQUEST, 'User with given email already exist');
 
     const hashPassword = await Algorithms.hashPassword(password);
 

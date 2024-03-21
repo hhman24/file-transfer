@@ -14,6 +14,7 @@ const verifyToken = async (req, res, next) => {
     }
 
     const accessToken = token.split(' ')[1];
+    console.log(accessToken);
     const decoded = jwt.verify(accessToken, env.ACCESS_TOKEN_PRIVATE_KEY);
     const user = await userService.getOne(decoded._id);
 

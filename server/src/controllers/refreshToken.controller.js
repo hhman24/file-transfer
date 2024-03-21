@@ -11,6 +11,8 @@ const refresh = async (req, res, next) => {
     const storedRefreshToken =
       await RefreshTokenService.findRefreshTokenByToken(cookiesRefreshToken);
 
+    console.log(storedRefreshToken);
+
     if (!storedRefreshToken) throw new ApiError(StatusCodes.UNAUTHORIZED, 'Unauthorized');
 
     try {
@@ -52,7 +54,7 @@ const refresh = async (req, res, next) => {
         accessToken: newAccessToken,
       });
     } catch (errorJWT) {
-      next(new ApiError(StatusCodes.FORBIDDEN, 'Forbidden'));
+      throw new ApiError(StatusCodes.FORBIDDEN, 'Forbidden');
     }
   } catch (err) {
     next(err);
