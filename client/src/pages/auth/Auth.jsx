@@ -11,14 +11,16 @@ import FormLabel from '@mui/material/FormLabel';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Divider from '@mui/material/Divider';
 import Checkbox from '@mui/material/Checkbox';
-import { grey } from '@mui/material/colors';
+import Alert from '@mui/material/Alert';
+import Collapse from '@mui/material/Collapse';
 import GoogleIcon from '~/components/Svg/GoogleIcon';
 import ModeToggle from '~/components/toggle/ModeToggle';
+import Inputv1 from '~/components/input/Inputv1';
+import * as yup from 'yup';
+import { grey } from '@mui/material/colors';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import { FormHelperText } from '@mui/material';
-import Inputv1 from '~/components/input/Inputv1';
 
 const schema = yup.object().shape({
   email: yup.string().required('email is required').email(),
@@ -247,7 +249,7 @@ function Auth() {
             </Box>
 
             {/* footer */}
-            <Box component="footer" sx={{ py: 3 }}>
+            <Box component="footer" sx={{ mb: 1 }}>
               <Typography variant="body2" textAlign="center">
                 © Your company {new Date().getFullYear()}
               </Typography>

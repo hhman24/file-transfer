@@ -1,12 +1,9 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { lazy } from 'react';
 import Auth from '~/pages/auth/Auth';
 import Register from '~/pages/auth/Register';
 import ErrorPage from '~/pages/error/ErrorPage';
 import Home from '~/pages/hone/Home';
-import Loadable from '~/components/load/Loadable';
-
-const MessageElement = Loadable(lazy(() => import('~/pages/message/Message')));
+import Message from '~/pages/message/Message';
 
 export const router = createBrowserRouter([
   {
@@ -26,7 +23,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/messages/t',
-    element: <MessageElement />,
+    element: <Message />,
     errorElement: <ErrorPage />,
   },
 ]);

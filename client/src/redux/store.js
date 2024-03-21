@@ -1,6 +1,6 @@
 // redux state management stool
 import { configureStore } from '@reduxjs/toolkit';
-import authSlice from './slices/auth.slice';
+import authSlice from './feature/auth/auth.slice';
 
 export const store = configureStore({
   reducer: {
