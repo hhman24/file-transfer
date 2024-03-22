@@ -1,29 +1,39 @@
 // eslint-disable no-console
-
-/**
- * "A bit of fragrance clings to the hand that gives flowers!"
- */
-import { env } from '~/config/environment';
 import exitHook from 'async-exit-hook';
 import express from 'express';
+import cors from 'cors';
+import cookie from 'cookie-parser';
+// import morgan from 'morgan';
+import { corsOptions } from './config/cors';
+import { env } from '~/config/environment';
+import { Loggers } from '~/middlewares/logger.middleware';
 import { CONNECT_DB, CLOSE_DB } from '~/config/mongodb';
 import { errorHandlingMiddleware } from '~/middlewares/errorHandler.middleware';
 import { API_v1 } from '~/routes/v1';
 
-const cookie = require('cookie-parser');
-
-
 const START_SERVER = () => {
   const app = express();
-  
-  app.use(express.json());
+
+  app.use(cors(corsOptions));
+
+  app.use(Loggers.logger);
   app.use(express.urlencoded({ extended: true }));
+  app.use(express.json());
   app.use(cookie());
   // use API v1
   app.use('/v1', API_v1);
 
   // Middlewares xử lý tập trung lỗi
   app.use(errorHandlingMiddleware);
+
+  // // Middleware để tạo delay
+  // function delayResponse(req, res, next) {
+  //   const delayTime = 2000; // Thời gian trễ 2 giây (2000 milliseconds)
+  //   setTimeout(next, delayTime);
+  // }
+
+  // // Sử dụng middleware delayResponse cho tất cả các route
+  // app.use(delayResponse);
 
   app.listen(env.APP_PORT, env.APP_HOST, () => {
     console.log(`3. Server is running on ${env.APP_HOST}:${env.APP_PORT}/`);
@@ -51,13 +61,3 @@ const START_SERVER = () => {
     process.exit(0);
   }
 })();
-
-// console.log('1. Connecting to MongoDB ...');
-// // Chỉ khi kết nối tới mongodb thành công thì mới START_SERVER lên
-// CONNECT_DB()
-//   .then(() => console.log('2. Connected to MongoDB Cloud Atlas'))
-//   .then(() => START_SERVER())
-//   .catch((error) => {
-//     console.log(error);
-//     process.exit(0);
-//   });

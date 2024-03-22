@@ -11,14 +11,22 @@ import FormLabel from '@mui/material/FormLabel';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Divider from '@mui/material/Divider';
 import Checkbox from '@mui/material/Checkbox';
-import { grey } from '@mui/material/colors';
+import Alert from '@mui/material/Alert';
+import Collapse from '@mui/material/Collapse';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 import GoogleIcon from '~/components/Svg/GoogleIcon';
 import ModeToggle from '~/components/toggle/ModeToggle';
+import Inputv1 from '~/components/input/Inputv1';
+import * as yup from 'yup';
+import { grey } from '@mui/material/colors';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import { FormHelperText } from '@mui/material';
-import Inputv1 from '~/components/input/Inputv1';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginUser } from '~/redux/feature/auth/authSlice';
+import { useEffect } from 'react';
 
 const schema = yup.object().shape({
   email: yup.string().required('email is required').email(),
@@ -31,6 +39,10 @@ const schema = yup.object().shape({
 
 function Auth() {
   const { mode, setMode } = useColorScheme();
+  const { error, isLoading, loginState } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  // const [login, { isLoading, isError }] = useLoginMutation();
 
   const {
     register,
@@ -47,8 +59,26 @@ function Auth() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = async (data) => {
-    console.log(data);
+  useEffect(() => {
+    if (loginState.isLogined) navigate('/messages/t');
+  }, [loginState, navigate]);
+
+  const onSubmit = (data) => {
+    dispatch(loginUser({ email: data.email, password: data.password }))
+      .unwrap()
+      .then(() => {
+        navigate('/messages/t');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    // // try {
+    //   const userData = await login({ email: data.email, password: data.password }).unwrap();
+    //   dispatch(setCredentials({ ...userData }));
+    //   navigate('/messages/t');
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   return (
@@ -170,8 +200,13 @@ function Auth() {
                 or
               </Divider>
 
-              <Stack gap={2} sx={{ mt: 2 }}>
-                <form onSubmit={handleSubmit(onSubmit)}>
+              <Stack sx={{ mt: 2 }}>
+                <Collapse in={error ? true : false}>
+                  <Alert severity="error" sx={{ mb: 2 }}>
+                    {error}
+                  </Alert>
+                </Collapse>
+                <form>
                   <FormControl required>
                     <FormLabel sx={{ fontWeight: 500 }} error={!!errors['email']}>
                       Email
@@ -238,7 +273,7 @@ function Auth() {
                       />
                       <Link href="/auth-forgot-password">Forgot your password?</Link>
                     </Box>
-                    <Button type="submit" fullWidth variant="contained">
+                    <Button type="submit" fullWidth variant="contained" onClick={handleSubmit(onSubmit)}>
                       Sign in
                     </Button>
                   </Stack>
@@ -247,7 +282,7 @@ function Auth() {
             </Box>
 
             {/* footer */}
-            <Box component="footer" sx={{ py: 3 }}>
+            <Box component="footer" sx={{ mb: 1 }}>
               <Typography variant="body2" textAlign="center">
                 © Your company {new Date().getFullYear()}
               </Typography>
@@ -276,6 +311,9 @@ function Auth() {
                 : 'url(https://images.unsplash.com/photo-1527181152855-fc03fc7949c8?auto=format&w=1000&dpr=2)',
           }}
         ></Box>
+        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={isLoading}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </Container>
     </>
   );

@@ -1,22 +1,22 @@
-/**
- * "A bit of fragrance clings to the hand that gives flowers!"
- */
 import Joi from 'joi';
 import { ObjectId } from 'mongodb';
-// import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/patternValidator';
 import { GET_DB } from '~/config/mongodb';
 
-const USER_COLLECTION_NAME = 'users';
+const USER_COLLECTION_NAME = 'Users';
 const USER_COLLECTION_SCHEMA = Joi.object({
-  //   _id: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
-  username: Joi.string().email().required().trim().strict(),
-  password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{8,30}$')).trim().strict(),
-
-  //   access_token: [Joi.string(), Joi.number()],
-
+  username: Joi.string().min(3).max(30).required().trim().strict(),
+  email: Joi.string().email().required().trim().strict(),
+  password: Joi.string().strict(),
+  PublicKeyCredential: Joi.string().strict().default(''),
+  // friends: Joi.array()
+  //   .items(Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE))
+  //   .default([]),
+  _destroy: Joi.boolean().default(false),
+  online: Joi.boolean().default(false),
   createAt: Joi.date().timestamp('javascript').default(Date.now),
   updatedAt: Joi.date().timestamp('javascript').default(null),
-  _destroy: Joi.boolean().default(false)
+  // enums
+  // type: Joi.string().valid('public', 'private').required();
 });
 
 const validateSchema = async (schema) => {
@@ -27,7 +27,13 @@ const saveModel = async (data) => {
   try {
     const validatedSchema = await validateSchema(data);
 
-    return await GET_DB().collection(USER_COLLECTION_NAME).insertOne(validatedSchema);
+    // biến đổi về object id
+    const newObj = {
+      ...validatedSchema,
+      // friends: validatedSchema.friends.map((u) => new ObjectId(u)),
+    };
+
+    return await GET_DB().collection(USER_COLLECTION_NAME).insertOne(newObj);
   } catch (error) {
     throw new Error(error);
   }
@@ -38,34 +44,64 @@ const findOneById = async (id) => {
     return await GET_DB()
       .collection(USER_COLLECTION_NAME)
       .findOne({
-        _id: new ObjectId(id)
+        _id: new ObjectId(id),
       });
   } catch (error) {
     throw new Error(error);
   }
 };
 
-const findOneByUsername = async (user) => {
+const getOneUserByFilter = async (filter) => {
   try {
-    return await GET_DB().collection(USER_COLLECTION_NAME).findOne({
-      username: user
-    });
+    const res = await GET_DB().collection(USER_COLLECTION_NAME).findOne(filter);
+    return res;
   } catch (error) {
     throw new Error(error);
   }
 };
 
+const getOneUserDetailsByFilter = async (filter) => {
+  try {
+    const res = await GET_DB()
+      .collection(USER_COLLECTION_NAME)
+      .aggregate([
+        {
+          $match: filter,
+        },
+        // {
+        //   $lookup: {
+        //     from: USER_COLLECTION_NAME,
+        //     localField: 'friends',
+        //     foreignField: '_id',
+        //     as: 'friendsInfo',
+        //   },
+        // },
+        {
+          $project: {
+            password: 0,
+            // 'friendsInfo.password': 0,
+          },
+        },
+        { $limit: 1 },
+      ])
+      .toArray();
+    return res[0] || {};
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+// get all user
 const get_all_users = async () => {
   try {
     //get all id and username only from users (check properties _destroy = false)
     return await GET_DB()
       .collection(USER_COLLECTION_NAME)
       .find({
-        _destroy: false
+        _destroy: false,
       })
       .project({
-        _id: 1,
-        username: 1
+        password: 0,
       })
       .toArray();
   } catch (error) {
@@ -80,13 +116,13 @@ const removeModel = async (id) => {
       .collection(USER_COLLECTION_NAME)
       .updateOne(
         {
-          _id: new ObjectId(id)
+          _id: new ObjectId(id),
         },
         {
           $set: {
-            _destroy: true
-          }
-        }
+            _destroy: true,
+          },
+        },
       );
   } catch (error) {
     throw new Error(error);
@@ -99,6 +135,7 @@ export const UserModel = {
   saveModel,
   findOneById,
   get_all_users,
-  findOneByUsername,
-  removeModel
+  removeModel,
+  getOneUserDetailsByFilter,
+  getOneUserByFilter,
 };
