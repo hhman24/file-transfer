@@ -13,13 +13,28 @@ function generateKey() {
             format: 'pem'
         }
     });
-    const aesKey = crypto.randomBytes(32).toString('hex');
-    const encryptedAesKey = crypto.publicEncrypt(publicKey, Buffer.from(aesKey, 'hex')).toString('hex');
+
     return {
-        publicKey: publicKey,
-        privateKey: privateKey,
-        encryptedAesKey: encryptedAesKey
+        publicKey,
+        privateKey
     };
 }
 
-module.exports = generateKey;
+function generateSymmetricKey(publicKey) {
+    const symmetricKey = crypto.randomBytes(32).toString('hex');
+    const encryptedSymmetricKey = crypto.publicEncrypt(publicKey, Buffer.from(symmetricKey, 'hex')).toString('hex');
+    return {
+        encryptedSymmetricKey
+    };
+}
+
+function decryptSymmetricKey(encryptedSymmetricKey, privateKey) {
+    const symmetricKey = crypto.privateDecrypt(privateKey, Buffer.from(encryptedSymmetricKey, 'hex')).toString('hex');
+    return symmetricKey;
+}
+
+module.exports = {
+    generateKey,
+    generateSymmetricKey,
+    decryptSymmetricKey
+};
