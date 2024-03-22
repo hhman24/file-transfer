@@ -26,6 +26,7 @@ import { FormHelperText } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '~/redux/feature/auth/authSlice';
+import { useEffect } from 'react';
 
 const schema = yup.object().shape({
   email: yup.string().required('email is required').email(),
@@ -38,7 +39,7 @@ const schema = yup.object().shape({
 
 function Auth() {
   const { mode, setMode } = useColorScheme();
-  const { error, isLoading } = useSelector((state) => state.auth);
+  const { error, isLoading, loginState } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   // const [login, { isLoading, isError }] = useLoginMutation();
@@ -57,6 +58,10 @@ function Auth() {
     shouldUnregister: true,
     resolver: yupResolver(schema),
   });
+
+  useEffect(() => {
+    if (loginState.isLogined) navigate('/messages/t');
+  }, [loginState, navigate]);
 
   const onSubmit = (data) => {
     dispatch(loginUser({ email: data.email, password: data.password }))
