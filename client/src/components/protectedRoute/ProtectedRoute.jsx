@@ -1,16 +1,10 @@
-import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 
 export const ProtectedRoute = ({ children }) => {
   const token = useSelector((state) => state.auth.loginState.token);
   const isLogin = useSelector((state) => state.auth.loginState.isLogined);
   const location = useLocation();
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (token === '' && !isLogin) navigate('/login', { replace: true, state: { from: location } });
-  }, [navigate, token, isLogin, location]);
-
-  return children;
+  return token === '' && !isLogin ? <Navigate to={'/login'} replace state={{ from: location }} /> : children;
 };

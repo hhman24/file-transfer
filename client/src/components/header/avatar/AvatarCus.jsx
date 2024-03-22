@@ -107,10 +107,10 @@ function AvatarCus() {
 
             <Box sx={{ ml: 1.5 }}>
               <Typography variant="subtitile2" fontWeight={500} color={'text.primary'} gutterBottom>
-                {userInfo.username}
+                {userInfo?.username}
               </Typography>
               <Typography variant="body2" color="text.tertiary" gutterBottom>
-                {userInfo.email}
+                {userInfo?.email}
               </Typography>
             </Box>
           </Box>

@@ -12,6 +12,7 @@ const initialState = {
   },
   error: null,
   isLoading: false,
+  currentRequestId: undefined,
 };
 
 export const registerUser = createAsyncThunk('auth/registerUser', async (body, thunkAPI) => {
@@ -98,22 +99,29 @@ const authSlice = createSlice({
       .addMatcher(
         // matcher can be defined inline as a type predicate function
         (action) => action.type.endsWith('/pending'),
-        (state) => {
+        (state, action) => {
+          state.currentRequestId = action.meta.requestId;
           state.isLoading = true;
         },
       )
       .addMatcher(
         // matcher can be defined inline as a type predicate function
         (action) => action.type.endsWith('/fulfilled'),
-        (state) => {
-          state.isLoading = false;
+        (state, action) => {
+          if (state.isLoading && state.currentRequestId === action.meta.requestId) {
+            state.isLoading = false;
+            state.currentRequestId = undefined;
+          }
         },
       )
       .addMatcher(
         // matcher can be defined inline as a type predicate function
         (action) => action.type.endsWith('/rejected'),
         (state, action) => {
-          state.isLoading = false;
+          if (state.isLoading && state.currentRequestId === action.meta.requestId) {
+            state.isLoading = false;
+            state.currentRequestId = undefined;
+          }
           state.error = action.payload;
         },
       );
