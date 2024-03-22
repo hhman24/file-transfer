@@ -1,4 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
+import { ProtectedRoute } from '~/components/protectedRoute/ProtectedRoute';
 import Auth from '~/pages/auth/Auth';
 import Register from '~/pages/auth/Register';
 import ErrorPage from '~/pages/error/ErrorPage';
@@ -23,7 +24,11 @@ export const router = createBrowserRouter([
   },
   {
     path: '/messages/t',
-    element: <Message />,
+    element: (
+      <ProtectedRoute>
+        <Message />
+      </ProtectedRoute>
+    ),
     errorElement: <ErrorPage />,
   },
 ]);

@@ -22,9 +22,9 @@ import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FormHelperText } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { registerUser } from '~/redux/feature/auth/authAction';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+// import { registerUser } from '~/redux/feature/auth/authSlice';
 
 const schema = yup.object().shape({
   email: yup.string().required('email is required').email(),
@@ -62,8 +62,12 @@ function Register() {
   }, [sRegister.success, navigate]);
 
   const onSubmit = async (data) => {
-    const promise = dispatch(registerUser({ ...data }));
-    promise.abort;
+    // try {
+    //   const promise = dispatch(registerUser({ ...data }));
+    //   promise.abort;
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   return (

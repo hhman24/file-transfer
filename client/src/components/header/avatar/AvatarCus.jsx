@@ -11,14 +11,19 @@ import Tooltip from '@mui/material/Tooltip';
 import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
+import { useSelector } from 'react-redux';
+import { stringAvatar, stringToColor } from '~/utils/stringAvatar';
 
 function AvatarCus() {
   const { mode, setMode } = useColorScheme();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const userInfo = useSelector((state) => state.auth.loginState?.userInfo);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -40,9 +45,10 @@ function AvatarCus() {
           aria-expanded={open ? 'true' : undefined}
         >
           <Avatar
-            src="https://i.pravatar.cc/40?img=2"
-            srcSet="https://i.pravatar.cc/80?img=2"
-            sx={{ maxWidth: '32px', maxHeight: '32px' }}
+            // src="https://i.pravatar.cc/40?img=2"
+            // srcSet="https://i.pravatar.cc/80?img=2"
+            {...stringAvatar(userInfo.username)}
+            sx={{ maxWidth: '32px', maxHeight: '32px', bgcolor: stringToColor(userInfo.username) }}
           >
             M
           </Avatar>

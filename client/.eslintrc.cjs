@@ -21,7 +21,7 @@ module.exports = {
     'react/display-name': 0,
 
     // editor
-    'no-console': 1,
+    'no-console': 0,
     'no-lonely-if': 1,
     'no-unused-vars': 1,
     'no-trailing-spaces': 1,

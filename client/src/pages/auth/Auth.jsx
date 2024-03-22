@@ -23,10 +23,9 @@ import { grey } from '@mui/material/colors';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FormHelperText } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
-import { loginUser } from '~/redux/feature/auth/authAction';
-import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginUser } from '~/redux/feature/auth/authSlice';
 
 const schema = yup.object().shape({
   email: yup.string().required('email is required').email(),
@@ -39,9 +38,11 @@ const schema = yup.object().shape({
 
 function Auth() {
   const { mode, setMode } = useColorScheme();
-  const { sLogin, error, loading } = useSelector((state) => state.auth);
+  const { error, isLoading } = useSelector((state) => state.auth);
+  // const { error, isLoading } = { error: false, isLoading: false };
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  // const [login, { isLoading, isError }] = useLoginMutation();
 
   const {
     register,
@@ -58,14 +59,22 @@ function Auth() {
     resolver: yupResolver(schema),
   });
 
-  useEffect(() => {
-    if (sLogin.isLoginIn) navigate('/messages/t');
-  }, [sLogin.isLoginIn, navigate]);
-
-  const onSubmit = async (data) => {
-    const promise = await dispatch(loginUser({ email: data.email, password: data.password }));
-
-    promise.abort;
+  const onSubmit = (data) => {
+    dispatch(loginUser({ email: data.email, password: data.password }))
+      .unwrap()
+      .then(() => {
+        navigate('/messages/t');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    // // try {
+    //   const userData = await login({ email: data.email, password: data.password }).unwrap();
+    //   dispatch(setCredentials({ ...userData }));
+    //   navigate('/messages/t');
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   return (
@@ -298,7 +307,7 @@ function Auth() {
                 : 'url(https://images.unsplash.com/photo-1527181152855-fc03fc7949c8?auto=format&w=1000&dpr=2)',
           }}
         ></Box>
-        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
+        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={isLoading}>
           <CircularProgress color="inherit" />
         </Backdrop>
       </Container>
