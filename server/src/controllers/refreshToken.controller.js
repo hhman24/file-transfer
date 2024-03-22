@@ -11,8 +11,6 @@ const refresh = async (req, res, next) => {
     const storedRefreshToken =
       await RefreshTokenService.findRefreshTokenByToken(cookiesRefreshToken);
 
-    console.log(storedRefreshToken);
-
     if (!storedRefreshToken) throw new ApiError(StatusCodes.UNAUTHORIZED, 'Unauthorized');
 
     try {

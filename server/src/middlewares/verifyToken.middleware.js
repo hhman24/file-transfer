@@ -14,17 +14,20 @@ const verifyToken = async (req, res, next) => {
     }
 
     const accessToken = token.split(' ')[1];
-    console.log(accessToken);
     const decoded = jwt.verify(accessToken, env.ACCESS_TOKEN_PRIVATE_KEY);
     const user = await userService.getOne(decoded._id);
-
     if (!user) {
       throw new ApiError(StatusCodes.FORBIDDEN, 'Token is not valid');
     }
+
     req.user = user;
     next();
   } catch (error) {
-    next(error);
+    if (error.name === 'TokenExpiredError') {
+      next(new ApiError(StatusCodes.UNAUTHORIZED, 'Token expired'));
+    } else {
+      next(error);
+    }
   }
 };
 
