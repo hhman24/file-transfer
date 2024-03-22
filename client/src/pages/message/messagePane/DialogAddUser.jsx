@@ -50,15 +50,6 @@ function AddFriendDialog({ open, handleClose }) {
           value={friendUsername}
           onChange={(e) => setFriendUsername(e.target.value)}
         />
-        <TextField
-          margin="dense"
-          id="search"
-          label="Search"
-          type="text"
-          fullWidth
-          value={searchKeyword}
-          onChange={(e) => setSearchKeyword(e.target.value)}
-        />
         <List>
           {filteredUsers.map(user => (
             <ListItem key={user.id} button>
