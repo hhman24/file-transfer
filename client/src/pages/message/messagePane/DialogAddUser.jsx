@@ -6,18 +6,32 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Avatar from '@mui/material/Avatar';
+import ListItemText from '@mui/material/ListItemText';
 
 function AddFriendDialog({ open, handleClose }) {
   const [friendUsername, setFriendUsername] = useState('');
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [users, setUsers] = useState([
+    { id: 1, username: 'user1', avatar: 'https://via.placeholder.com/50' },
+    { id: 2, username: 'user2', avatar: 'https://via.placeholder.com/50' },
+    { id: 3, username: 'user3', avatar: 'https://via.placeholder.com/50' },
+    { id: 4, username: 'user4', avatar: 'https://via.placeholder.com/50' },
+    // Add more users as needed
+  ]);
 
-  const handleAddFriend = () => {
-    // Logic to add friend here, using friendUsername state
-    console.log(`Adding friend: ${friendUsername}`);
-    // Reset the friendUsername state
+  const handleAddFriend = (username) => {
+    console.log(`Adding friend: ${username}`);
     setFriendUsername('');
-    // Close the dialog
     handleClose();
   };
+
+  const filteredUsers = users.filter(user =>
+    user.username.toLowerCase().includes(searchKeyword.toLowerCase())
+  );
 
   return (
     <Dialog open={open} onClose={handleClose}>
@@ -36,13 +50,30 @@ function AddFriendDialog({ open, handleClose }) {
           value={friendUsername}
           onChange={(e) => setFriendUsername(e.target.value)}
         />
+        <TextField
+          margin="dense"
+          id="search"
+          label="Search"
+          type="text"
+          fullWidth
+          value={searchKeyword}
+          onChange={(e) => setSearchKeyword(e.target.value)}
+        />
+        <List>
+          {filteredUsers.map(user => (
+            <ListItem key={user.id} button>
+              <ListItemAvatar>
+                <Avatar alt={user.username} src={user.avatar} />
+              </ListItemAvatar>
+              <ListItemText primary={user.username} />
+              <Button onClick={() => handleAddFriend(user.username)}>Add</Button>
+            </ListItem>
+          ))}
+        </List>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color="primary">
           Cancel
-        </Button>
-        <Button onClick={handleAddFriend} color="primary">
-          Add
         </Button>
       </DialogActions>
     </Dialog>
