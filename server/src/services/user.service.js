@@ -3,8 +3,6 @@ import { StatusCodes } from 'http-status-codes';
 import { ObjectId } from 'mongodb';
 import { UserModel } from '~/models/UserModel';
 import { MsgModel } from '~/models/MessageModel';
-import bcrypt from 'bcryptjs';
-import { boolean } from 'joi';
 import ApiError from '~/utils/ApiError';
 
 // create new user
@@ -72,31 +70,31 @@ const getOneUserByEmail = async (email) => {
 };
 const getMsgById = async (req) => {
   const { id } = req.params;
-  const page = parseInt(req.query.page)
-  const limit = parseInt(req.query.limit)
+  const page = parseInt(req.query.page);
+  const limit = parseInt(req.query.limit);
 
-  const startIndex = (page - 1) * limit
-  const endIndex = page * limit
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
 
-  const results = {}
+  const results = {};
 
-  if (endIndex < await MsgModel.countAmount()) {
+  if (endIndex < (await MsgModel.countAmount())) {
     results.next = {
       page: page + 1,
-      limit: limit
-    }
+      limit: limit,
+    };
   }
-  
+
   if (startIndex > 0) {
     results.previous = {
       page: page - 1,
-      limit: limit
-    }
-  }  
+      limit: limit,
+    };
+  }
 
   try {
-    results.results =  await MsgModel.findById(id,startIndex, limit)
-    return results
+    results.results = await MsgModel.findById(id, startIndex, limit);
+    return results;
   } catch (error) {
     throw error;
   }
@@ -114,10 +112,8 @@ export const userService = {
   createNew,
   getAll,
   getOne,
-  login,
   remove,
-  getMsgById
-  remove,
+  getMsgById,
   getOneUserByFilter,
   getOneUserByEmail,
 };
