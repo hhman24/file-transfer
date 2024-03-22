@@ -11,6 +11,7 @@
     "prettier": "prettier --check \"src/**/(*.js|*.jsx|*.css)\"",
     "prettier:fix": "prettier --write \"src/**/(*.js|*.jsx|*.css)\"",
     "preview": "vite preview"
+    
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
