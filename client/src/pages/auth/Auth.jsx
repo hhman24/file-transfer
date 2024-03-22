@@ -39,7 +39,6 @@ const schema = yup.object().shape({
 function Auth() {
   const { mode, setMode } = useColorScheme();
   const { error, isLoading } = useSelector((state) => state.auth);
-  // const { error, isLoading } = { error: false, isLoading: false };
   const dispatch = useDispatch();
   const navigate = useNavigate();
   // const [login, { isLoading, isError }] = useLoginMutation();

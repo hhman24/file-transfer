@@ -4,10 +4,10 @@ import { useAxios } from '~/apis/axiosConfig';
 const initialState = {
   loginState: {
     userInfo: null,
-    token: null,
+    token: '',
     isLogined: false,
   },
-  register: {
+  registerState: {
     success: false,
   },
   error: null,
@@ -48,7 +48,7 @@ export const logoutUser = createAsyncThunk('auth/logoutUser', async (_, thunkAPI
   try {
     const state = thunkAPI.getState().auth.loginState;
     const axios = useAxios(state.token, thunkAPI.dispatch);
-    return (await axios.get(`/refresh/logout`, { signal: thunkAPI.signal })).data;
+    return (await axios.post(`/refresh/logout`, { signal: thunkAPI.signal })).data;
   } catch (error) {
     if (error.response && error.response.data.message) {
       return thunkAPI.rejectWithValue(error.response.data.message);
@@ -66,6 +66,7 @@ const authSlice = createSlice({
       state.loginState.userInfo = action.payload.user;
       state.loginState.token = action.payload.accessToken;
       state.loginState.isLogined = true;
+      state.error = null;
     },
     setLogout: (state) => {
       state.loginState.userInfo = null;
@@ -79,6 +80,20 @@ const authSlice = createSlice({
         state.loginState.userInfo = action.payload.user;
         state.loginState.token = action.payload.accessToken;
         state.loginState.isLogined = true;
+      })
+      .addCase(registerUser.fulfilled, (state) => {
+        state.registerState.success = true;
+      })
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.loginState.userInfo = null;
+        state.loginState.token = '';
+        state.loginState.isLogined = false;
+        state.error = null;
+      })
+      .addCase(logoutUser.rejected, (state) => {
+        state.loginState.userInfo = null;
+        state.loginState.token = '';
+        state.loginState.isLogined = false;
       })
       .addMatcher(
         // matcher can be defined inline as a type predicate function

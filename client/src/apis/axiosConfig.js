@@ -46,9 +46,12 @@ export const BASE_API_URL = import.meta.env.VITE_API_URL;
 
 export const refreshToken = async () => {
   try {
-    return (await axios.post(`${BASE_API_URL}/refresh`, { withCredentials: true })).data;
+    return (
+      await axios.post(`${BASE_API_URL}/refresh`, null, {
+        withCredentials: true,
+      })
+    ).data;
   } catch (error) {
-    // window.location.href = '/login';
     throw new Error('Có lỗi xảy ra, vui lòng thử lại sau');
   }
 };
@@ -81,14 +84,16 @@ export const useAxios = (accessToken, dispatch) => {
   axiosInstance.interceptors.response.use(
     (response) => response,
     async (error) => {
-      console.log(error);
+      console.log(error?.config);
       const prevRequest = error?.config;
       if (error?.response?.status === 401 && !prevRequest?.sent) {
         prevRequest.sent = true;
         const data = await refreshToken();
+        console.log(data);
+
         // update acessToken state
         dispatch(setLogin({ ...data }));
-        prevRequest.headers.accessToken = `Bearer ${accessToken}`;
+        prevRequest.headers.accessToken = `Bearer ${data.accessToken}`;
         return axiosInstance(prevRequest);
       }
 

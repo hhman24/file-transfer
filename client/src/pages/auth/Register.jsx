@@ -24,7 +24,7 @@ import { FormHelperText } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-// import { registerUser } from '~/redux/feature/auth/authSlice';
+import { registerUser } from '~/redux/feature/auth/authSlice';
 
 const schema = yup.object().shape({
   email: yup.string().required('email is required').email(),
@@ -38,7 +38,7 @@ const schema = yup.object().shape({
 
 function Register() {
   const { mode, setMode } = useColorScheme();
-  const { sRegister, loading, error } = useSelector((state) => state.auth);
+  const { registerState, isLoading, error } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -58,16 +58,16 @@ function Register() {
   });
 
   useEffect(() => {
-    if (sRegister.success) navigate('/login');
-  }, [sRegister.success, navigate]);
+    if (registerState.success) navigate('/login');
+  }, [registerState.success, navigate]);
 
   const onSubmit = async (data) => {
-    // try {
-    //   const promise = dispatch(registerUser({ ...data }));
-    //   promise.abort;
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      const promise = dispatch(registerUser({ ...data })).unwrap();
+      promise.abort;
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -303,7 +303,7 @@ function Register() {
             </Box>
           </Box>
         </Box>
-        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
+        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={isLoading}>
           <CircularProgress color="inherit" />
         </Backdrop>
       </Container>
