@@ -11,14 +11,24 @@ import Tooltip from '@mui/material/Tooltip';
 import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
+import { useDispatch, useSelector } from 'react-redux';
+import { stringAvatar, stringToColor } from '~/utils/stringAvatar';
+import { logoutUser } from '~/redux/feature/auth/authSlice';
+import { useNavigate } from 'react-router-dom';
+import { refreshToken } from '~/apis/axiosConfig';
 
 function AvatarCus() {
   const { mode, setMode } = useColorScheme();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const userInfo = useSelector((state) => state.auth.loginState?.userInfo);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -40,9 +50,10 @@ function AvatarCus() {
           aria-expanded={open ? 'true' : undefined}
         >
           <Avatar
-            src="https://i.pravatar.cc/40?img=2"
-            srcSet="https://i.pravatar.cc/80?img=2"
-            sx={{ maxWidth: '32px', maxHeight: '32px' }}
+            // src="https://i.pravatar.cc/40?img=2"
+            // srcSet="https://i.pravatar.cc/80?img=2"
+            {...stringAvatar(userInfo?.username || 'Minh An')}
+            sx={{ maxWidth: '32px', maxHeight: '32px', bgcolor: stringToColor(userInfo?.username || 'Minh An') }}
           >
             M
           </Avatar>
@@ -84,17 +95,22 @@ function AvatarCus() {
             }}
           >
             <Avatar
-              src="https://i.pravatar.cc/40?img=2"
-              srcSet="https://i.pravatar.cc/80?img=2"
-              sx={{ borderRadius: '50%' }}
+              {...stringAvatar(userInfo?.username || 'Minh An')}
+              sx={{
+                borderRadius: '50%',
+                maxWidth: '32px',
+                maxHeight: '32px',
+                bgcolor: stringToColor(userInfo?.username || 'Minh An'),
+                fontSize: '16px',
+              }}
             />
 
             <Box sx={{ ml: 1.5 }}>
               <Typography variant="subtitile2" fontWeight={500} color={'text.primary'} gutterBottom>
-                Ainz Gold
+                {userInfo.username}
               </Typography>
               <Typography variant="body2" color="text.tertiary" gutterBottom>
-                hhman@gmail.com
+                {userInfo.email}
               </Typography>
             </Box>
           </Box>
@@ -109,7 +125,20 @@ function AvatarCus() {
           Settings
         </MenuItem>
         <Divider sx={{ my: 0.5, mx: -1 }} />
-        <MenuItem>
+        <MenuItem
+          onClick={() => {
+            // refreshToken()
+            //   .then((data) => {
+            //     console.log(data);
+            //   })
+            //   .catch((err) => {
+            //     console.log(err);
+            //   });
+            dispatch(logoutUser()).then(() => {
+              navigate('/login');
+            });
+          }}
+        >
           <LogoutRoundedIcon sx={{ fontSize: '20px' }} />
           Log out
         </MenuItem>

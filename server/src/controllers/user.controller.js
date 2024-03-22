@@ -11,7 +11,7 @@ const createNew = async (req, res, next) => {
     const createdUser = await userService.createNew(data);
 
     if (!createdUser) {
-      next(new ApiError(StatusCodes.BAD_REQUEST, 'User not created'));
+      throw new ApiError(StatusCodes.BAD_REQUEST, 'User not created');
     }
     generateTokenAndSetCookie(createdUser._id, res);
     res.status(StatusCodes.CREATED).json({
@@ -46,7 +46,7 @@ const remove = async (req, res, next) => {
   try {
     const removedUser = await userService.remove(req.user._id);
     if (!removedUser) {
-      next(ApiError(StatusCodes.BAD_REQUEST, 'User not removed'));
+      throw new ApiError(StatusCodes.BAD_REQUEST, 'User not removed');
     }
     res.status(StatusCodes.OK).json({
       message: 'Remove user successfully',

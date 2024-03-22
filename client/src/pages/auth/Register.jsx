@@ -9,14 +9,22 @@ import Link from '@mui/material/Link';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import Divider from '@mui/material/Divider';
-import { grey } from '@mui/material/colors';
+import Alert from '@mui/material/Alert';
+import Collapse from '@mui/material/Collapse';
 import GoogleIcon from '~/components/Svg/GoogleIcon';
 import ModeToggle from '~/components/toggle/ModeToggle';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import * as yup from 'yup';
+import Inputv1 from '~/components/input/Inputv1';
+import { grey } from '@mui/material/colors';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import { FormHelperText } from '@mui/material';
-import Inputv1 from '~/components/input/Inputv1';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { registerUser } from '~/redux/feature/auth/authSlice';
 
 const schema = yup.object().shape({
   email: yup.string().required('email is required').email(),
@@ -30,6 +38,9 @@ const schema = yup.object().shape({
 
 function Register() {
   const { mode, setMode } = useColorScheme();
+  const { registerState, isLoading, error } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const {
     register,
@@ -46,8 +57,17 @@ function Register() {
     resolver: yupResolver(schema),
   });
 
+  useEffect(() => {
+    if (registerState.success) navigate('/login');
+  }, [registerState.success, navigate]);
+
   const onSubmit = async (data) => {
-    console.log(data);
+    try {
+      const promise = dispatch(registerUser({ ...data })).unwrap();
+      promise.abort;
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -183,103 +203,109 @@ function Register() {
 
               <Divider>or</Divider>
 
-              <Stack gap={2}>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                  <FormControl required>
-                    <FormLabel sx={{ fontWeight: 500 }} error={!!errors['username']}>
-                      User Name
-                    </FormLabel>
-                    <Controller
-                      name="username"
-                      control={control}
-                      render={() => (
-                        <>
-                          <Inputv1
-                            name={'username'}
-                            type={''}
-                            id={'username'}
-                            autoFocus={true}
-                            register={register}
-                            errors={errors}
-                          />
-                        </>
-                      )}
-                    />
-                    <FormHelperText error>{errors['username'] ? errors['username']?.message : ' '}</FormHelperText>
-                  </FormControl>
+              <Stack>
+                <Collapse in={error ? true : false}>
+                  <Alert severity="error" sx={{ mb: 2 }}>
+                    {error}
+                  </Alert>
+                </Collapse>
+                <FormControl required>
+                  <FormLabel sx={{ fontWeight: 500 }} error={!!errors['username']}>
+                    User Name
+                  </FormLabel>
+                  <Controller
+                    name="username"
+                    control={control}
+                    render={() => (
+                      <>
+                        <Inputv1
+                          name={'username'}
+                          type={''}
+                          id={'username'}
+                          autoFocus={true}
+                          register={register}
+                          errors={errors}
+                        />
+                      </>
+                    )}
+                  />
+                  <FormHelperText error>{errors['username'] ? errors['username']?.message : ' '}</FormHelperText>
+                </FormControl>
 
-                  <FormControl required>
-                    <FormLabel sx={{ fontWeight: 500 }} error={!!errors['email']}>
-                      Email
-                    </FormLabel>
-                    <Controller
-                      name="email"
-                      control={control}
-                      render={() => (
-                        <>
-                          <Inputv1
-                            name={'email'}
-                            type={''}
-                            id={'email'}
-                            autoFocus={true}
-                            register={register}
-                            errors={errors}
-                          />
-                        </>
-                      )}
-                    />
-                    <FormHelperText error>{errors['email'] ? errors['email']?.message : ' '}</FormHelperText>
-                  </FormControl>
+                <FormControl required>
+                  <FormLabel sx={{ fontWeight: 500 }} error={!!errors['email']}>
+                    Email
+                  </FormLabel>
+                  <Controller
+                    name="email"
+                    control={control}
+                    render={() => (
+                      <>
+                        <Inputv1
+                          name={'email'}
+                          type={''}
+                          id={'email'}
+                          autoFocus={true}
+                          register={register}
+                          errors={errors}
+                        />
+                      </>
+                    )}
+                  />
+                  <FormHelperText error>{errors['email'] ? errors['email']?.message : ' '}</FormHelperText>
+                </FormControl>
 
-                  <FormControl required>
-                    <FormLabel sx={{ fontWeight: 500 }} error={!!errors['password']}>
-                      Password
-                    </FormLabel>
-                    <Controller
-                      name="password"
-                      control={control}
-                      render={() => (
-                        <>
-                          <Inputv1
-                            name={'password'}
-                            type={'password'}
-                            id={'password'}
-                            autoFocus={true}
-                            register={register}
-                            errors={errors}
-                          />
-                        </>
-                      )}
-                    />
-                    <FormHelperText error>{errors['password'] ? errors['password']?.message : ' '}</FormHelperText>
-                  </FormControl>
+                <FormControl required>
+                  <FormLabel sx={{ fontWeight: 500 }} error={!!errors['password']}>
+                    Password
+                  </FormLabel>
+                  <Controller
+                    name="password"
+                    control={control}
+                    render={() => (
+                      <>
+                        <Inputv1
+                          name={'password'}
+                          type={'password'}
+                          id={'password'}
+                          autoFocus={true}
+                          register={register}
+                          errors={errors}
+                        />
+                      </>
+                    )}
+                  />
+                  <FormHelperText error>{errors['password'] ? errors['password']?.message : ' '}</FormHelperText>
+                </FormControl>
 
-                  <Stack gap={2} sx={{ mt: 2 }}>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Link href="/auth-forgot-password">Forgot your password?</Link>
-                    </Box>
-                    <Button type="submit" fullWidth variant="contained">
-                      Sign in
-                    </Button>
-                  </Stack>
-                </form>
+                <Stack gap={2} sx={{ mt: 2 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Link href="/auth-forgot-password">Forgot your password?</Link>
+                  </Box>
+                  <Button type="submit" fullWidth variant="contained" onClick={handleSubmit(onSubmit)}>
+                    Sign up
+                  </Button>
+                </Stack>
               </Stack>
             </Box>
 
             {/* footer */}
-            <Box component="footer" sx={{ mb: 3 }}>
+            <Box component="footer" sx={{ mb: 4 }}>
               <Typography variant="body2" textAlign="center">
                 © Your company {new Date().getFullYear()}
               </Typography>
             </Box>
           </Box>
         </Box>
+        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={isLoading}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </Container>
     </>
   );

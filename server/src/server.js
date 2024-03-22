@@ -1,8 +1,4 @@
 // eslint-disable no-console
-
-/**
- * "A bit of fragrance clings to the hand that gives flowers!"
- */
 import exitHook from 'async-exit-hook';
 import express from 'express';
 import cors from 'cors';
@@ -29,6 +25,15 @@ const START_SERVER = () => {
 
   // Middlewares xử lý tập trung lỗi
   app.use(errorHandlingMiddleware);
+
+  // // Middleware để tạo delay
+  // function delayResponse(req, res, next) {
+  //   const delayTime = 2000; // Thời gian trễ 2 giây (2000 milliseconds)
+  //   setTimeout(next, delayTime);
+  // }
+
+  // // Sử dụng middleware delayResponse cho tất cả các route
+  // app.use(delayResponse);
 
   app.listen(env.APP_PORT, env.APP_HOST, () => {
     console.log(`3. Server is running on ${env.APP_HOST}:${env.APP_PORT}/`);
