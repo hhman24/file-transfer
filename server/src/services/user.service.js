@@ -3,6 +3,7 @@
  * "A bit of fragrance clings to the hand that gives flowers!"
  */
 import { UserModel } from '~/models/UserModel';
+import { MsgModel } from '~/models/MessageModel';
 import bcrypt from 'bcryptjs';
 import { boolean } from 'joi';
 
@@ -48,6 +49,37 @@ const login = async (body) => {
     throw error;
   }
 };
+const getMsgById = async (req) => {
+  const { id } = req.params;
+  const page = parseInt(req.query.page)
+  const limit = parseInt(req.query.limit)
+
+  const startIndex = (page - 1) * limit
+  const endIndex = page * limit
+
+  const results = {}
+
+  if (endIndex < await MsgModel.countAmount()) {
+    results.next = {
+      page: page + 1,
+      limit: limit
+    }
+  }
+  
+  if (startIndex > 0) {
+    results.previous = {
+      page: page - 1,
+      limit: limit
+    }
+  }  
+
+  try {
+    results.results =  await MsgModel.findById(id,startIndex, limit)
+    return results
+  } catch (error) {
+    throw error;
+  }
+};
 
 const remove = async (id) => {
   try {
@@ -62,5 +94,6 @@ export const userService = {
   getAll,
   getOne,
   login,
-  remove
+  remove,
+  getMsgById
 };

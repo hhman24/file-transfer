@@ -98,6 +98,20 @@ const remove = async (req, res, next) => {
   }
 };
 
+
+
+const getMsgById = async (req, res, next) => {
+  try {
+
+    const result = await userService.getMsgById(req);
+    res.status(StatusCodes.OK).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
 export const userController = {
   createNew,
   login,
@@ -105,5 +119,6 @@ export const userController = {
   createNew,
   getAll,
   getOne,
-  remove
+  remove,
+  getMsgById
 };

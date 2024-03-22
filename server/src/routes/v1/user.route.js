@@ -21,4 +21,7 @@ Router.route('/signup').post(userValidation.createNew, userController.createNew)
 Router.route('/login').post(userValidation.createNew, userController.login);
 Router.route('/logout').post(userController.logout);
 Router.route('/remove').get(JWT.verifyJWT, userController.remove);
+Router.route('/message/:id').get(userController.getMsgById);
+
+
 export const userRoute = Router;
