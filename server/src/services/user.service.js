@@ -68,6 +68,23 @@ const getOneUserByEmail = async (email) => {
     throw new Error(error);
   }
 };
+
+/**
+ * @dev find one user by id
+ * @returns {...} or null
+ */
+const getOneUserById = async (id) => {
+  try {
+    const user = await UserModel.getOneUserByFilter({
+      _id: new ObjectId(id),
+      _destroy: false,
+    });
+    return user;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 const getMsgById = async (req) => {
   const { id } = req.params;
   const page = parseInt(req.query.page);
@@ -116,4 +133,5 @@ export const userService = {
   getMsgById,
   getOneUserByFilter,
   getOneUserByEmail,
+  getOneUserById,
 };
