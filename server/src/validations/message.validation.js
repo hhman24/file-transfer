@@ -5,6 +5,13 @@ import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/patternValidator
 
 const sendMsg = async (req, res, next) => {
   const correctCondition = Joi.object({
+    friendId: Joi.string()
+      .required()
+      .pattern(OBJECT_ID_RULE)
+      .message(OBJECT_ID_RULE_MESSAGE)
+      .messages({
+        'any.required': 'friendId is required (hhman)',
+      }),
     contact: Joi.string()
       .required()
       .pattern(OBJECT_ID_RULE)
@@ -20,7 +27,10 @@ const sendMsg = async (req, res, next) => {
 
   try {
     // disable abortEarly để check toàn bộ lỗi
-    await correctCondition.validateAsync(req.body, { abortEarly: false });
+    await correctCondition.validateAsync(
+      { ...req.body, friendId: req.params.friendId },
+      { abortEarly: false },
+    );
     // validate successly
     next();
   } catch (errors) {

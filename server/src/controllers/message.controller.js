@@ -14,16 +14,25 @@ const getMsgById = async (req, res, next) => {
 
 const sendMsg = async (req, res, next) => {
   try {
-    const data = { ...req.body, sendById: req.user._id.toString() };
+    const userId = req.user._id.toString();
+    const friendId = req.params.friendId;
 
-    const existContact = await friendService.findContactById(data.contact);
+    const existContact = await friendService.findContactById(req.body.contact);
+
     if (!existContact) throw new ApiError(StatusCodes.BAD_REQUEST, 'Not found contact');
 
-    const msg = await messageService.sendMsg(data);
-    res.status(StatusCodes.CREATED).json({
-      message: 'send successfully',
-      newMessage: msg,
-    });
+    if (
+      (existContact.userA.toString() === userId && existContact.userB.toString() === friendId) ||
+      (existContact.userA.toString() === friendId && existContact.userB.toString() === userId)
+    ) {
+      const msg = await messageService.sendMsg({ ...req.body, sendById: userId });
+      res.status(StatusCodes.CREATED).json({
+        message: 'send successfully',
+        newMessage: msg,
+      });
+    } else {
+      throw new ApiError(StatusCodes.BAD_REQUEST, 'Not your friend');
+    }
   } catch (error) {
     next(error);
   }
