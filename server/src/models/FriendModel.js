@@ -12,7 +12,7 @@ const FRIEND_COLLECTION_NAME = 'Friends';
 const FRIEND_COLLECTION_SCHEMA = Joi.object({
   userA: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
   userB: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
-  enPubKey: Joi.string().strict().default(''),
+  enPrivateKey: Joi.string().strict().default(''),
   status: Joi.string()
     .valid(...Object.values(FRIEND_STATUS))
     .default(FRIEND_STATUS.PENDING),
@@ -138,6 +138,11 @@ const findFriendsWithLastMessage = async (user) => {
             from: UserModel.USER_COLLECTION_NAME,
             localField: 'userB',
             foreignField: '_id',
+            pipeline: [
+              {
+                $project: { password: 0 },
+              },
+            ],
             as: 'userB',
           },
         },

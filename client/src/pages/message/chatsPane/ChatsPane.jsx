@@ -15,7 +15,7 @@ import { toggleMessagesPane } from '~/utils/toggleMessagePane';
 
 function ChatsPane({ chats, setSelectedChat, selectedChatId }) {
   const { mode, setMode } = useColorScheme();
-
+  
   return (
     <Box sx={{ bgcolor: 'background.paper' }}>
       <Box
