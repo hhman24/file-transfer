@@ -10,6 +10,17 @@ const getMsgById = async (req, res, next) => {
   }
 };
 
+const sendMsg = async (req, res, next) => {
+  try {
+    res.status(StatusCodes.CREATED).json({
+      message: 'send successfully',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const messageController = {
   getMsgById,
+  sendMsg,
 };
