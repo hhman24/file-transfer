@@ -8,7 +8,6 @@ const Router = express.Router();
 Router.use(verifyTokenMiddleware.verifyToken);
 
 Router.route('/getAll').get(userController.getAll);
-Router.route('/message/:id').get(userController.getMsgById);
 
 Router.route('/u/:id')
   .get(userController.getOne)
