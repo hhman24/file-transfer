@@ -20,10 +20,7 @@ const sendMsg = async (req, res, next) => {
 
   try {
     // disable abortEarly để check toàn bộ lỗi
-    await correctCondition.validateAsync(
-      { ...req.body, contact: req.params.contact },
-      { abortEarly: false },
-    );
+    await correctCondition.validateAsync(req.body, { abortEarly: false });
     // validate successly
     next();
   } catch (errors) {

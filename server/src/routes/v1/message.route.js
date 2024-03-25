@@ -9,6 +9,6 @@ const Router = express.Router();
 Router.use(verifyTokenMiddleware.verifyToken);
 
 Router.route('/:id').get(messageController.getMsgById);
-Router.route('/t/:contact').get(messageValidation.sendMsg, messageController.sendMsg);
+Router.route('/t').post(messageValidation.sendMsg, messageController.sendMsg);
 
 export const messageRoute = Router;

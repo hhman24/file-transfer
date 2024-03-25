@@ -1,5 +1,4 @@
 /* eslint-disable no-useless-catch */
-import { async } from '@babel/runtime/regenerator';
 import { StatusCodes } from 'http-status-codes';
 import { friendModel } from '~/models/FriendModel';
 import ApiError from '~/utils/ApiError';
@@ -74,7 +73,17 @@ const rejectFriend = async (userId, friendId) => {
  */
 const getFriends = async (user) => {
   try {
-    return await friendModel.findFriendsWithLastMessage(user);
+    const friends = await friendModel.findFriendsWithLastMessage(user);
+
+    const res = friends.map((f) => {
+      f.friend = f.userA._id.toString() === user ? f.userB : f.userA;
+
+      delete f.userA;
+      delete f.userB;
+      return f;
+    });
+
+    return res;
   } catch (error) {
     throw error;
   }
@@ -124,10 +133,20 @@ const getUserNotFriend = async (userId) => {
   }
 };
 
+const findContactById = async (id) => {
+  try {
+    const contact = await friendModel.findOneById(id);
+    return contact;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const friendService = {
   addFriend,
   acceptedFriend,
   rejectFriend,
   getFriends,
   getUserNotFriend,
+  findContactById,
 };

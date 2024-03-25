@@ -33,4 +33,24 @@ const getMsgById = async (req) => {
   }
 };
 
-export const messageService = { getMsgById };
+/**
+ * @dev send ecrypted message with encrypted metaURL
+ * @param data: {...req.body, sendById: req.user._id.toString()}
+ * @returns object or null
+ */
+
+const sendMsg = async (data) => {
+  try {
+    const res = await messageModel.saveModel({
+      contact: data.contact,
+      sendById: data.sendById,
+      content: data.content,
+      metaURL: data.metaURL,
+    });
+    return await messageModel.findOneById(res.insertedId);
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const messageService = { getMsgById, sendMsg };
