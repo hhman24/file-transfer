@@ -6,7 +6,7 @@ import { chats } from '~/data/messagesData';
 import MessagePane from './messagePane/MessagePane';
 
 function BodyMessage() {
-  const [selectedChat, setSelectedChat] = useState(chats[0]);
+  // const [selectedChat, setSelectedChat] = useState(chats[0]);
   const { mode, setMode } = useColorScheme();
 
   return (
@@ -29,7 +29,8 @@ function BodyMessage() {
           mt: '58px',
         }}
       >
-        <ChatsPane chats={chats} selectedChatId={selectedChat.id} setSelectedChat={setSelectedChat} />
+        {/* chats={chats} selectedChatId={selectedChat.id} setSelectedChat={setSelectedChat} */}
+        <ChatsPane />
       </Box>
       <Box
         sx={{
@@ -44,7 +45,7 @@ function BodyMessage() {
             mode === 'light' ? theme.devSchema.backgroundLevel1Light : theme.devSchema.backgroundLevel1Dark,
         }}
       >
-        <MessagePane chat={selectedChat} />
+        {/* <MessagePane chat={selectedChat} /> */}
       </Box>
     </>
   );

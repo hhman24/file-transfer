@@ -15,7 +15,7 @@ export const users = [
     username: 'Minh Tri',
     email: 'mt@gmail.com',
     publicKeyCredential: '',
-    online: false,
+    online: true,
     lastOnline: '2024-03-23T16:21:55.640Z',
     createAt: '2024-03-23T16:21:55.641Z',
     updatedAt: null,

@@ -1,7 +1,7 @@
 // redux state management stool
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import { apiSlice } from '~/apis/apiSlice';
-import { setupListeners } from '@reduxjs/toolkit/query';
+// import { apiSlice } from '~/apis/apiSlice';
+// import { setupListeners } from '@reduxjs/toolkit/query';
 import { persistReducer, persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import friendSlice from './feature/friend/friendSlice';
@@ -10,7 +10,7 @@ import authSlice from './feature/auth/authSlice';
 const rootReducer = combineReducers({
   friends: friendSlice,
   auth: authSlice,
-  [apiSlice.reducerPath]: apiSlice.reducer,
+  // [apiSlice.reducerPath]: apiSlice.reducer,
 });
 
 const persistConfig = {
@@ -34,7 +34,7 @@ export const store = configureStore({
 });
 
 // Optional, nhưng bắt buộc nếu dùng tính năng refetchOnFocus/refetchOnReconnect
-setupListeners(store.dispatch);
+// setupListeners(store.dispatch);
 
 export const persistor = persistStore(store);
 

@@ -69,6 +69,9 @@ const authSlice = createSlice({
       state.loginState.isLogined = true;
       state.error = null;
     },
+    setRegister: (state, action) => {
+      state.registerState.success = action.payload;
+    },
     setLogout: (state) => {
       state.loginState.userInfo = null;
       state.loginState.token = '';
@@ -128,5 +131,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setLogin, setLogout } = authSlice.actions;
+export const { setLogin, setLogout, setRegister } = authSlice.actions;
 export default authSlice.reducer;
