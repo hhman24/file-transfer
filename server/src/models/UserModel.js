@@ -8,16 +8,15 @@ const USER_COLLECTION_SCHEMA = Joi.object({
   email: Joi.string().email().required().trim().strict(),
   password: Joi.string().strict(),
   publicKeyCredential: Joi.string().strict().default(''),
+  online: Joi.boolean().default(false),
+  lastOnline: Joi.date().default(new Date()),
+  createAt: Joi.date().timestamp('javascript').default(new Date()),
+  updatedAt: Joi.date().timestamp('javascript').default(null),
+  _destroy: Joi.boolean().default(false),
   // friends: Joi.array()
   //   .items(Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE))
   //   .default([]),
-  online: Joi.boolean().default(false),
-  lastOnline: Joi.date().timestamp('javascript').default(Date.now),
-  createAt: Joi.date().timestamp('javascript').default(Date.now),
-  updatedAt: Joi.date().timestamp('javascript').default(null),
-  _destroy: Joi.boolean().default(false),
-  // enums
-  // type: Joi.string().valid('public', 'private').required();
+  // type: Joi.string().valid('public', 'private').required(); // enums
 });
 
 const validateSchema = async (schema) => {

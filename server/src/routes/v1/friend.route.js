@@ -8,7 +8,9 @@ const Router = express.Router();
 Router.use(verifyTokenMiddleware.verifyToken);
 
 Router.route('/add/:friendId').post(friendController.addFriend);
-Router.route('/access/:id').patch(friendController.accessFriend);
-Router.route('/reject/:id').patch(friendController.rejectFriend);
+Router.route('/accept/:friendId').patch(friendController.acceptFriend);
+Router.route('/reject/:friendId').post(friendController.rejectFriend);
+Router.route('/getAll').get(friendController.getFriends);
+Router.route('/getUnFriends').get(friendController.getUserNotFriend);
 
 export const friendRoute = Router;

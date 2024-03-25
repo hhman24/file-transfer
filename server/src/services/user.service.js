@@ -2,7 +2,7 @@
 import { StatusCodes } from 'http-status-codes';
 import { ObjectId } from 'mongodb';
 import { UserModel } from '~/models/UserModel';
-import { MsgModel } from '~/models/MessageModel';
+import { messageModel } from '~/models/MessageModel';
 import ApiError from '~/utils/ApiError';
 
 // create new user
@@ -95,7 +95,7 @@ const getMsgById = async (req) => {
 
   const results = {};
 
-  if (endIndex < (await MsgModel.countAmount())) {
+  if (endIndex < (await messageModel.countAmount())) {
     results.next = {
       page: page + 1,
       limit: limit,
@@ -110,7 +110,7 @@ const getMsgById = async (req) => {
   }
 
   try {
-    results.results = await MsgModel.findById(id, startIndex, limit);
+    results.results = await messageModel.findById(id, startIndex, limit);
     return results;
   } catch (error) {
     throw error;

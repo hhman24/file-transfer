@@ -19,5 +19,4 @@ export const REFRESH_TOKEN_STATUS = {
 export const FRIEND_STATUS = {
   ACCEPTED: 'accepted',
   PENDING: 'pending',
-  REJECTED: 'rejected',
 };
