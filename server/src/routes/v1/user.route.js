@@ -1,13 +1,11 @@
 import express from 'express';
-import { StatusCodes } from 'http-status-codes';
 import { userController } from '~/controllers/user.controller';
+import { verifyTokenMiddleware } from '~/middlewares/verifyToken.middleware';
 //import jwt from midleware
 
 const Router = express.Router();
 
-Router.route('/').get((req, res) => {
-  res.status(StatusCodes.OK).json({ message: 'Welcome to user route' });
-});
+Router.use(verifyTokenMiddleware.verifyToken);
 
 Router.route('/getAll').get(userController.getAll);
 Router.route('/message/:id').get(userController.getMsgById);

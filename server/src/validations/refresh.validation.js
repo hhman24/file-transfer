@@ -10,7 +10,7 @@ const refreshToken = async (req, res, next) => {
   });
 
   try {
-    // disable abortEarly để check toàn bộ lỗi    
+    // disable abortEarly để check toàn bộ lỗi
     await correctCondition.validateAsync(
       { refreshToken: req.cookies.refresh_token },
       { abortEarly: false },

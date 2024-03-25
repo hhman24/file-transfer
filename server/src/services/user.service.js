@@ -2,7 +2,7 @@
 import { StatusCodes } from 'http-status-codes';
 import { ObjectId } from 'mongodb';
 import { UserModel } from '~/models/UserModel';
-import { MsgModel } from '~/models/MessageModel';
+import { messageModel } from '~/models/MessageModel';
 import ApiError from '~/utils/ApiError';
 
 // create new user
@@ -68,6 +68,23 @@ const getOneUserByEmail = async (email) => {
     throw new Error(error);
   }
 };
+
+/**
+ * @dev find one user by id
+ * @returns {...} or null
+ */
+const getOneUserById = async (id) => {
+  try {
+    const user = await UserModel.getOneUserByFilter({
+      _id: new ObjectId(id),
+      _destroy: false,
+    });
+    return user;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 const getMsgById = async (req) => {
   const { id } = req.params;
   const page = parseInt(req.query.page);
@@ -78,7 +95,7 @@ const getMsgById = async (req) => {
 
   const results = {};
 
-  if (endIndex < (await MsgModel.countAmount())) {
+  if (endIndex < (await messageModel.countAmount())) {
     results.next = {
       page: page + 1,
       limit: limit,
@@ -93,7 +110,7 @@ const getMsgById = async (req) => {
   }
 
   try {
-    results.results = await MsgModel.findById(id, startIndex, limit);
+    results.results = await messageModel.findById(id, startIndex, limit);
     return results;
   } catch (error) {
     throw error;
@@ -116,4 +133,5 @@ export const userService = {
   getMsgById,
   getOneUserByFilter,
   getOneUserByEmail,
+  getOneUserById,
 };

@@ -9,7 +9,7 @@ const createNew = async ({ token, userId, expireDate }) => {
   try {
     const newFreshToken = RefreshTokenModule.saveModel({ token, userId, expireDate });
 
-    return await RefreshTokenModule.findOneById(newFreshToken._id);
+    return await RefreshTokenModule.findOneById(newFreshToken.insertedId);
   } catch (error) {
     throw new Error(error);
   }
