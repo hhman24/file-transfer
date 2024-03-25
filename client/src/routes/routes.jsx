@@ -23,11 +23,12 @@ export const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: '/messages/t',
+    path: '/messages',
     element: (
-      <ProtectedRoute>
-        <Message />
-      </ProtectedRoute>
+      // <ProtectedRoute>
+      //   <Message />
+      // </ProtectedRoute>
+      <Message />
     ),
     errorElement: <ErrorPage />,
   },
