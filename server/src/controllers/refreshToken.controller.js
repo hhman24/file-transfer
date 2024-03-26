@@ -65,12 +65,14 @@ const logout = async (req, res, next) => {
     const userToken = await RefreshTokenService.findRefreshTokenByToken(token);
 
     if (!userToken) {
+      res.clearCookie('refresh_token');
       return res.status(StatusCodes.OK).json({
         message: 'Logged Out Sucessfully',
       });
     }
 
     await RefreshTokenService.revokedToken(userToken.token);
+    res.clearCookie('refresh_token');
     return res.status(StatusCodes.OK).json({
       message: 'Logged Out Sucessfully',
     });

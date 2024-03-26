@@ -159,6 +159,9 @@ const findFriendsWithLastMessage = async (user) => {
             userB: { $arrayElemAt: ['$userB', 0] },
           },
         },
+        {
+          $sort: { 'lastMessage.createdAt': -1 }, // Sắp xếp theo createAt tăng dần
+        },
       ])
       .toArray();
     return res;
