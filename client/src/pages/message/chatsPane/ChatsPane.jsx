@@ -11,11 +11,38 @@ import EditNoteRoundedIcon from '@mui/icons-material/EditNoteRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ChatsListItem from './ChatsListItem';
+import Skeleton from '@mui/material/Skeleton';
 import { toggleMessagesPane } from '~/utils/toggleMessagePane';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { Bounce, toast } from 'react-toastify';
+import { getListFriends } from '~/redux/feature/friend/friendSlice';
 
-function ChatsPane({ chats, setSelectedChat, selectedChatId }) {
+function ChatsPane() {
   const { mode, setMode } = useColorScheme();
-  
+  const dispatch = useDispatch();
+  const { listFriend, selectedChat, isLoading, error } = useSelector((state) => state.friends);
+
+  useEffect(() => {
+    if (error) {
+      toast(`🔥🔥 ${error}!`, {
+        position: 'top-center',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light',
+        transition: Bounce,
+      });
+    }
+  }, [error]);
+
+  useEffect(() => {
+    dispatch(getListFriends());
+  }, [dispatch]);
+
   return (
     <Box sx={{ bgcolor: 'background.paper' }}>
       <Box
@@ -136,9 +163,15 @@ function ChatsPane({ chats, setSelectedChat, selectedChatId }) {
           },
         }}
       >
-        {chats.map((chat) => (
-          <ChatsListItem key={chat.id} {...chat} setSelectedChat={setSelectedChat} selectedChatId={selectedChatId} />
-        ))}
+        {isLoading ? (
+          <Stack direction={'column'} spacing={1} alignItems={'center'} justifyContent={'space-between'}>
+            {[1, 2, 3, 4, 5, 6].map((value, index) => (
+              <Skeleton key={index} variant="rectangular" height={60} animation="wave" />
+            ))}
+          </Stack>
+        ) : (
+          listFriend.map((f) => <ChatsListItem key={f._id} chat={f} selectedChat={selectedChat} />)
+        )}
       </List>
     </Box>
   );

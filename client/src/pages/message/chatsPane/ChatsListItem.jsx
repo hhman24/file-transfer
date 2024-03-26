@@ -5,17 +5,21 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import CircleIcon from '@mui/icons-material/Circle';
 import AvatarWithStatus from '~/components/avatar/AvatarWithStatus';
+import { useDispatch } from 'react-redux';
+import { setSelectedChat } from '~/redux/feature/friend/friendSlice';
+import moment from 'moment';
 
 function ChatsListItem(props) {
-  const { id, sender, messages, selectedChatId, setSelectedChat } = props;
-  const selected = selectedChatId === id;
+  const { chat, selectedChat } = props;
+  const dispatch = useDispatch();
+  const selected = selectedChat._id === chat._id;
 
   return (
     <>
       <ListItemButton
         selected={selected}
         onClick={() => {
-          setSelectedChat({ id, sender, messages });
+          dispatch(setSelectedChat(chat));
         }}
         sx={{
           flexDirection: 'column',
@@ -24,13 +28,16 @@ function ChatsListItem(props) {
         }}
       >
         <Stack direction={'row'} spacing={1.5} sx={{ flex: 1 }}>
-          <AvatarWithStatus online={sender.online} senderName={sender.name} />
+          <AvatarWithStatus
+            online={chat?.friend?.online || false}
+            senderName={chat.friend?.username || 'Minh An test'}
+          />
           <Box sx={{ flex: 1 }}>
             <Typography variant="subtitile2" fontSize={'14px'} fontWeight={500}>
-              {sender.name}
+              {chat.friend?.username || 'Minh An test'}
             </Typography>
             <Typography variant="body2" fontWeight={300} fontSize={'13px'} color="text.tertiary">
-              {sender.username}
+              {chat.friend?.email || 'Minh An test'}
             </Typography>
           </Box>
           <Box
@@ -39,7 +46,7 @@ function ChatsListItem(props) {
               textAlign: 'right',
             }}
           >
-            {messages[0].unread && <CircleIcon sx={{ fontSize: 12 }} color="primary" />}
+            {chat?.lastMessage?._unread && <CircleIcon sx={{ fontSize: 12 }} color="primary" />}
             <Typography
               display={{
                 xs: 'none',
@@ -48,7 +55,7 @@ function ChatsListItem(props) {
               noWrap
               variant="body2"
             >
-              5 mins ago
+              {chat.lastMessage ? moment(chat?.lastMessage?.createdAt).fromNow() : ''}
             </Typography>
           </Box>
         </Stack>
@@ -62,7 +69,7 @@ function ChatsListItem(props) {
             textOverflow: 'ellipsis',
           }}
         >
-          {messages[0].content}
+          {chat?.lastMessage?.content || ' '}
         </Typography>
       </ListItemButton>
       <Divider sx={{ margin: 0 }} />

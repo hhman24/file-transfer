@@ -5,19 +5,23 @@ import Stack from '@mui/material/Stack';
 import AvatarWithStatus from '~/components/avatar/AvatarWithStatus';
 import ChatBubble from './ChatBubble';
 import MessageInput from './MessageInput';
+import { useDispatch, useSelector } from 'react-redux';
+import { getMsg } from '~/redux/feature/message/messageSlice';
 
-function MessagePane(props) {
-  const { chat } = props;
-  const [chatMessages, setChatMessages] = useState(chat.messages);
+function MessagePane() {
   const [textAreaValue, setTextAreaValue] = useState('');
+  const dispatch = useDispatch();
+  const selectedChat = useSelector((state) => state.friends.selectedChat);
+  const messages = useSelector((state) => state.message.message);
 
   useEffect(() => {
-    setChatMessages(chat.messages);
-  }, [chat.messages]);
+    // setChatMessages(chat.messages);
+    if (selectedChat) dispatch(getMsg({ id: selectedChat._id, page: 1, limit: 10 }));
+  }, [selectedChat, dispatch]);
 
   return (
     <>
-      <HeaderMessagePane sender={chat.sender} />
+      <HeaderMessagePane sender={selectedChat?.friend} />
       <Box
         sx={{
           display: 'flex',
@@ -30,14 +34,14 @@ function MessagePane(props) {
         }}
       >
         <Stack spacing={2} justifyContent={'flex-end'}>
-          {chatMessages.map((message, index) => {
-            const isYou = message.sender === 'You';
+          {messages.map((message, index) => {
+            const isYou = message.sendById !== selectedChat.friend._id;
             return (
               <Stack key={index} direction={'row'} spacing={2} flexDirection={isYou ? 'row-reverse' : 'row'}>
-                {message.sender !== 'You' && (
-                  <AvatarWithStatus online={message.sender.online} senderName={message.sender.name} />
+                {!isYou && (
+                  <AvatarWithStatus online={selectedChat.friend.online} senderName={selectedChat.friend.username} />
                 )}
-                <ChatBubble variant={isYou ? 'sent' : 'received'} {...message} />
+                <ChatBubble variant={isYou ? 'sent' : 'received'} message={message} friend={selectedChat.friend} />
               </Stack>
             );
           })}
@@ -47,17 +51,17 @@ function MessagePane(props) {
         textAreaValue={textAreaValue}
         setTextAreaValue={setTextAreaValue}
         onSubmit={() => {
-          const newId = chatMessages.length + 1;
-          const newIdString = newId.toString();
-          setChatMessages([
-            ...chatMessages,
-            {
-              id: newIdString,
-              sender: 'You',
-              content: textAreaValue,
-              timestamp: 'Just now',
-            },
-          ]);
+          // const newId = chatMessages.length + 1;
+          // const newIdString = newId.toString();
+          // setChatMessages([
+          //   ...chatMessages,
+          //   {
+          //     id: newIdString,
+          //     sender: 'You',
+          //     content: textAreaValue,
+          //     timestamp: 'Just now',
+          //   },
+          // ]);
         }}
       />
     </>

@@ -50,7 +50,7 @@ const findById = async (id, startIndex, limit) => {
   try {
     return await GET_DB()
       .collection(MESSAGE_COLLECTION_NAME)
-      .find({ receiver: new ObjectId(id) })
+      .find({ contact: new ObjectId(id) })
       .limit(limit)
       .skip(startIndex)
       .toArray();
