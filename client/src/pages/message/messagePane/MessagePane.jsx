@@ -17,7 +17,7 @@ function MessagePane() {
   useEffect(() => {
     // setChatMessages(chat.messages);
     if (selectedChat) dispatch(getMsg({ id: selectedChat._id, page: 1, limit: 10 }));
-  }, [dispatch, selectedChat]);
+  }, [selectedChat, dispatch]);
 
   return (
     <>
@@ -38,7 +38,9 @@ function MessagePane() {
             const isYou = message.sendById !== selectedChat.friend._id;
             return (
               <Stack key={index} direction={'row'} spacing={2} flexDirection={isYou ? 'row-reverse' : 'row'}>
-                {!isYou && <AvatarWithStatus online={message.sender.online} senderName={message.sender.name} />}
+                {!isYou && (
+                  <AvatarWithStatus online={selectedChat.friend.online} senderName={selectedChat.friend.username} />
+                )}
                 <ChatBubble variant={isYou ? 'sent' : 'received'} message={message} friend={selectedChat.friend} />
               </Stack>
             );

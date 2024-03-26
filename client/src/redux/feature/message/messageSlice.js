@@ -45,7 +45,6 @@ const messageSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(getMsg.fulfilled, (state, action) => {
-        console.log(action.payload);
         state.message = action.payload.results;
       })
       .addMatcher(

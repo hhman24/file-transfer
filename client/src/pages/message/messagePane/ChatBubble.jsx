@@ -7,7 +7,7 @@ import Avatar from '@mui/material/Avatar';
 import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRounded';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import CelebrationOutlinedIcon from '@mui/icons-material/CelebrationOutlined';
-import { useSelector } from 'react-redux';
+import moment from 'moment';
 
 function ChatBubble(props) {
   const { variant, message, friend } = props;
@@ -24,7 +24,7 @@ function ChatBubble(props) {
           {message.sendById === friend._id ? friend.username : 'You'}
         </Typography>
         <Typography variant="body2" fontWeight={400} fontSize={'12px'} color="text.tertiary">
-          {message.createdAt}
+          {moment(message?.createdAt).fromNow()}
         </Typography>
       </Stack>
       {message.metaURL ? (
