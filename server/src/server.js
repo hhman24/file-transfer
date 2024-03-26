@@ -31,12 +31,10 @@ const START_SERVER = () => {
   //   const delayTime = 2000; // Thời gian trễ 2 giây (2000 milliseconds)
   //   setTimeout(next, delayTime);
   // }
-
-  // // Sử dụng middleware delayResponse cho tất cả các route
   // app.use(delayResponse);
 
   app.listen(env.APP_PORT, env.APP_HOST, () => {
-    console.log(`3. Server is running on ${env.APP_HOST}:${env.APP_PORT}/`);
+    console.log(`3. Server is running on ${env.APP_HOST}:${env.APP_PORT}`);
   });
 
   // thực hiện các tác vụ cleanup trk khi dừng server
