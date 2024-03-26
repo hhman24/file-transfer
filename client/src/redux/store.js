@@ -6,9 +6,11 @@ import { persistReducer, persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, 
 import storage from 'redux-persist/lib/storage';
 import friendSlice from './feature/friend/friendSlice';
 import authSlice from './feature/auth/authSlice';
+import messageSlice from './feature/message/messageSlice';
 
 const rootReducer = combineReducers({
   friends: friendSlice,
+  message: messageSlice,
   auth: authSlice,
   // [apiSlice.reducerPath]: apiSlice.reducer,
 });

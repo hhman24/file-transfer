@@ -44,19 +44,19 @@ function HeaderMessagePane(props) {
         </IconButton>
         <Avatar
           alt="avtar"
-          {...stringAvatar(sender.name)}
+          {...stringAvatar(sender?.username || 'Minh An test')}
           sx={{
             height: 64,
             width: 64,
-            bgcolor: stringToColor(sender.name),
+            bgcolor: stringToColor(sender?.username || 'Minh An test'),
           }}
         />
         <div>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
             <Typography variant="subtitile2" fontSize={'20px'} fontWeight={500} noWrap>
-              {sender.name}
+              {sender?.username || 'Minh An test'}
             </Typography>
-            {sender.online ? (
+            {sender?.online ? (
               <Chip
                 icon={<CircleIcon color="success" />}
                 label="Online"
@@ -76,7 +76,7 @@ function HeaderMessagePane(props) {
             ) : undefined}
           </Box>
           <Typography variant="body2" fontWeight={300} fontSize={'16px'} color="text.tertiary">
-            {sender.username}
+            {sender?.email || 'Minh An test'}
           </Typography>
         </div>
       </Stack>

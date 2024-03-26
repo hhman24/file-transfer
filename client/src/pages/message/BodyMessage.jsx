@@ -1,8 +1,6 @@
 import { useColorScheme } from '@mui/material/styles';
-import { useState } from 'react';
 import Box from '@mui/material/Box';
 import ChatsPane from './chatsPane/ChatsPane';
-import { chats } from '~/data/messagesData';
 import MessagePane from './messagePane/MessagePane';
 
 function BodyMessage() {
@@ -45,7 +43,7 @@ function BodyMessage() {
             mode === 'light' ? theme.devSchema.backgroundLevel1Light : theme.devSchema.backgroundLevel1Dark,
         }}
       >
-        {/* <MessagePane chat={selectedChat} /> */}
+        <MessagePane />
       </Box>
     </>
   );
