@@ -16,7 +16,7 @@ const verifyToken = async (req, res, next) => {
     const accessToken = token.split(' ')[1];
     const decoded = jwt.verify(accessToken, env.ACCESS_TOKEN_PRIVATE_KEY);
     const user = await userService.getOne(decoded._id);
-    if (!user) {
+    if (Object.keys(user) === 0) {
       throw new ApiError(StatusCodes.FORBIDDEN, 'Token is not valid');
     }
 

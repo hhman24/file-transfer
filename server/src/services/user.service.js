@@ -68,6 +68,22 @@ const getOneUserByEmail = async (email) => {
   }
 };
 
+/**
+ * @dev find one user by id
+ * @returns {...} or null
+ */
+const getOneUserById = async (id) => {
+  try {
+    const user = await UserModel.getOneUserByFilter({
+      _id: new ObjectId(id),
+      _destroy: false,
+    });
+    return user;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 const remove = async (id) => {
   try {
     return await UserModel.removeModel(id);
@@ -83,4 +99,5 @@ export const userService = {
   remove,
   getOneUserByFilter,
   getOneUserByEmail,
+  getOneUserById,
 };

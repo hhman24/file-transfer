@@ -61,7 +61,7 @@ function Header() {
               }}
             />
           </Box>
-          <Typography fontSize="1.2rem" fontWeight="bold" variant="span">
+          <Typography sx={{ fontSize: { sm: '1rem', lg: '1.25rem' } }} fontWeight="bold" variant="span">
             Capstone 2024 Chat
           </Typography>
         </Box>

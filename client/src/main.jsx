@@ -6,6 +6,8 @@ import { router } from '~/routes/routes.jsx';
 import { Provider } from 'react-redux';
 import GlobalStyles from '@mui/material/GlobalStyles';
 import themes from '~/themes/index.js';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 import { persistor, store } from '~/redux/store';
 import { PersistGate } from 'redux-persist/integration/react';
 
@@ -25,6 +27,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           })}
         />
         <RouterProvider router={router} />
+        <ToastContainer />
       </CssVarsProvider>
     </PersistGate>
   </Provider>,

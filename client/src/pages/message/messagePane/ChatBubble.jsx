@@ -7,9 +7,10 @@ import Avatar from '@mui/material/Avatar';
 import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRounded';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import CelebrationOutlinedIcon from '@mui/icons-material/CelebrationOutlined';
+import moment from 'moment';
 
 function ChatBubble(props) {
-  const { content, variant, timestamp, attachment = undefined, sender } = props;
+  const { variant, message, friend } = props;
   const isSent = variant === 'sent';
   const [isHovered, setIsHovered] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
@@ -20,13 +21,13 @@ function ChatBubble(props) {
     <Box sx={{ maxWidth: '60%', minWidth: 'auto' }}>
       <Stack direction="row" justifyContent="space-between" spacing={2} sx={{ mb: 0.25 }}>
         <Typography variant="body2" fontWeight={400} fontSize={'12px'} color="text.tertiary">
-          {sender === 'You' ? sender : sender.name}
+          {message.sendById === friend._id ? friend.username : 'You'}
         </Typography>
         <Typography variant="body2" fontWeight={400} fontSize={'12px'} color="text.tertiary">
-          {timestamp}
+          {moment(message?.createdAt).fromNow()}
         </Typography>
       </Stack>
-      {attachment ? (
+      {message.metaURL ? (
         <Box
           sx={{
             backgroundColor: (theme) =>
@@ -45,9 +46,9 @@ function ChatBubble(props) {
               <InsertDriveFileRoundedIcon />
             </Avatar>
             <div>
-              <Typography fontSize={'12px'}>{attachment.fileName}</Typography>
+              <Typography fontSize={'12px'}>{message.metaURL}</Typography>
               <Typography variant="body2" fontSize={'12px'}>
-                {attachment.size}
+                {message.metaURL}
               </Typography>
             </div>
           </Stack>
@@ -80,7 +81,7 @@ function ChatBubble(props) {
                 color: (theme) => (isSent ? theme.devSchema.mainLight : 'text.primary'),
               }}
             >
-              {content}
+              {message.content}
             </Typography>
           </Box>
           {(isHovered || isLiked || isCelebrated) && (

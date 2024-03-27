@@ -24,7 +24,7 @@ import { FormHelperText } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { registerUser } from '~/redux/feature/auth/authSlice';
+import { registerUser, setRegister } from '~/redux/feature/auth/authSlice';
 
 const schema = yup.object().shape({
   email: yup.string().required('email is required').email(),
@@ -58,8 +58,11 @@ function Register() {
   });
 
   useEffect(() => {
-    if (registerState.success) navigate('/login');
-  }, [registerState.success, navigate]);
+    if (registerState.success) {
+      dispatch(setRegister(false));
+      navigate('/login');
+    }
+  }, [registerState.success, navigate, dispatch]);
 
   const onSubmit = async (data) => {
     try {
