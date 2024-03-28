@@ -129,6 +129,23 @@ const removeModel = async (id) => {
   }
 };
 
+// find and update
+const findOneAndUpdateById = async (id, update) => {
+  try {
+    return await GET_DB()
+      .collection(USER_COLLECTION_NAME)
+      .findOneAndUpdate(
+        {
+          _id: new ObjectId(id),
+        },
+        update,
+        { returnDocument: 'after' },
+      );
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 export const UserModel = {
   USER_COLLECTION_NAME,
   USER_COLLECTION_SCHEMA,
@@ -138,4 +155,5 @@ export const UserModel = {
   removeModel,
   getOneUserDetailsByFilter,
   getOneUserByFilter,
+  findOneAndUpdateById,
 };

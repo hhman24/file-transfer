@@ -5,7 +5,7 @@ import { GET_DB } from '~/config/mongodb';
 
 const MESSAGE_COLLECTION_NAME = 'Messages';
 const MESSAGE_COLLECTION_SCHEMA = Joi.object({
-  contact: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
+  conversation: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
   sendById: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
   content: Joi.string().required(),
   metaURL: Joi.string().allow('').required(),
@@ -24,7 +24,7 @@ const saveModel = async (data) => {
 
     const newObj = {
       ...validatedSchema,
-      contact: new ObjectId(validatedSchema.contact),
+      conversation: new ObjectId(validatedSchema.contact),
       sendById: new ObjectId(validatedSchema.sendById),
     };
 
@@ -50,7 +50,7 @@ const findById = async (id, startIndex, limit) => {
   try {
     return await GET_DB()
       .collection(MESSAGE_COLLECTION_NAME)
-      .find({ contact: new ObjectId(id) })
+      .find({ conversation: new ObjectId(id) })
       .limit(limit)
       .skip(startIndex)
       .toArray();

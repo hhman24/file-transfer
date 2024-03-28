@@ -38,11 +38,10 @@ const getMsgById = async (req) => {
  * @param data: {...req.body, sendById: req.user._id.toString()}
  * @returns object or null
  */
-
 const sendMsg = async (data) => {
   try {
     const res = await messageModel.saveModel({
-      contact: data.contact,
+      conversation: data.conversation,
       sendById: data.sendById,
       content: data.content,
       metaURL: data.metaURL,

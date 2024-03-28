@@ -10,18 +10,27 @@ import { Loggers } from '~/middlewares/logger.middleware';
 import { CONNECT_DB, CLOSE_DB } from '~/config/mongodb';
 import { errorHandlingMiddleware } from '~/middlewares/errorHandler.middleware';
 import { API_v1 } from '~/routes/v1';
+import { SOCKET_IO } from './sockets/socket';
 
 const START_SERVER = () => {
   const app = express();
 
-  app.use(cors(corsOptions));
+  // create server http for socket io
+  const { server } = SOCKET_IO.SocketInit(app);
 
+  app.use(cors(corsOptions)); // setup cors
   app.use(Loggers.logger);
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
   app.use(cookie());
+
   // use API v1
   app.use('/v1', API_v1);
+
+  // Middleware for socket
+
+  // Listen event
+  SOCKET_IO.onConnection();
 
   // Middlewares xử lý tập trung lỗi
   app.use(errorHandlingMiddleware);
@@ -33,8 +42,8 @@ const START_SERVER = () => {
   // }
   // app.use(delayResponse);
 
-  app.listen(env.APP_PORT, env.APP_HOST, () => {
-    console.log(`3. Server is running on ${env.APP_HOST}:${env.APP_PORT}`);
+  server.listen(env.APP_PORT, () => {
+    console.log(`3. Server is running on http://${env.APP_HOST}:${env.APP_PORT}`);
   });
 
   // thực hiện các tác vụ cleanup trk khi dừng server

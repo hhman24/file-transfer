@@ -12,7 +12,7 @@ const sendMsg = async (req, res, next) => {
       .messages({
         'any.required': 'friendId is required (hhman)',
       }),
-    contact: Joi.string()
+    conversation: Joi.string()
       .required()
       .pattern(OBJECT_ID_RULE)
       .message(OBJECT_ID_RULE_MESSAGE)
