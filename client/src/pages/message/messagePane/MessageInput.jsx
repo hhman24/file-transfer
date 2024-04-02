@@ -1,16 +1,32 @@
 import { useColorScheme } from '@mui/material/styles';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import IconButton from '@mui/material/IconButton';
 import Input from '@mui/material/Input';
 import SendIcon from '@mui/icons-material/Send';
 import AddIcon from '@mui/icons-material/Add';
+import { useDispatch, useSelector } from 'react-redux';
+import { sendMsg } from '~/redux/feature/message/messageSlice';
 
-function MessageInput(props) {
+function MessageInput() {
   const { mode, setMode } = useColorScheme();
-  const { textAreaValue, setTextAreaValue, onSubmit } = props;
+  const [textAreaValue, setTextAreaValue] = useState('');
   const textAreaRef = useRef(null);
+  const selectedChat = useSelector((state) => state.friends.selectedChat);
+  const dispatch = useDispatch();
+
+  const onSubmit = () => {
+    const msg = {
+      _id: '1231231231232',
+      conversation: selectedChat._id,
+      content: textAreaValue,
+      metaURL: '',
+      createdAt: new Date().toString(),
+      _unread: true,
+    };
+    dispatch(sendMsg(msg));
+  };
 
   const handleClick = () => {
     if (textAreaValue.trim() !== '') {

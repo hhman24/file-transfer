@@ -22,9 +22,10 @@ function BodyMessage() {
           overflowY: 'auto',
           position: { xs: 'fixed', sm: 'sticky' },
           top: 0,
-          right: 0,
+          left: 0,
           zIndex: 9999,
           mt: '58px',
+          backgroundColor: 'white',
         }}
       >
         {/* chats={chats} selectedChatId={selectedChat.id} setSelectedChat={setSelectedChat} */}

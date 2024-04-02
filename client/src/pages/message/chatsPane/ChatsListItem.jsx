@@ -12,7 +12,7 @@ import moment from 'moment';
 function ChatsListItem(props) {
   const { chat, selectedChat } = props;
   const dispatch = useDispatch();
-  const selected = selectedChat._id === chat._id;
+  const selected = selectedChat?._id === chat?._id;
 
   return (
     <>

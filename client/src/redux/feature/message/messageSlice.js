@@ -16,7 +16,6 @@ const initialState = {
   message: [],
   isLoading: false,
   error: null,
-  currentRequestId: undefined,
 };
 
 export const getMsg = createAsyncThunk('message/getMsg', async ({ id, page, limit }, thunkAPI) => {
@@ -38,47 +37,31 @@ const messageSlice = createSlice({
   initialState,
   name: 'message',
   reducers: {
+    reSetStateMsg: (state) => {
+      state.message = [];
+      state.isLoading = false;
+      state.error = null;
+    },
     sendMsg: (state, action) => {
       state.message.push(action.payload);
     },
   },
   extraReducers(builder) {
     builder
+      .addCase(getMsg.pending, (state) => {
+        state.isLoading = true;
+      })
       .addCase(getMsg.fulfilled, (state, action) => {
         state.message = action.payload.results;
+        state.isLoading = false;
+        state.error = null;
       })
-      .addMatcher(
-        // matcher can be defined inline as a type predicate function
-        (action) => action.type.endsWith('/pending'),
-        (state, action) => {
-          state.currentRequestId = action.meta.requestId;
-          state.isLoading = true;
-        },
-      )
-      .addMatcher(
-        // matcher can be defined inline as a type predicate function
-        (action) => action.type.endsWith('/fulfilled'),
-        (state, action) => {
-          if (state.isLoading && state.currentRequestId === action.meta.requestId) {
-            state.isLoading = false;
-            state.currentRequestId = undefined;
-            state.error = null;
-          }
-        },
-      )
-      .addMatcher(
-        // matcher can be defined inline as a type predicate function
-        (action) => action.type.endsWith('/rejected'),
-        (state, action) => {
-          if (state.isLoading && state.currentRequestId === action.meta.requestId) {
-            state.isLoading = false;
-            state.currentRequestId = undefined;
-          }
-          state.error = action.payload;
-        },
-      );
+      .addCase(getMsg.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      });
   },
 });
 
-export const { sendMsg } = messageSlice.actions;
+export const { sendMsg, reSetStateMsg } = messageSlice.actions;
 export default messageSlice.reducer;

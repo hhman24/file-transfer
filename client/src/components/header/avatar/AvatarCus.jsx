@@ -15,7 +15,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { stringAvatar, stringToColor } from '~/utils/stringAvatar';
 import { logoutUser } from '~/redux/feature/auth/authSlice';
 import { useNavigate } from 'react-router-dom';
-import { refreshToken } from '~/apis/axiosConfig';
+import { reSetStateFriend } from '~/redux/feature/friend/friendSlice';
+import { reSetStateMsg } from '~/redux/feature/message/messageSlice';
 
 function AvatarCus() {
   const { mode, setMode } = useColorScheme();
@@ -127,14 +128,9 @@ function AvatarCus() {
         <Divider sx={{ my: 0.5, mx: -1 }} />
         <MenuItem
           onClick={() => {
-            // refreshToken()
-            //   .then((data) => {
-            //     console.log(data);
-            //   })
-            //   .catch((err) => {
-            //     console.log(err);
-            //   });
             dispatch(logoutUser()).then(() => {
+              dispatch(reSetStateFriend()); // friend;
+              dispatch(reSetStateMsg()); // friend;
               navigate('/login');
             });
           }}
