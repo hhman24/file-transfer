@@ -8,10 +8,10 @@ const MESSAGE_COLLECTION_SCHEMA = Joi.object({
   conversation: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
   sendById: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
   content: Joi.string().required(),
-  metaURL: Joi.string().allow('').required(),
+  metaURL: Joi.string().allow('').default(''),
   createdAt: Joi.date().default(() => new Date()),
   updatedAt: Joi.date().default(null),
-  _unread: Joi.boolean().default(false),
+  _unread: Joi.boolean().default(true),
 });
 
 const validateSchema = async (schema) => {

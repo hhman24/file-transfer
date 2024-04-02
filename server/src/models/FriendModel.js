@@ -12,7 +12,8 @@ const FRIEND_COLLECTION_NAME = 'Friends';
 const FRIEND_COLLECTION_SCHEMA = Joi.object({
   userA: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
   userB: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
-  enPrivateKey: Joi.string().strict().default(''),
+  enPrivateKeyA: Joi.string().strict().default(''),
+  enPrivateKeyB: Joi.string().strict().default(''),
   status: Joi.string()
     .valid(...Object.values(FRIEND_STATUS))
     .default(FRIEND_STATUS.PENDING),

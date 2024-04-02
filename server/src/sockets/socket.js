@@ -4,6 +4,7 @@ import { corsOptions } from '~/config/cors';
 import { userService } from '~/services/user.service';
 import { EVENT } from '~/utils/constants';
 import { sendMessageEvent } from './event/msg.event';
+import { acceptFriendReqEvent, sendFriendReqEvent } from './event/friend.event';
 
 const userSocketMap = {}; // userId: socketId
 let ioInstance = null;
@@ -63,11 +64,13 @@ const onConnection = () => {
     /**
      * @dev send messages
      */
-    socket.on(EVENT.SEND_MESSAGE, sendMessageEvent(ioInstance, socket));
+    socket.on(EVENT.SEND_TEXT_MESSAGE, sendMessageEvent(ioInstance, socket));
 
     /**
      * @dev friend request
      */
+    socket.on(EVENT.SEND_FRIEND_REQUEST, sendFriendReqEvent(ioInstance, userSocketMap));
+    socket.on(EVENT.ACCEPT_FRIEND_REQUEST, acceptFriendReqEvent(ioInstance, userSocketMap));
 
     // -------------- HANDLE SOCKET DISCONNECTION ----------------- //
     socket.on('disconnect', () => {
