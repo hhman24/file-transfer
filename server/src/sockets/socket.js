@@ -3,7 +3,7 @@ import { Server } from 'socket.io';
 import { corsOptions } from '~/config/cors';
 import { userService } from '~/services/user.service';
 import { EVENT } from '~/utils/constants';
-import { sendMessageEvent } from './event/msg.event';
+import { sendMessageEvent, startConversation } from './event/msg.event';
 import { acceptFriendReqEvent, sendFriendReqEvent } from './event/friend.event';
 
 const userSocketMap = {}; // userId: socketId
@@ -45,7 +45,6 @@ const onConnection = () => {
     console.log('user connected', socket.id);
     const userId = socket.handshake.query.userId;
 
-    console.log('user connected', socket.handshake.query);
     /**
      * @dev notifi who's online
      */
@@ -64,7 +63,8 @@ const onConnection = () => {
     /**
      * @dev send messages
      */
-    socket.on(EVENT.SEND_TEXT_MESSAGE, sendMessageEvent(ioInstance, socket));
+    socket.on(EVENT.SEND_TEXT_MESSAGE, sendMessageEvent(ioInstance, userSocketMap));
+    socket.on(EVENT.START_CONVERSATION, startConversation(ioInstance, userSocketMap));
 
     /**
      * @dev friend request

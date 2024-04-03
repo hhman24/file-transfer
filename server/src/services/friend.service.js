@@ -155,6 +155,14 @@ const findContactById = async (id, user) => {
   }
 };
 
+const findConversation = async (id) => {
+  try {
+    return await friendModel.findOneById(id);
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const friendService = {
   addFriend,
   acceptedFriend,
@@ -162,4 +170,5 @@ export const friendService = {
   getFriends,
   getUserNotFriend,
   findContactById,
+  findConversation,
 };

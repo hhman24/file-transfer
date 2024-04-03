@@ -24,7 +24,7 @@ const saveModel = async (data) => {
 
     const newObj = {
       ...validatedSchema,
-      conversation: new ObjectId(validatedSchema.contact),
+      conversation: new ObjectId(validatedSchema.conversation),
       sendById: new ObjectId(validatedSchema.sendById),
     };
 
@@ -67,6 +67,47 @@ const countAmount = async () => {
     throw new Error(error);
   }
 };
+
+/**
+ * @return set _unread where condition
+ */
+const updateManyMessageStatus = async (filter) => {
+  try {
+    return await GET_DB()
+      .collection(MESSAGE_COLLECTION_NAME)
+      .updateMany(
+        filter,
+        {
+          $set: {
+            _unread: false,
+            updatedAt: new Date(),
+          },
+        },
+        // { multi: true },
+      );
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+/**
+ * @return new message
+ */
+const newMessage = async (conversation) => {
+  try {
+    return await GET_DB()
+      .collection(MESSAGE_COLLECTION_NAME)
+      .findOne(
+        {
+          conversation: new ObjectId(conversation),
+        },
+        { sort: { createdAt: -1 } },
+      );
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 export const messageModel = {
   MESSAGE_COLLECTION_NAME,
   MESSAGE_COLLECTION_SCHEMA,
@@ -74,4 +115,6 @@ export const messageModel = {
   findById,
   countAmount,
   findOneById,
+  updateManyMessageStatus,
+  newMessage,
 };

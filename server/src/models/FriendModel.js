@@ -85,7 +85,6 @@ const findOneRelationUpdate = async (userA, userB, status) => {
         { returnDocument: 'after' },
       );
 
-    console.log(res);
     return res;
   } catch (error) {
     throw new Error(error);
@@ -109,7 +108,7 @@ const findFriendsWithLastMessage = async (user) => {
           $lookup: {
             from: messageModel.MESSAGE_COLLECTION_NAME,
             localField: '_id',
-            foreignField: 'contact',
+            foreignField: 'conversation',
             pipeline: [
               {
                 $sort: { createdAt: -1 },

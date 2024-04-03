@@ -12,8 +12,11 @@ export const WHITELIST_DOMAINS = [
 
 // Event
 export const EVENT = {
-  SEND_TEXT_MESSAGE: 'envet::send_text_msg',
-  SEND_FILE_MESSAGE: 'envet::send_file_msg',
+  SEND_TEXT_MESSAGE: 'event::send_text_msg',
+  NEW_MESSAGE: 'event::new_msg',
+  SEEN_MESSAGE: 'event::seen_msg',
+  START_CONVERSATION: 'event::start_conversation',
+  SEND_FILE_MESSAGE: 'event::send_file_msg',
   SEND_FRIEND_REQUEST: 'event::send_friend_req',
   RECEIVE_FRIEND_REQUEST: 'event::receive_friend_request',
   ACCEPT_FRIEND_REQUEST: 'event::accept_friend_req',

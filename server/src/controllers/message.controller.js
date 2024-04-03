@@ -17,7 +17,7 @@ const sendMsg = async (req, res, next) => {
     const userId = req.user._id.toString();
     const friendId = req.params.friendId;
 
-    const existContact = await friendService.findContactById(req.body.conversation);
+    const existContact = await friendService.findConversation(req.body.conversation);
 
     if (!existContact) throw new ApiError(StatusCodes.BAD_REQUEST, 'Not found contact');
 
