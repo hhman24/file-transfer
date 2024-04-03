@@ -108,12 +108,18 @@ const friendSlice = createSlice({
       state.listNotFriend[id].conversation = req;
     },
     acceptRequest: (state, action) => {
-      console.log(action.payload);
       state.listFriend.unshift(action.payload);
       const res = state.listNotFriend.filter((f) => {
         return !f.conversation || f.conversation._id !== action.payload._id;
       });
       state.listNotFriend = res;
+    },
+    setLastMessageSelectedChat: (state, action) => {
+      const id = state.listFriend.findIndex((m) => m._id === action.payload.conversation);
+      console.log(id);
+      state.listFriend[id].lastMessage = id < 0 ? null : action.payload;
+      console.log(state.listFriend[id].lastMessage);
+      state.selectedChat.lastMessage = id < 0 ? null : action.payload;
     },
   },
   extraReducers(builder) {
@@ -147,5 +153,6 @@ const friendSlice = createSlice({
   },
 });
 
-export const { setSelectedChat, reSetStateFriend, receiveRequest, acceptRequest } = friendSlice.actions;
+export const { setSelectedChat, reSetStateFriend, receiveRequest, acceptRequest, setLastMessageSelectedChat } =
+  friendSlice.actions;
 export default friendSlice.reducer;

@@ -45,6 +45,17 @@ const messageSlice = createSlice({
     sendMsg: (state, action) => {
       state.message.push(action.payload);
     },
+    updateMsg: (state, action) => {
+      const id = state.message.findIndex((m) => m.conversation === action.payload.conversation);
+
+      if (!id) {
+        console.log(state.message);
+        console.log(action.payload);
+        console.log(id);
+      }
+
+      state.message[id] = action.payload;
+    },
   },
   extraReducers(builder) {
     builder
@@ -63,5 +74,5 @@ const messageSlice = createSlice({
   },
 });
 
-export const { sendMsg, reSetStateMsg } = messageSlice.actions;
+export const { sendMsg, reSetStateMsg, updateMsg } = messageSlice.actions;
 export default messageSlice.reducer;

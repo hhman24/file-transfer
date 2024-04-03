@@ -7,25 +7,31 @@ import Input from '@mui/material/Input';
 import SendIcon from '@mui/icons-material/Send';
 import AddIcon from '@mui/icons-material/Add';
 import { useDispatch, useSelector } from 'react-redux';
-import { sendMsg } from '~/redux/feature/message/messageSlice';
+import { socket } from '~/utils/socket';
+import { EVENT } from '~/utils/constants';
 
 function MessageInput() {
   const { mode, setMode } = useColorScheme();
   const [textAreaValue, setTextAreaValue] = useState('');
   const textAreaRef = useRef(null);
   const selectedChat = useSelector((state) => state.friends.selectedChat);
+  const { userInfo } = useSelector((state) => state.auth.loginState);
   const dispatch = useDispatch();
 
   const onSubmit = () => {
-    const msg = {
-      _id: '1231231231232',
-      conversation: selectedChat._id,
-      content: textAreaValue,
-      metaURL: '',
-      createdAt: new Date().toString(),
-      _unread: true,
-    };
-    dispatch(sendMsg(msg));
+    socket.emit(
+      EVENT.SEND_TEXT_MESSAGE,
+      {
+        fromId: userInfo._id,
+        toId: selectedChat.friend._id,
+        conversation: selectedChat._id,
+        content: textAreaValue,
+        metaURL: '',
+      },
+      (response) => {
+        console.log(response);
+      },
+    );
   };
 
   const handleClick = () => {

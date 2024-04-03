@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
-import { acceptRequest, receiveRequest } from '~/redux/feature/friend/friendSlice';
+import { acceptRequest, receiveRequest, setLastMessageSelectedChat } from '~/redux/feature/friend/friendSlice';
+import { sendMsg } from '~/redux/feature/message/messageSlice';
 import { EVENT } from '~/utils/constants';
 import { connectSocket, socket } from '~/utils/socket';
 
@@ -23,6 +24,7 @@ export const ProtectedRoute = ({ children }) => {
       // };
 
       if (!socket) {
+        if (!userId) return;
         connectSocket(userId);
 
         // new friend request
@@ -31,15 +33,27 @@ export const ProtectedRoute = ({ children }) => {
         });
 
         socket.on(EVENT.ACCEPT_FRIEND_REQUEST, (data) => {
-          console.log('socket ACCEPT_FRIEND_REQUEST', data);
           dispatch(acceptRequest(data.conversataion));
+        });
+
+        socket.on(EVENT.SEEN_MESSAGE, (data) => {
+          console.log('socket SEEN_MESSAGE', data.lastMessage);
+          dispatch(setLastMessageSelectedChat(data.lastMessage ? data.lastMessage : null));
+        });
+
+        socket.on(EVENT.NEW_MESSAGE, (data) => {
+          console.log('socket NEW_MESSAGE', data.message);
+          dispatch(sendMsg(data.message));
+          dispatch(setLastMessageSelectedChat(data.message));
         });
       }
     }
 
     return () => {
-      socket.off(EVENT.SEND_FRIEND_REQUEST);
-      socket.off(EVENT.ACCEPT_FRIEND_REQUEST);
+      socket?.off(EVENT.SEND_FRIEND_REQUEST);
+      socket?.off(EVENT.ACCEPT_FRIEND_REQUEST);
+      socket?.off(EVENT.SEEN_MESSAGE);
+      socket?.off(EVENT.NEW_MESSAGE);
     };
   }, [isLogin, socket]);
 
