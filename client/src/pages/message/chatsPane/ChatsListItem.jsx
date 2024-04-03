@@ -5,14 +5,18 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import CircleIcon from '@mui/icons-material/Circle';
 import AvatarWithStatus from '~/components/avatar/AvatarWithStatus';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedChat } from '~/redux/feature/friend/friendSlice';
 import moment from 'moment';
+import { socket } from '~/utils/socket';
+import { EVENT } from '~/utils/constants';
+import truncateText from '~/utils/truncate';
 
 function ChatsListItem(props) {
   const { chat, selectedChat } = props;
   const dispatch = useDispatch();
-  const selected = selectedChat._id === chat._id;
+  const selected = selectedChat?._id === chat?._id;
+  const { userInfo } = useSelector((state) => state.auth.loginState);
 
   return (
     <>
@@ -20,6 +24,14 @@ function ChatsListItem(props) {
         selected={selected}
         onClick={() => {
           dispatch(setSelectedChat(chat));
+          // emit start conversation
+          socket.emit(
+            EVENT.START_CONVERSATION,
+            { fromId: userInfo._id, toId: chat.friend._id, conversation: chat._id },
+            (response) => {
+              console.log(response);
+            },
+          );
         }}
         sx={{
           flexDirection: 'column',
@@ -69,7 +81,10 @@ function ChatsListItem(props) {
             textOverflow: 'ellipsis',
           }}
         >
-          {chat?.lastMessage?.content || ' '}
+          {chat?.lastMessage?.content === '' && chat?.lastMessage?.metaURL !== ''
+            ? 'Attached file ...'
+            : truncateText(chat?.lastMessage?.content, 20) || ' '}
+          {/* {truncateText(chat?.lastMessage?.content, 20)} */}
         </Typography>
       </ListItemButton>
       <Divider sx={{ margin: 0 }} />

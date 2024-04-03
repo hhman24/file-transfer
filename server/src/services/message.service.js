@@ -1,4 +1,5 @@
 /* eslint-disable no-useless-catch */
+import { ObjectId } from 'mongodb';
 import { messageModel } from '~/models/MessageModel';
 
 const getMsgById = async (req) => {
@@ -38,11 +39,10 @@ const getMsgById = async (req) => {
  * @param data: {...req.body, sendById: req.user._id.toString()}
  * @returns object or null
  */
-
 const sendMsg = async (data) => {
   try {
     const res = await messageModel.saveModel({
-      contact: data.contact,
+      conversation: data.conversation,
       sendById: data.sendById,
       content: data.content,
       metaURL: data.metaURL,
@@ -53,4 +53,22 @@ const sendMsg = async (data) => {
   }
 };
 
-export const messageService = { getMsgById, sendMsg };
+/**
+ * @dev set _unread = false where sendById !== userId
+ * @return new message
+ */
+
+const readMsg = async (userId, conversation) => {
+  try {
+    await messageModel.updateManyMessageStatus({
+      conversation: new ObjectId(conversation),
+      sendById: { $ne: new ObjectId(userId) },
+      _unread: true,
+    });
+    return await messageModel.newMessage(conversation);
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const messageService = { getMsgById, sendMsg, readMsg };

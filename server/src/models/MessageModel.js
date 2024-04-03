@@ -5,13 +5,13 @@ import { GET_DB } from '~/config/mongodb';
 
 const MESSAGE_COLLECTION_NAME = 'Messages';
 const MESSAGE_COLLECTION_SCHEMA = Joi.object({
-  contact: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
+  conversation: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
   sendById: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
   content: Joi.string().required(),
-  metaURL: Joi.string().allow('').required(),
+  metaURL: Joi.string().allow('').default(''),
   createdAt: Joi.date().default(() => new Date()),
   updatedAt: Joi.date().default(null),
-  _unread: Joi.boolean().default(false),
+  _unread: Joi.boolean().default(true),
 });
 
 const validateSchema = async (schema) => {
@@ -24,7 +24,7 @@ const saveModel = async (data) => {
 
     const newObj = {
       ...validatedSchema,
-      contact: new ObjectId(validatedSchema.contact),
+      conversation: new ObjectId(validatedSchema.conversation),
       sendById: new ObjectId(validatedSchema.sendById),
     };
 
@@ -50,7 +50,7 @@ const findById = async (id, startIndex, limit) => {
   try {
     return await GET_DB()
       .collection(MESSAGE_COLLECTION_NAME)
-      .find({ contact: new ObjectId(id) })
+      .find({ conversation: new ObjectId(id) })
       .limit(limit)
       .skip(startIndex)
       .toArray();
@@ -67,6 +67,47 @@ const countAmount = async () => {
     throw new Error(error);
   }
 };
+
+/**
+ * @return set _unread where condition
+ */
+const updateManyMessageStatus = async (filter) => {
+  try {
+    return await GET_DB()
+      .collection(MESSAGE_COLLECTION_NAME)
+      .updateMany(
+        filter,
+        {
+          $set: {
+            _unread: false,
+            updatedAt: new Date(),
+          },
+        },
+        // { multi: true },
+      );
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+/**
+ * @return new message
+ */
+const newMessage = async (conversation) => {
+  try {
+    return await GET_DB()
+      .collection(MESSAGE_COLLECTION_NAME)
+      .findOne(
+        {
+          conversation: new ObjectId(conversation),
+        },
+        { sort: { createdAt: -1 } },
+      );
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 export const messageModel = {
   MESSAGE_COLLECTION_NAME,
   MESSAGE_COLLECTION_SCHEMA,
@@ -74,4 +115,6 @@ export const messageModel = {
   findById,
   countAmount,
   findOneById,
+  updateManyMessageStatus,
+  newMessage,
 };

@@ -62,6 +62,7 @@ function ChatBubble(props) {
           <Box
             sx={{
               p: 1.25,
+              minWidth: 'auto',
               borderRadius: '12px',
               borderTopRightRadius: isSent ? 0 : '12px',
               borderTopLeftRadius: isSent ? '12px' : 0,

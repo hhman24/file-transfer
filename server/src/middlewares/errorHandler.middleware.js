@@ -1,7 +1,3 @@
-/**
- * "A bit of fragrance clings to the hand that gives flowers!"
- */
-
 /* eslint-disable no-unused-vars */
 import { StatusCodes } from 'http-status-codes';
 import { env } from '~/config/environment';

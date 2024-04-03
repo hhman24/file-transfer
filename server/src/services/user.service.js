@@ -92,6 +92,35 @@ const remove = async (id) => {
   }
 };
 
+/**
+ * @dev change user status online
+ * @returns {...} or null
+ */
+
+const changeStatus = async (id, status) => {
+  try {
+    const existUser = await UserModel.findOneById(id.toString());
+    if (!existUser) throw new ApiError(StatusCodes.BAD_REQUEST, 'No exist user');
+
+    if (status) {
+      return await UserModel.findOneAndUpdateById(id.toString(), {
+        $set: {
+          online: true,
+        },
+      });
+    } else {
+      return await UserModel.findOneAndUpdateById(id.toString(), {
+        $set: {
+          online: false,
+          lastOnline: new Date(),
+        },
+      });
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const userService = {
   createNew,
   getAll,
@@ -100,4 +129,5 @@ export const userService = {
   getOneUserByFilter,
   getOneUserByEmail,
   getOneUserById,
+  changeStatus,
 };

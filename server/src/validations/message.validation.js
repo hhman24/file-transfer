@@ -12,7 +12,7 @@ const sendMsg = async (req, res, next) => {
       .messages({
         'any.required': 'friendId is required (hhman)',
       }),
-    contact: Joi.string()
+    conversation: Joi.string()
       .required()
       .pattern(OBJECT_ID_RULE)
       .message(OBJECT_ID_RULE_MESSAGE)
@@ -38,6 +38,41 @@ const sendMsg = async (req, res, next) => {
   }
 };
 
+const sendMsgSocket = async (payload) => {
+  const correctConditionSocket = Joi.object({
+    fromId: Joi.string()
+      .required()
+      .pattern(OBJECT_ID_RULE)
+      .message(OBJECT_ID_RULE_MESSAGE)
+      .messages({
+        'any.required': 'friendId is required (hhman)',
+      }),
+    toId: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE).messages({
+      'any.required': 'friendId is required (hhman)',
+    }),
+    conversation: Joi.string()
+      .required()
+      .pattern(OBJECT_ID_RULE)
+      .message(OBJECT_ID_RULE_MESSAGE)
+      .messages({
+        'any.required': 'contact is required (hhman)',
+      }),
+    content: Joi.string().min(1).required().trim().strict().messages({
+      'any.required': 'content is required (hhman)',
+    }),
+    metaURL: Joi.string().trim().allow(''),
+  });
+
+  try {
+    // disable abortEarly để check toàn bộ lỗi
+    await correctConditionSocket.validateAsync({ ...payload }, { abortEarly: false });
+    // validate successly
+  } catch (errors) {
+    throw new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(errors).message);
+  }
+};
+
 export const messageValidation = {
   sendMsg,
+  sendMsgSocket,
 };

@@ -108,11 +108,10 @@ const getUserNotFriend = async (userId) => {
       );
 
     // filter friend with pending
-    const pendingFriends = friends
-      .filter((f) => f.status === FRIEND_STATUS.PENDING)
-      .map((f) =>
-        f.userA.toString() === userId.toString() ? f.userB.toString() : f.userA.toString(),
-      );
+    const pendingFriends = friends.filter((f) => f.status === FRIEND_STATUS.PENDING);
+    // .map((f) =>
+    //   f.userA.toString() === userId.toString() ? f.userB.toString() : f.userA.toString(),
+    // );
 
     // filter user not in accpeted list and not user id
     const res = users
@@ -121,9 +120,12 @@ const getUserNotFriend = async (userId) => {
           !acceptedfriends.includes(u._id.toString()) && u._id.toString() !== userId.toString(),
       )
       .map((u) => {
+        const status = pendingFriends.find(
+          (p) => p.userA.toString() === u._id.toString() || p.userB.toString() === u._id.toString(),
+        );
         return {
           ...u,
-          status: pendingFriends.includes(u._id.toString()) ? FRIEND_STATUS.PENDING : null,
+          conversation: status ? status : null,
         };
       });
 
@@ -133,10 +135,29 @@ const getUserNotFriend = async (userId) => {
   }
 };
 
-const findContactById = async (id) => {
+const findContactById = async (id, user) => {
   try {
-    const contact = await friendModel.findOneById(id);
-    return contact;
+    const friends = await friendModel.findFriendsWithLastMessage(user);
+
+    const res = friends
+      .map((f) => {
+        f.friend = f.userA._id.toString() === user ? f.userB : f.userA;
+
+        delete f.userA;
+        delete f.userB;
+        return f;
+      })
+      .find((r) => r._id.toString() === id.toString());
+
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const findConversation = async (id) => {
+  try {
+    return await friendModel.findOneById(id);
   } catch (error) {
     throw error;
   }
@@ -149,4 +170,5 @@ export const friendService = {
   getFriends,
   getUserNotFriend,
   findContactById,
+  findConversation,
 };

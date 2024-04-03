@@ -1,16 +1,38 @@
 import { useColorScheme } from '@mui/material/styles';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import IconButton from '@mui/material/IconButton';
 import Input from '@mui/material/Input';
 import SendIcon from '@mui/icons-material/Send';
 import AddIcon from '@mui/icons-material/Add';
+import { useDispatch, useSelector } from 'react-redux';
+import { socket } from '~/utils/socket';
+import { EVENT } from '~/utils/constants';
 
-function MessageInput(props) {
+function MessageInput() {
   const { mode, setMode } = useColorScheme();
-  const { textAreaValue, setTextAreaValue, onSubmit } = props;
+  const [textAreaValue, setTextAreaValue] = useState('');
   const textAreaRef = useRef(null);
+  const selectedChat = useSelector((state) => state.friends.selectedChat);
+  const { userInfo } = useSelector((state) => state.auth.loginState);
+  const dispatch = useDispatch();
+
+  const onSubmit = () => {
+    socket.emit(
+      EVENT.SEND_TEXT_MESSAGE,
+      {
+        fromId: userInfo._id,
+        toId: selectedChat.friend._id,
+        conversation: selectedChat._id,
+        content: textAreaValue,
+        metaURL: '',
+      },
+      (response) => {
+        console.log(response);
+      },
+    );
+  };
 
   const handleClick = () => {
     if (textAreaValue.trim() !== '') {

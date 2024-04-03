@@ -4,12 +4,23 @@ import { env } from '~/config/environment';
 export const WHITELIST_DOMAINS = [
   // `http://${env.APP_HOST}:${env.APP_PORT}`,
   `http://${env.APP_HOST}:${3000}`,
+  `http://${env.APP_HOST}:${8000}`,
+  `http://192.168.220.1:${3000}`,
+  `http://192.168.14.1:${3000}`,
+  `http://192.168.1.10:${3000}`,
 ];
 
-// export const CHAT_TYPE = {
-//   PUBLIC: 'public',
-//   PRIVATE: 'private'
-// };
+// Event
+export const EVENT = {
+  SEND_TEXT_MESSAGE: 'event::send_text_msg',
+  NEW_MESSAGE: 'event::new_msg',
+  SEEN_MESSAGE: 'event::seen_msg',
+  START_CONVERSATION: 'event::start_conversation',
+  SEND_FILE_MESSAGE: 'event::send_file_msg',
+  SEND_FRIEND_REQUEST: 'event::send_friend_req',
+  RECEIVE_FRIEND_REQUEST: 'event::receive_friend_request',
+  ACCEPT_FRIEND_REQUEST: 'event::accept_friend_req',
+};
 
 export const REFRESH_TOKEN_STATUS = {
   ACTIVE: 'active',

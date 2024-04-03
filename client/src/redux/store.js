@@ -7,11 +7,13 @@ import storage from 'redux-persist/lib/storage';
 import friendSlice from './feature/friend/friendSlice';
 import authSlice from './feature/auth/authSlice';
 import messageSlice from './feature/message/messageSlice';
+import dialogSlice from './feature/dialog/dialogSlice';
 
 const rootReducer = combineReducers({
   friends: friendSlice,
   message: messageSlice,
   auth: authSlice,
+  dialog: dialogSlice,
   // [apiSlice.reducerPath]: apiSlice.reducer,
 });
 
