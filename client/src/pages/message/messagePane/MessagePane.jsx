@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import Box from '@mui/material/Box';
 import HeaderMessagePane from './HeaderMessagePane';
 import Stack from '@mui/material/Stack';
@@ -14,6 +14,12 @@ function MessagePane() {
   const selectedChat = useSelector((state) => state.friends.selectedChat);
   const userInfo = useSelector((state) => state.auth.loginState.userInfo);
   const messages = useSelector((state) => state.message.message);
+
+  const refLastestMsg = useRef();
+
+  useEffect(() => {
+    refLastestMsg.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, [messages]);
 
   useEffect(() => {
     // setChatMessages(chat.messages);
@@ -36,7 +42,7 @@ function MessagePane() {
           flexDirection: 'column-reverse',
         }}
       >
-        <Stack spacing={2} justifyContent={'flex-end'}>
+        <Stack spacing={2} justifyContent={'flex-end'} ref={refLastestMsg}>
           {messages.map((message, index) => {
             const isYou = message.sendById !== selectedChat.friend._id;
             return (

@@ -84,7 +84,6 @@ export const useAxios = (accessToken, dispatch) => {
   axiosInstance.interceptors.response.use(
     (response) => response,
     async (error) => {
-      console.log(error?.config);
       const prevRequest = error?.config;
       if (error?.response?.status === 401 && !prevRequest?.sent) {
         prevRequest.sent = true;
