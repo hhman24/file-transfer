@@ -14,6 +14,7 @@ import { useAxios } from '~/apis/axiosConfig';
 
 const initialState = {
   message: [],
+  metaData: null,
   isLoading: false,
   error: null,
 };
@@ -39,6 +40,7 @@ const messageSlice = createSlice({
   reducers: {
     reSetStateMsg: (state) => {
       state.message = [];
+      state.metaData = null;
       state.isLoading = false;
       state.error = null;
     },
@@ -55,6 +57,12 @@ const messageSlice = createSlice({
       }
 
       state.message[id] = action.payload;
+    },
+    setMetaData: (state, action) => {
+      state.metaData = action.payload;
+    },
+    resetMetaData: (state) => {
+      state.metaData = null;
     },
   },
   extraReducers(builder) {
@@ -74,5 +82,5 @@ const messageSlice = createSlice({
   },
 });
 
-export const { sendMsg, reSetStateMsg, updateMsg } = messageSlice.actions;
+export const { sendMsg, reSetStateMsg, updateMsg, setMetaData, resetMetaData } = messageSlice.actions;
 export default messageSlice.reducer;

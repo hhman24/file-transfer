@@ -9,6 +9,9 @@ import AddIcon from '@mui/icons-material/Add';
 import { useDispatch, useSelector } from 'react-redux';
 import { socket } from '~/utils/socket';
 import { EVENT } from '~/utils/constants';
+import { Bounce, toast } from 'react-toastify';
+import FilePrev from './FilePrev';
+import { resetMetaData, setMetaData } from '~/redux/feature/message/messageSlice';
 
 function MessageInput() {
   const { mode, setMode } = useColorScheme();
@@ -16,6 +19,7 @@ function MessageInput() {
   const textAreaRef = useRef(null);
   const selectedChat = useSelector((state) => state.friends.selectedChat);
   const { userInfo } = useSelector((state) => state.auth.loginState);
+  const { metaData } = useSelector((state) => state.message);
   const dispatch = useDispatch();
 
   const fileRef = useRef(null);
@@ -41,13 +45,62 @@ function MessageInput() {
     if (textAreaValue.trim() !== '') {
       onSubmit();
       setTextAreaValue('');
+      dispatch(resetMetaData());
     }
   };
 
-  const handleFileChange = async (e, key) => {};
+  const handleFileChange = async (e) => {
+    try {
+      const files = e.target.files[0];
+
+      if (!files) return;
+
+      const limit = 25000;
+
+      const size = files.size / 1024;
+
+      if (size > limit) {
+        const err = new Error(`file too big: ${(size / 1000).toFixed(2)} MB`);
+        // toast
+        toast(`🔥🔥 ${err.message}!`, {
+          position: 'top-center',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'light',
+          transition: Bounce,
+        });
+
+        return;
+      }
+
+      // update file to state to render
+      dispatch(setMetaData(files));
+      console.log(files);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <FormControl sx={{ width: '100%' }}>
+      {metaData && (
+        <Box
+          sx={{
+            px: 2,
+            pt: 1,
+            display: 'flex',
+            alignItems: 'end',
+            gap: 1,
+            backgroundColor: (theme) => theme.palette.background.paper,
+          }}
+        >
+          <FilePrev filename={metaData.name} size={`${(metaData.size / (1024 * 1000)).toFixed(2)} MB`} />
+        </Box>
+      )}
       <Box
         sx={{
           px: 2,
@@ -81,7 +134,7 @@ function MessageInput() {
           <input
             ref={fileRef}
             type="file"
-            onChange={(e) => handleFileChange(e, 'Files')}
+            onChange={(e) => handleFileChange(e)}
             style={{
               clip: 'rect(0 0 0 0)',
               clipPath: 'inset(50%)',
@@ -126,6 +179,7 @@ function MessageInput() {
             },
           }}
         />
+
         <IconButton
           variant="outlined"
           color="neutral"
