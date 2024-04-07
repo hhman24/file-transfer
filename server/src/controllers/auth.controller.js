@@ -8,14 +8,12 @@ import { env } from '~/config/environment';
 
 const register = async (req, res, next) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, publicKey } = req.body;
     const user = await userService.getOneUserByFilter({ email: email });
     if (Object.keys(user).length !== 0)
       throw new ApiError(StatusCodes.BAD_REQUEST, 'User with given email already exist');
 
-    const hashPassword = await Algorithms.hashPassword(password);
-
-    await userService.createNew({ username: username, email: email, password: hashPassword });
+    await userService.createNew({ username: username, email: email, publicKey: publicKey });
 
     res.status(StatusCodes.CREATED).json({
       message: 'Account created sucessfully',
@@ -27,15 +25,16 @@ const register = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, tokenKey } = req.body;
 
     const existUser = await userService.getOneUserByEmail(email);
 
     if (!existUser) throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid email or password');
 
-    const verifiedPassword = await Algorithms.comparePasswords(password, existUser.password);
+    const verifiedToken = Algorithms.decryptToken(tokenKey, existUser.publicKey);
+    const curTime = new Date().getTime();
 
-    if (!verifiedPassword) throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid email or password');
+    if (verifiedToken < curTime - 3 || verifiedToken > curTime) throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid email or password');
 
     const accessToken = generateAccessToken({
       _id: existUser._id,
@@ -62,8 +61,6 @@ const login = async (req, res, next) => {
       sameSite: 'strict', // CSRF attacks cross-site request forgery attacks
       secure: env.BUILD_MODE !== 'dev',
     });
-
-    delete existUser.password;
 
     res.status(StatusCodes.OK).json({
       message: 'Logged in sucessfully',

@@ -2,7 +2,7 @@ import crypto from 'crypto';
 const keyLength = 2048;
 
 function generateRSAKey() {
-  const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+  const { publicKey, privateKey } = crypto.generateKeyPair('rsa', {
     modulusLength: keyLength,
     publicKeyEncoding: {
       type: 'pkcs1',

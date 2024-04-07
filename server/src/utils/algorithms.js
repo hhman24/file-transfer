@@ -1,5 +1,6 @@
 /* eslint-disable no-useless-catch */
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import { env } from '~/config/environment';
 
 const hashPassword = async (plainPassword) => {
@@ -42,8 +43,23 @@ const mapOrder = (originalArray, orderArray, key) => {
   return orderedArray;
 };
 
+//using public key to decrypt token
+const decryptToken = (token, publicKey) => {
+  const symmetricKey = crypto.privateDecrypt(
+    {
+      key: publicKey,
+      padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+      oaepHash: 'sha256',
+    },
+    Buffer.from(token, 'hex')
+  );
+
+  return symmetricKey.toString();
+};
+
 export const Algorithms = {
   hashPassword,
   comparePasswords,
   mapOrder,
+  decryptToken,
 };
