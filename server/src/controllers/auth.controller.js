@@ -35,8 +35,7 @@ const login = async (req, res, next) => {
 
     const verifiedPassword = await Algorithms.comparePasswords(password, existUser.password);
 
-    if (!verifiedPassword)
-      return new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid email or password');
+    if (!verifiedPassword) throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid email or password');
 
     const accessToken = generateAccessToken({
       _id: existUser._id,

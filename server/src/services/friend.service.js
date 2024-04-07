@@ -78,8 +78,8 @@ const getFriends = async (user) => {
     const res = friends.map((f) => {
       f.friend = f.userA._id.toString() === user ? f.userB : f.userA;
 
-      delete f.userA;
-      delete f.userB;
+      f.userA = f.userA._id; // _id
+      f.userB = f.userB._id; // _id
       return f;
     });
 
