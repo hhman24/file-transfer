@@ -119,7 +119,7 @@ const friendSlice = createSlice({
       console.log(id);
       state.listFriend[id].lastMessage = id < 0 ? null : action.payload;
       console.log(state.listFriend[id].lastMessage);
-      state.selectedChat.lastMessage = id < 0 ? null : action.payload;
+      // state.selectedChat.lastMessage = id < 0 ? null : action.payload;
     },
   },
   extraReducers(builder) {

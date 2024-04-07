@@ -25,15 +25,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { registerUser, setRegister } from '~/redux/feature/auth/authSlice';
+import { generateKey } from '~/utils/generateKey';
 
 const schema = yup.object().shape({
   email: yup.string().required('email is required').email(),
-  password: yup
+  username: yup
     .string()
-    .required('No password provided.')
-    .min(8, 'Password is too short - should be 8 chars minimum.')
-    .matches(/^[a-zA-Z0-9]{8,30}$/, 'Password can only contain Latin letters, numbers.'),
-  username: yup.string().max(10, 'User name is so long').required('User name is required'),
+    .min(2, 'username - should be 2 chars minimum.')
+    .max(10, 'User name is so long')
+    .required('User name is required'),
 });
 
 function Register() {
@@ -51,7 +51,6 @@ function Register() {
     defaultValues: {
       email: '',
       username: '',
-      password: '',
     },
     shouldUnregister: true,
     resolver: yupResolver(schema),
@@ -66,8 +65,16 @@ function Register() {
 
   const onSubmit = async (data) => {
     try {
-      const promise = dispatch(registerUser({ ...data })).unwrap();
-      promise.abort;
+      // generate private key
+      const { privKey, pubKey } = generateKey.generateRSAKey();
+
+      console.log('priv key', privKey);
+
+      console.log('pub key', pubKey);
+
+      // const promise = await dispatch(registerUser({ ...data })).unwrap();
+      // promise.abort;
+      // show private key and go to login page
     } catch (error) {
       console.log(error);
     }
@@ -257,30 +264,6 @@ function Register() {
                   />
                   <FormHelperText error>{errors['email'] ? errors['email']?.message : ' '}</FormHelperText>
                 </FormControl>
-
-                <FormControl required>
-                  <FormLabel sx={{ fontWeight: 500 }} error={!!errors['password']}>
-                    Password
-                  </FormLabel>
-                  <Controller
-                    name="password"
-                    control={control}
-                    render={() => (
-                      <>
-                        <Inputv1
-                          name={'password'}
-                          type={'password'}
-                          id={'password'}
-                          autoFocus={true}
-                          register={register}
-                          errors={errors}
-                        />
-                      </>
-                    )}
-                  />
-                  <FormHelperText error>{errors['password'] ? errors['password']?.message : ' '}</FormHelperText>
-                </FormControl>
-
                 <Stack gap={2} sx={{ mt: 2 }}>
                   <Box
                     sx={{

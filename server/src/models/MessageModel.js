@@ -50,7 +50,7 @@ const findById = async (id, startIndex, limit) => {
   try {
     return await GET_DB()
       .collection(MESSAGE_COLLECTION_NAME)
-      .find({ conversation: new ObjectId(id) })
+      .find({ conversation: new ObjectId(id) }, { sort: { createdAt: -1 } })
       .limit(limit)
       .skip(startIndex)
       .toArray();

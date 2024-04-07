@@ -12,7 +12,6 @@ const initialState = {
   },
   error: null,
   isLoading: false,
-  currentRequestId: undefined,
 };
 
 export const registerUser = createAsyncThunk('auth/registerUser', async (body, thunkAPI) => {
@@ -80,54 +79,59 @@ const authSlice = createSlice({
   },
   extraReducers(builder) {
     builder
+      .addCase(loginUser.pending, (state) => {
+        state.isLoading = true;
+      })
       .addCase(loginUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+
         state.loginState.userInfo = action.payload.user;
         state.loginState.token = action.payload.accessToken;
         state.loginState.isLogined = true;
       })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.loginState.userInfo = null;
+        state.loginState.token = '';
+        state.loginState.isLogined = false;
+
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(registerUser.pending, (state) => {
+        state.isLoading = true;
+      })
       .addCase(registerUser.fulfilled, (state) => {
         state.registerState.success = true;
+
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.registerState.success = false;
+
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(logoutUser.pending, (state) => {
+        state.isLoading = true;
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.loginState.userInfo = null;
         state.loginState.token = '';
         state.loginState.isLogined = false;
+
+        state.isLoading = false;
         state.error = null;
       })
-      .addCase(logoutUser.rejected, (state) => {
+      .addCase(logoutUser.rejected, (state, action) => {
         state.loginState.userInfo = null;
         state.loginState.token = '';
         state.loginState.isLogined = false;
-      })
-      .addMatcher(
-        // matcher can be defined inline as a type predicate function
-        (action) => action.type.endsWith('/pending'),
-        (state, action) => {
-          state.currentRequestId = action.meta.requestId;
-          state.isLoading = true;
-        },
-      )
-      .addMatcher(
-        // matcher can be defined inline as a type predicate function
-        (action) => action.type.endsWith('/fulfilled'),
-        (state, action) => {
-          if (state.isLoading && state.currentRequestId === action.meta.requestId) {
-            state.isLoading = false;
-            state.currentRequestId = undefined;
-          }
-        },
-      )
-      .addMatcher(
-        // matcher can be defined inline as a type predicate function
-        (action) => action.type.endsWith('/rejected'),
-        (state, action) => {
-          if (state.isLoading && state.currentRequestId === action.meta.requestId) {
-            state.isLoading = false;
-            state.currentRequestId = undefined;
-          }
-          state.error = action.payload;
-        },
-      );
+
+        state.isLoading = false;
+        state.error = action.payload;
+      });
   },
 });
 

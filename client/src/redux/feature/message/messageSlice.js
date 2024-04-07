@@ -63,7 +63,7 @@ const messageSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(getMsg.fulfilled, (state, action) => {
-        state.message = action.payload.results;
+        state.message = action.payload.results.reverse();
         state.isLoading = false;
         state.error = null;
       })
