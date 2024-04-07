@@ -18,6 +18,9 @@ function MessageInput() {
   const { userInfo } = useSelector((state) => state.auth.loginState);
   const dispatch = useDispatch();
 
+  const fileRef = useRef(null);
+  const selectFile = () => fileRef.current?.click();
+
   const onSubmit = () => {
     socket.emit(
       EVENT.SEND_TEXT_MESSAGE,
@@ -40,6 +43,8 @@ function MessageInput() {
       setTextAreaValue('');
     }
   };
+
+  const handleFileChange = async (e, key) => {};
 
   return (
     <FormControl sx={{ width: '100%' }}>
@@ -70,8 +75,26 @@ function MessageInput() {
               bgcolor: (theme) => (mode === 'light' ? 'primary.main' : theme.devSchema.secondaryDark),
             },
           }}
+          onClick={selectFile}
         >
-          <AddIcon fontSize="inherit" />
+          <AddIcon sx={{ fontSize: '24px' }} />
+          <input
+            ref={fileRef}
+            type="file"
+            onChange={(e) => handleFileChange(e, 'Files')}
+            style={{
+              clip: 'rect(0 0 0 0)',
+              clipPath: 'inset(50%)',
+              height: 1,
+              overflow: 'hidden',
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              whiteSpace: 'nowrap',
+              width: 1,
+              display: 'none',
+            }}
+          />
         </IconButton>
         <Input
           id="input-with-message"
