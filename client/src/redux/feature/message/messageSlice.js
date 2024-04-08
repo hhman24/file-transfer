@@ -14,6 +14,7 @@ import { useAxios } from '~/apis/axiosConfig';
 
 const initialState = {
   message: [],
+  metaData: null,
   isLoading: false,
   error: null,
 };
@@ -39,6 +40,7 @@ const messageSlice = createSlice({
   reducers: {
     reSetStateMsg: (state) => {
       state.message = [];
+      state.metaData = null;
       state.isLoading = false;
       state.error = null;
     },
@@ -47,14 +49,13 @@ const messageSlice = createSlice({
     },
     updateMsg: (state, action) => {
       const id = state.message.findIndex((m) => m.conversation === action.payload.conversation);
-
-      if (!id) {
-        console.log(state.message);
-        console.log(action.payload);
-        console.log(id);
-      }
-
       state.message[id] = action.payload;
+    },
+    setMetaData: (state, action) => {
+      state.metaData = action.payload;
+    },
+    resetMetaData: (state) => {
+      state.metaData = null;
     },
   },
   extraReducers(builder) {
@@ -63,7 +64,7 @@ const messageSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(getMsg.fulfilled, (state, action) => {
-        state.message = action.payload.results.reverse();
+        state.message = [...action.payload.results.reverse(), ...state.message];
         state.isLoading = false;
         state.error = null;
       })
@@ -74,5 +75,5 @@ const messageSlice = createSlice({
   },
 });
 
-export const { sendMsg, reSetStateMsg, updateMsg } = messageSlice.actions;
+export const { sendMsg, reSetStateMsg, updateMsg, setMetaData, resetMetaData } = messageSlice.actions;
 export default messageSlice.reducer;
