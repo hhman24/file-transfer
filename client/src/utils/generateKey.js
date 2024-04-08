@@ -1,52 +1,45 @@
-import crypto from 'crypto';
+import forge from 'node-forge';
 const keyLength = 2048;
 
 function generateRSAKey() {
-  const { publicKey, privateKey } = crypto.generateKeyPair('rsa', {
-    modulusLength: keyLength,
-    publicKeyEncoding: {
-      type: 'pkcs1',
-      format: 'pem',
-    },
-    privateKeyEncoding: {
-      type: 'pkcs1',
-      format: 'pem',
-    },
-  });
+  const rsa = forge.pki.rsa.generateKeyPair({ bits: keyLength });
   return {
-    publicKey,
-    privateKey,
+    publicKey: forge.pki.publicKeyToPem(rsa.publicKey),
+    privateKey: forge.pki.privateKeyToPem(rsa.privateKey),
   };
 }
 
 function generateAESKey(publicKey) {
-  const symmetricKey = crypto.randomBytes(32).toString('hex');
-  const encryptedSymmetricKey = crypto.publicEncrypt(publicKey, Buffer.from(symmetricKey, 'hex')).toString('hex');
+  const symmetricKey = forge.random.getBytesSync(32).toString();
+  const encryptedSymmetricKey = forge.pki.publicKeyFromPem(publicKey).encrypt(symmetricKey);
   return {
     encryptedSymmetricKey,
   };
 }
 
 function decryptAESKey(encryptedSymmetricKey, privateKey) {
-  const symmetricKey = crypto.privateDecrypt(privateKey, Buffer.from(encryptedSymmetricKey, 'hex')).toString('hex');
+  forge.pki.privateKeyFromPem(privateKey);
+  const symmetricKey = forge.pki.privateKeyFromPem(privateKey).decrypt(encryptedSymmetricKey);
   return symmetricKey;
 }
 
 function encryptData(data, symmetricKey) {
-  const iv = crypto.randomBytes(16);
-  const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(symmetricKey, 'hex'), iv);
-  let encrypted = cipher.update(data);
-  encrypted = Buffer.concat([encrypted, cipher.final()]);
-  return iv.toString('hex') + ':' + encrypted.toString('hex');
+  const iv = forge.random.getBytesSync(16);
+  const cipher = forge.cipher.createCipher('AES-CBC', symmetricKey);
+  cipher.start({ iv });
+  cipher.update(forge.util.createBuffer(data));
+  cipher.finish();
+  return iv.toString('hex') +':'+ cipher.output.toHex();
 }
 
 function decryptData(data, symmetricKey) {
   const parts = data.split(':');
-  const iv = Buffer.from(parts[0], 'hex');
-  const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(symmetricKey, 'hex'), iv);
-  let decrypted = decipher.update(Buffer.from(parts[1], 'hex'));
-  decrypted = Buffer.concat([decrypted, decipher.final()]);
-  return decrypted.toString();
+  const iv = forge.util.createBuffer(parts[0], 'hex');
+  const decipher = forge.cipher.createDecipher('AES-CBC', symmetricKey);
+  decipher.start({ iv });
+  decipher.update(forge.util.createBuffer(forge.util.hexToBytes(parts[1])));
+  decipher.finish();
+  return decipher.output.toString();
 }
 
 //test
