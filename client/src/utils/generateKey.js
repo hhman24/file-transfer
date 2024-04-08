@@ -29,7 +29,7 @@ function encryptData(data, symmetricKey) {
   cipher.start({ iv });
   cipher.update(forge.util.createBuffer(data));
   cipher.finish();
-  return iv.toString('hex') +':'+ cipher.output.toHex();
+  return iv.toString('hex') + ':' + cipher.output.toHex();
 }
 
 function decryptData(data, symmetricKey) {
