@@ -17,13 +17,17 @@ const initialState = {
   metaData: null,
   isLoading: false,
   error: null,
+  pageNum: 1,
 };
 
-export const getMsg = createAsyncThunk('message/getMsg', async ({ id, page, limit }, thunkAPI) => {
+export const getMsg = createAsyncThunk('message/getMsg', async ({ id, page = 1, limit = 10, date }, thunkAPI) => {
   try {
     const state = thunkAPI.getState().auth.loginState;
     const axios = useAxios(state.token, thunkAPI.dispatch);
-    const res = await axios.get(`/message/${id}`, { params: { page: page, limit: limit }, signal: thunkAPI.signal });
+    const res = await axios.get(`/message/${id}`, {
+      params: { page: page, limit: limit, date: date },
+      signal: thunkAPI.signal,
+    });
     return res.data;
   } catch (error) {
     if (error.response && error.response.data.message) {
@@ -46,6 +50,12 @@ const messageSlice = createSlice({
     },
     sendMsg: (state, action) => {
       state.message.push(action.payload);
+    },
+    setPageNum: (state) => {
+      state.pageNum += 1;
+    },
+    reSetPageNum: (state) => {
+      state.pageNum = 1;
     },
     updateMsg: (state, action) => {
       const id = state.message.findIndex((m) => m.conversation === action.payload.conversation);
@@ -75,5 +85,6 @@ const messageSlice = createSlice({
   },
 });
 
-export const { sendMsg, reSetStateMsg, updateMsg, setMetaData, resetMetaData } = messageSlice.actions;
+export const { sendMsg, reSetStateMsg, updateMsg, setMetaData, resetMetaData, setPageNum, reSetPageNum } =
+  messageSlice.actions;
 export default messageSlice.reducer;

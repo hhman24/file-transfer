@@ -1,35 +1,83 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import HeaderMessagePane from './HeaderMessagePane';
 import Stack from '@mui/material/Stack';
+import CircularProgress from '@mui/material/CircularProgress';
 import AvatarWithStatus from '~/components/avatar/AvatarWithStatus';
 import ChatBubble from './ChatBubble';
 import MessageInput from './MessageInput';
-import { useDispatch, useSelector } from 'react-redux';
-import { getMsg } from '~/redux/feature/message/messageSlice';
-// import { useGetMessagesQuery } from '~/redux/feature/message/messageApiSlice';
 import NoChat from '~/components/noChat/NoChat';
+import { useDispatch, useSelector } from 'react-redux';
+import { getMsg, reSetPageNum, setPageNum } from '~/redux/feature/message/messageSlice';
+import { toast } from 'react-toastify';
+import { TOAST_ERROR_CSS } from '~/utils/constants';
 
 function MessagePane() {
   const dispatch = useDispatch();
   const selectedChat = useSelector((state) => state.friends.selectedChat);
   const userInfo = useSelector((state) => state.auth.loginState.userInfo);
-  const messages = useSelector((state) => state.message.message);
+  const { message, error, pageNum } = useSelector((state) => state.message);
 
-  // const { data, isLoading, isError, error } = useGetMessagesQuery();
+  const [hasNextPage, setHashNextPage] = useState(false);
+  const [isFetching, setFetching] = useState(false);
 
   const refLastestMsg = useRef();
+  const intObserver = useRef();
+  const oldMsgRef = useCallback(
+    (msg) => {
+      if (isFetching) return;
+
+      if (intObserver.current) intObserver.current.disconnect();
+
+      intObserver.current = new IntersectionObserver((msg) => {
+        if (msg[0].isIntersecting && hasNextPage) {
+          console.log('We are near the old message!');
+          dispatch(setPageNum());
+        }
+      });
+
+      if (msg) intObserver.current.observe(msg);
+    },
+    [isFetching, hasNextPage],
+  );
 
   useEffect(() => {
     refLastestMsg.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  }, [messages]);
+  }, [message]);
 
+  // For selectedChat change
   useEffect(() => {
-    // setChatMessages(chat.messages);
     if (selectedChat) {
-      dispatch(getMsg({ id: selectedChat._id, page: 1, limit: 10 }));
+      const timestamp = selectedChat.lastMessage ? new Date(selectedChat.lastMessage.createdAt) : new Date();
+      dispatch(getMsg({ id: selectedChat._id, page: pageNum, limit: 6, date: timestamp }))
+        .unwrap()
+        .then((data) => {
+          setHashNextPage(Boolean(data.results.length));
+        })
+        .catch(() => {
+          setFetching(false);
+          toast(`🔥🔥 ${error}!`, TOAST_ERROR_CSS);
+        });
     }
   }, [dispatch, selectedChat]);
+
+  useEffect(() => {
+    if (selectedChat && pageNum > 1) {
+      setFetching(true);
+
+      const timestamp = new Date(selectedChat.lastMessage.createdAt);
+      dispatch(getMsg({ id: selectedChat._id, page: pageNum, limit: 5, date: timestamp }))
+        .unwrap()
+        .then((data) => {
+          setHashNextPage(Boolean(data.results.length));
+          setFetching(false);
+        })
+        .catch(() => {
+          setFetching(false);
+          toast(`🔥🔥 ${error}!`, TOAST_ERROR_CSS);
+        });
+    }
+  }, [pageNum]);
 
   return !selectedChat ? (
     <NoChat />
@@ -48,8 +96,34 @@ function MessagePane() {
         }}
       >
         <Stack spacing={2} justifyContent={'flex-end'}>
-          {messages.map((message, index) => {
+          {isFetching && (
+            <Box sx={{ display: 'flex' }}>
+              <CircularProgress />
+            </Box>
+          )}
+          {message?.map((message, index) => {
             const isYou = message.sendById !== selectedChat.friend._id;
+
+            // Observer
+            if (index === 0) {
+              return (
+                <Stack
+                  ref={oldMsgRef}
+                  key={index}
+                  direction={'row'}
+                  gap={1}
+                  flexDirection={isYou ? 'row-reverse' : 'row'}
+                >
+                  {!isYou ? (
+                    <AvatarWithStatus online={selectedChat.friend.online} senderName={selectedChat.friend.username} />
+                  ) : (
+                    <AvatarWithStatus online={selectedChat.friend.online} senderName={userInfo.username} />
+                  )}
+                  <ChatBubble variant={isYou ? 'sent' : 'received'} message={message} friend={selectedChat.friend} />
+                </Stack>
+              );
+            }
+
             return (
               <Stack key={index} direction={'row'} gap={1} flexDirection={isYou ? 'row-reverse' : 'row'}>
                 {!isYou ? (
@@ -58,10 +132,10 @@ function MessagePane() {
                   <AvatarWithStatus online={selectedChat.friend.online} senderName={userInfo.username} />
                 )}
                 <ChatBubble variant={isYou ? 'sent' : 'received'} message={message} friend={selectedChat.friend} />
-                <div ref={refLastestMsg} />
               </Stack>
             );
           })}
+          <div ref={refLastestMsg} />
         </Stack>
       </Box>
       <MessageInput />
