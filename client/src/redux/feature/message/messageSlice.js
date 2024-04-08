@@ -49,13 +49,6 @@ const messageSlice = createSlice({
     },
     updateMsg: (state, action) => {
       const id = state.message.findIndex((m) => m.conversation === action.payload.conversation);
-
-      if (!id) {
-        console.log(state.message);
-        console.log(action.payload);
-        console.log(id);
-      }
-
       state.message[id] = action.payload;
     },
     setMetaData: (state, action) => {
@@ -71,7 +64,7 @@ const messageSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(getMsg.fulfilled, (state, action) => {
-        state.message = action.payload.results.reverse();
+        state.message = [...action.payload.results.reverse(), ...state.message];
         state.isLoading = false;
         state.error = null;
       })

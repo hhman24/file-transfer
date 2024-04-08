@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import HeaderMessagePane from './HeaderMessagePane';
 import Stack from '@mui/material/Stack';
@@ -7,6 +7,7 @@ import ChatBubble from './ChatBubble';
 import MessageInput from './MessageInput';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMsg } from '~/redux/feature/message/messageSlice';
+// import { useGetMessagesQuery } from '~/redux/feature/message/messageApiSlice';
 import NoChat from '~/components/noChat/NoChat';
 
 function MessagePane() {
@@ -14,6 +15,8 @@ function MessagePane() {
   const selectedChat = useSelector((state) => state.friends.selectedChat);
   const userInfo = useSelector((state) => state.auth.loginState.userInfo);
   const messages = useSelector((state) => state.message.message);
+
+  // const { data, isLoading, isError, error } = useGetMessagesQuery();
 
   const refLastestMsg = useRef();
 
@@ -23,7 +26,9 @@ function MessagePane() {
 
   useEffect(() => {
     // setChatMessages(chat.messages);
-    if (selectedChat) dispatch(getMsg({ id: selectedChat._id, page: 1, limit: 10 }));
+    if (selectedChat) {
+      dispatch(getMsg({ id: selectedChat._id, page: 1, limit: 10 }));
+    }
   }, [dispatch, selectedChat]);
 
   return !selectedChat ? (
@@ -42,7 +47,7 @@ function MessagePane() {
           flexDirection: 'column-reverse',
         }}
       >
-        <Stack spacing={2} justifyContent={'flex-end'} ref={refLastestMsg}>
+        <Stack spacing={2} justifyContent={'flex-end'}>
           {messages.map((message, index) => {
             const isYou = message.sendById !== selectedChat.friend._id;
             return (
@@ -53,6 +58,7 @@ function MessagePane() {
                   <AvatarWithStatus online={selectedChat.friend.online} senderName={userInfo.username} />
                 )}
                 <ChatBubble variant={isYou ? 'sent' : 'received'} message={message} friend={selectedChat.friend} />
+                <div ref={refLastestMsg} />
               </Stack>
             );
           })}
