@@ -5,7 +5,7 @@ import { authRoute } from './auth.route';
 import { refreshRoute } from './refreshToken.route';
 import { friendRoute } from './friend.route';
 import { messageRoute } from './message.route';
-
+import {uploadRoute} from './upload.route';
 const Router = express.Router();
 
 Router.get('/status', (req, res) => {
@@ -19,5 +19,7 @@ Router.use('/friend', friendRoute);
 Router.use('/message', messageRoute);
 Router.use('/auth', authRoute);
 Router.use('/refresh', refreshRoute);
+
+Router.use('/upload', uploadRoute);
 
 export const API_v1 = Router;
