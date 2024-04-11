@@ -21,6 +21,7 @@ function MessagePane() {
 
   const [hasNextPage, setHashNextPage] = useState(false);
   const [isFetching, setFetching] = useState(false);
+  const [firstFetchTimeMsg, setFirstFetchTimeMsg] = useState(null);
 
   const refLastestMsg = useRef();
   const intObserver = useRef();
@@ -52,7 +53,9 @@ function MessagePane() {
       dispatch(reSetStateMsg());
 
       const timestamp = selectedChat.lastMessage ? new Date(selectedChat.lastMessage.createdAt) : new Date();
-      dispatch(getMsg({ id: selectedChat._id, page: 1, limit: 5, date: timestamp }))
+      setFirstFetchTimeMsg(timestamp);
+      
+      dispatch(getMsg({ id: selectedChat._id, page: 1, limit: 10, date: timestamp }))
         .unwrap()
         .then((data) => {
           setHashNextPage(Boolean(data.results.length));
@@ -69,8 +72,7 @@ function MessagePane() {
     if (selectedChat && pageNum > 1 && hasNextPage) {
       setFetching(true);
 
-      const timestamp = new Date(selectedChat.lastMessage.createdAt);
-      dispatch(getMsg({ id: selectedChat._id, page: pageNum, limit: 5, date: timestamp }))
+      dispatch(getMsg({ id: selectedChat._id, page: pageNum, limit: 10, date: firstFetchTimeMsg }))
         .unwrap()
         .then((data) => {
           setHashNextPage(Boolean(data.results.length));
