@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import SendIcon from '@mui/icons-material/Send';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
@@ -14,7 +15,9 @@ import Checkbox from '@mui/material/Checkbox';
 import Alert from '@mui/material/Alert';
 import Collapse from '@mui/material/Collapse';
 import Backdrop from '@mui/material/Backdrop';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import CircularProgress from '@mui/material/CircularProgress';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
 import GoogleIcon from '~/components/Svg/GoogleIcon';
 import ModeToggle from '~/components/toggle/ModeToggle';
 import Inputv1 from '~/components/input/Inputv1';
@@ -26,6 +29,8 @@ import { FormHelperText } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '~/redux/feature/auth/authSlice';
+import { generateKey } from '~/utils/generateKey';
+import { useRef } from 'react';
 
 const schema = yup.object().shape({
   email: yup.string().required('email is required').email(),
@@ -38,10 +43,14 @@ function Auth() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const fileRef = useRef(null);
+  const selectFile = () => fileRef.current?.click();
+
   const {
     register,
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -53,21 +62,36 @@ function Auth() {
     resolver: yupResolver(schema),
   });
 
+  const handleFileChange = (e) => {
+    try {
+      const file = e.target.files[0];
+
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.readAsText(file);
+      reader.onload = () => {
+        setValue('privateKey', reader.result);
+      };
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const onSubmit = async (data) => {
     try {
       // encrypt timestamp before send and decode private key
-      // const currentTime = new Date();
-      // const tokenKey = await
-      console.log(data);
+      const decodePrivateKey = atob(data.privateKey);
+      const signMsg = await generateKey.signMessage(decodePrivateKey);
 
-      // await dispatch(loginUser({ email: data.email, tokenKey: data.privateKey }))
-      //   .unwrap()
-      //   .then(() => {
-      //     navigate('/message');
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
+      await dispatch(loginUser({ email: data.email, message: signMsg.time, signature: signMsg.signature }))
+        .unwrap()
+        .then(() => {
+          navigate('/message');
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     } catch (err) {
       console.log(err);
     }
@@ -223,9 +247,67 @@ function Auth() {
                   </FormControl>
 
                   <FormControl required>
-                    <FormLabel sx={{ fontWeight: 500 }} error={!!errors['privateKey']}>
+                    <FormLabel
+                      sx={{ fontWeight: 500, display: 'flex', alignItems: 'center' }}
+                      error={!!errors['privateKey']}
+                    >
                       Private Key
+                      <Tooltip
+                        title="Import Private Key"
+                        placement="right-end"
+                        slotProps={{
+                          popper: {
+                            sx: {
+                              [`&.${tooltipClasses.popper}[data-popper-placement*="right"] .${tooltipClasses.tooltip}`]:
+                                {
+                                  marginLeft: '0px',
+                                },
+                            },
+                          },
+                        }}
+                      >
+                        <IconButton
+                          variant="outlined"
+                          color="neutral"
+                          sx={{
+                            '&:hover': {
+                              backgroundColor: 'transparent',
+                              color: 'primary.main',
+                            },
+                          }}
+                          onClick={selectFile}
+                        >
+                          <UploadFileIcon
+                            sx={{
+                              fontSize: '18px',
+                              '&:hover': {
+                                color: 'inherit',
+                              },
+                            }}
+                          />
+
+                          <input
+                            ref={fileRef}
+                            type="file"
+                            accept="text/plain"
+                            onChange={(e) => handleFileChange(e)}
+                            style={{
+                              clip: 'rect(0 0 0 0)',
+                              clipPath: 'inset(50%)',
+                              height: 1,
+                              overflow: 'hidden',
+                              position: 'absolute',
+                              bottom: 0,
+                              left: 0,
+                              whiteSpace: 'nowrap',
+                              width: 1,
+                              display: 'none',
+                            }}
+                          />
+                        </IconButton>
+                      </Tooltip>
                     </FormLabel>
+
                     <Controller
                       name="privateKey"
                       control={control}

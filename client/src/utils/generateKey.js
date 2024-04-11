@@ -43,14 +43,14 @@ function decryptData(data, symmetricKey) {
   return decipher.output.toString();
 }
 
-function signMessage(privateKey) {
+async function signMessage(privateKey) {
   const privateKeyObject = forge.pki.privateKeyFromPem(privateKey);
   const md = forge.md.sha256.create();
   md.update(new Date().toString(), 'utf8');
   const signature = privateKeyObject.sign(md);
   return {
     signature: forge.util.encode64(signature),
-    time: new Date().toString(),
+    time: new Date().toString(), // time maybe not as the same line 49 ??
   };
 }
 

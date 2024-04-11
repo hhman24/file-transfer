@@ -68,7 +68,7 @@ function Register() {
       // generate private key
       const { privateKey, publicKey } = await generateKey.generateRSAKey(1024);
 
-      await dispatch(registerUser({ ...data, publicKey: btoa(publicKey).trim() }))
+      await dispatch(registerUser({ ...data, publicKey: btoa(publicKey) }))
         .unwrap()
         .then(() => {
           // show private key and go to login page
