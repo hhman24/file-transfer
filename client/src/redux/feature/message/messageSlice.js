@@ -14,15 +14,20 @@ import { useAxios } from '~/apis/axiosConfig';
 
 const initialState = {
   message: [],
+  metaData: null,
   isLoading: false,
   error: null,
+  pageNum: 1,
 };
 
-export const getMsg = createAsyncThunk('message/getMsg', async ({ id, page, limit }, thunkAPI) => {
+export const getMsg = createAsyncThunk('message/getMsg', async ({ id, page = 1, limit = 10, date }, thunkAPI) => {
   try {
     const state = thunkAPI.getState().auth.loginState;
     const axios = useAxios(state.token, thunkAPI.dispatch);
-    const res = await axios.get(`/message/${id}`, { params: { page: page, limit: limit }, signal: thunkAPI.signal });
+    const res = await axios.get(`/message/${id}`, {
+      params: { page: page, limit: limit, date: date },
+      signal: thunkAPI.signal,
+    });
     return res.data;
   } catch (error) {
     if (error.response && error.response.data.message) {
@@ -39,22 +44,28 @@ const messageSlice = createSlice({
   reducers: {
     reSetStateMsg: (state) => {
       state.message = [];
+      state.metaData = null;
       state.isLoading = false;
       state.error = null;
     },
     sendMsg: (state, action) => {
       state.message.push(action.payload);
     },
+    setPageNum: (state) => {
+      state.pageNum += 1;
+    },
+    reSetPageNum: (state) => {
+      state.pageNum = 1;
+    },
     updateMsg: (state, action) => {
       const id = state.message.findIndex((m) => m.conversation === action.payload.conversation);
-
-      if (!id) {
-        console.log(state.message);
-        console.log(action.payload);
-        console.log(id);
-      }
-
       state.message[id] = action.payload;
+    },
+    setMetaData: (state, action) => {
+      state.metaData = action.payload;
+    },
+    resetMetaData: (state) => {
+      state.metaData = null;
     },
   },
   extraReducers(builder) {
@@ -63,7 +74,7 @@ const messageSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(getMsg.fulfilled, (state, action) => {
-        state.message = action.payload.results.reverse();
+        state.message = [...action.payload.results.reverse(), ...state.message];
         state.isLoading = false;
         state.error = null;
       })
@@ -74,5 +85,6 @@ const messageSlice = createSlice({
   },
 });
 
-export const { sendMsg, reSetStateMsg, updateMsg } = messageSlice.actions;
+export const { sendMsg, reSetStateMsg, updateMsg, setMetaData, resetMetaData, setPageNum, reSetPageNum } =
+  messageSlice.actions;
 export default messageSlice.reducer;

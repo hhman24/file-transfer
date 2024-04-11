@@ -25,7 +25,7 @@ function BodyMessage() {
           left: 0,
           zIndex: 9999,
           mt: '58px',
-          backgroundColor: 'white',
+          backgroundColor: mode === 'light' ? 'white' : 'black',
         }}
       >
         {/* chats={chats} selectedChatId={selectedChat.id} setSelectedChat={setSelectedChat} */}

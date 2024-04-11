@@ -33,12 +33,20 @@ const login = async (req, res, next) => {
 
     if (!existUser) throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid email or password');
 
+<<<<<<< HEAD
     const isValid = Algorithms.verifySignature(message, signature, existUser.publicKey);
 
     //if signature is valid and time is not expired (3s) => login
     if (!isValid || curTime - new Date(message) > 3000) {
       throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid email or password');
     }
+=======
+    // const verifiedToken = Algorithms.decryptToken(tokenKey, existUser.publicKey);
+    // const curTime = new Date().getTime();
+
+    // if (verifiedToken < curTime - 3 || verifiedToken > curTime)
+    //   throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid email or password');
+>>>>>>> 24809357159ef2031244e4b73b06caad8a7db70b
 
     const accessToken = generateAccessToken({
       _id: existUser._id,

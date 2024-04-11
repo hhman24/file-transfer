@@ -31,7 +31,7 @@ function encryptData(data, symmetricKey) {
   cipher.start({ iv });
   cipher.update(forge.util.createBuffer(data));
   cipher.finish();
-  return iv.toString('hex') +':'+ cipher.output.toHex();
+  return iv.toString('hex') + ':' + cipher.output.toHex();
 }
 
 function decryptData(data, symmetricKey) {
@@ -85,5 +85,9 @@ export const generateKey = {
   decryptAESKey,
   encryptData,
   decryptData,
+<<<<<<< HEAD
   signMessage,
 };
+=======
+};
+>>>>>>> 24809357159ef2031244e4b73b06caad8a7db70b
