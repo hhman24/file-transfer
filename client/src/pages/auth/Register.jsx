@@ -38,7 +38,7 @@ const schema = yup.object().shape({
 
 function Register() {
   const { mode, setMode } = useColorScheme();
-  const { registerState, isLoading, error } = useSelector((state) => state.auth);
+  const { isLoading, error } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -56,13 +56,6 @@ function Register() {
     resolver: yupResolver(schema),
   });
 
-  useEffect(() => {
-    if (registerState.success) {
-      dispatch(setRegister(false));
-      navigate('/login');
-    }
-  }, [registerState.success, navigate, dispatch]);
-
   const onSubmit = async (data) => {
     try {
       // generate private key
@@ -72,9 +65,7 @@ function Register() {
         .unwrap()
         .then(() => {
           // show private key and go to login page
-
           console.log(btoa(privateKey));
-          console.log(atob(btoa(privateKey)));
         });
     } catch (error) {
       console.log(error);

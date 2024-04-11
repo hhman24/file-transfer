@@ -47,6 +47,7 @@ const messageSlice = createSlice({
       state.metaData = null;
       state.isLoading = false;
       state.error = null;
+      state.pageNum = 1;
     },
     sendMsg: (state, action) => {
       state.message.push(action.payload);

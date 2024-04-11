@@ -8,13 +8,14 @@ import ChatBubble from './ChatBubble';
 import MessageInput from './MessageInput';
 import NoChat from '~/components/noChat/NoChat';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMsg, reSetPageNum, setPageNum } from '~/redux/feature/message/messageSlice';
+import { getMsg, reSetPageNum, reSetStateMsg, setPageNum } from '~/redux/feature/message/messageSlice';
 import { toast } from 'react-toastify';
 import { TOAST_ERROR_CSS } from '~/utils/constants';
 
 function MessagePane() {
   const dispatch = useDispatch();
   const selectedChat = useSelector((state) => state.friends.selectedChat);
+  const lastMsg = selectedChat.lastMessage;
   const userInfo = useSelector((state) => state.auth.loginState.userInfo);
   const { message, error, pageNum } = useSelector((state) => state.message);
 
@@ -43,26 +44,29 @@ function MessagePane() {
 
   useEffect(() => {
     refLastestMsg.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  }, [message]);
+  }, [lastMsg]);
 
   // For selectedChat change
   useEffect(() => {
     if (selectedChat) {
+      dispatch(reSetStateMsg());
+
       const timestamp = selectedChat.lastMessage ? new Date(selectedChat.lastMessage.createdAt) : new Date();
-      dispatch(getMsg({ id: selectedChat._id, page: pageNum, limit: 6, date: timestamp }))
+      dispatch(getMsg({ id: selectedChat._id, page: 1, limit: 5, date: timestamp }))
         .unwrap()
         .then((data) => {
           setHashNextPage(Boolean(data.results.length));
+          refLastestMsg.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
         })
         .catch(() => {
           setFetching(false);
           toast(`🔥🔥 ${error}!`, TOAST_ERROR_CSS);
         });
     }
-  }, [dispatch, selectedChat]);
+  }, [dispatch, selectedChat._id]);
 
   useEffect(() => {
-    if (selectedChat && pageNum > 1) {
+    if (selectedChat && pageNum > 1 && hasNextPage) {
       setFetching(true);
 
       const timestamp = new Date(selectedChat.lastMessage.createdAt);
