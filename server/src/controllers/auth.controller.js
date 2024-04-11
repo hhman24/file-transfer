@@ -31,14 +31,13 @@ const login = async (req, res, next) => {
   try {
     const curTime = new Date().getTime();
 
-    const { email, message, signature} = req.body;
+    const { email, message, signature } = req.body;
 
     const existUser = await userService.getOneUserByEmail(email);
 
     if (!existUser) throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid email or password');
 
-
-    const verifiedToken = await Algorithms.decryptToken(tokenKey, existUser.publicKey);
+    const verifiedToken = await Algorithms.decryptToken(signature, existUser.publicKey);
 
     if (verifiedToken < curTime - 3 || verifiedToken > curTime)
       throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid email or password');
@@ -49,7 +48,6 @@ const login = async (req, res, next) => {
     if (!isValid || curTime - new Date(message) > 3000) {
       throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid email or password');
     }
-
 
     const accessToken = generateAccessToken({
       _id: existUser._id,
