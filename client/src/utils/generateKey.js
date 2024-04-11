@@ -1,7 +1,6 @@
 import forge from 'node-forge';
-const keyLength = 2048;
 
-function generateRSAKey() {
+async function generateRSAKey(keyLength = 2048) {
   const rsa = forge.pki.rsa.generateKeyPair({ bits: keyLength });
   return {
     publicKey: forge.pki.publicKeyToPem(rsa.publicKey),
@@ -9,15 +8,15 @@ function generateRSAKey() {
   };
 }
 
-function generateAESKey(publicKey) {
-  const symmetricKey = forge.random.getBytesSync(32).toString();
+async function generateAESKey(publicKey) {
+  const symmetricKey = forge.random.getBytesSync(16).toString();
   const encryptedSymmetricKey = forge.pki.publicKeyFromPem(publicKey).encrypt(symmetricKey);
   return {
     encryptedSymmetricKey,
   };
 }
 
-function decryptAESKey(encryptedSymmetricKey, privateKey) {
+async function decryptAESKey(encryptedSymmetricKey, privateKey) {
   forge.pki.privateKeyFromPem(privateKey);
   const symmetricKey = forge.pki.privateKeyFromPem(privateKey).decrypt(encryptedSymmetricKey);
   return symmetricKey;

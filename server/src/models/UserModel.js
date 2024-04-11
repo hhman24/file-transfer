@@ -6,13 +6,13 @@ const USER_COLLECTION_NAME = 'Users';
 const USER_COLLECTION_SCHEMA = Joi.object({
   username: Joi.string().min(3).max(30).required().trim().strict(),
   email: Joi.string().email().required().trim().strict(),
-  password: Joi.string().strict(),
   publicKeyCredential: Joi.string().strict().default(''),
   online: Joi.boolean().default(false),
   lastOnline: Joi.date().default(new Date()),
   createAt: Joi.date().timestamp('javascript').default(new Date()),
   updatedAt: Joi.date().timestamp('javascript').default(null),
   _destroy: Joi.boolean().default(false),
+  // password: Joi.string().strict(),
   // friends: Joi.array()
   //   .items(Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE))
   //   .default([]),

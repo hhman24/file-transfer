@@ -10,7 +10,8 @@ const register = async (req, res, next) => {
     email: Joi.string().email().required().trim().strict().messages({
       'any.required': 'email is required (hhman)',
     }),
-    password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{8,30}$')).trim().strict(),
+    // password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{8,30}$')).trim().strict(),
+    publicKey: Joi.string().strict(),
   });
 
   try {
@@ -28,7 +29,7 @@ const signin = async (req, res, next) => {
     email: Joi.string().email().required().trim().strict().messages({
       'any.required': 'email is required (hhman)',
     }),
-    password: Joi.string().trim().strict(),
+    tokenKey: Joi.string(),
   });
 
   try {

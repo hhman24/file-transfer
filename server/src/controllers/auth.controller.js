@@ -1,10 +1,10 @@
 import ApiError from '~/utils/ApiError';
 import { StatusCodes } from 'http-status-codes';
 import { userService } from '~/services/user.service';
-import { Algorithms } from '~/utils/algorithms.js';
 import { generateAccessToken, generateRefreshToken } from '~/utils/token';
 import { RefreshTokenService } from '~/services/refreshToken.service';
 import { env } from '~/config/environment';
+import { Algorithms } from '~/utils/algorithms';
 
 const register = async (req, res, next) => {
   try {
@@ -13,7 +13,11 @@ const register = async (req, res, next) => {
     if (Object.keys(user).length !== 0)
       throw new ApiError(StatusCodes.BAD_REQUEST, 'User with given email already exist');
 
-    await userService.createNew({ username: username, email: email, publicKey: publicKey });
+    await userService.createNew({
+      username: username,
+      email: email,
+      publicKeyCredential: publicKey,
+    });
 
     res.status(StatusCodes.CREATED).json({
       message: 'Account created sucessfully',
@@ -31,11 +35,11 @@ const login = async (req, res, next) => {
 
     if (!existUser) throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid email or password');
 
-    // const verifiedToken = Algorithms.decryptToken(tokenKey, existUser.publicKey);
-    // const curTime = new Date().getTime();
+    const verifiedToken = await Algorithms.decryptToken(tokenKey, existUser.publicKey);
+    const curTime = new Date().getTime();
 
-    // if (verifiedToken < curTime - 3 || verifiedToken > curTime)
-    //   throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid email or password');
+    if (verifiedToken < curTime - 3 || verifiedToken > curTime)
+      throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid email or password');
 
     const accessToken = generateAccessToken({
       _id: existUser._id,

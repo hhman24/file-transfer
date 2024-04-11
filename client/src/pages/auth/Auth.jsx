@@ -29,11 +29,7 @@ import { loginUser } from '~/redux/feature/auth/authSlice';
 
 const schema = yup.object().shape({
   email: yup.string().required('email is required').email(),
-  password: yup
-    .string()
-    .required('No password provided.')
-    .min(8, 'Password is too short - should be 8 chars minimum.')
-    .matches(/^[a-zA-Z0-9]{8,30}$/, 'Password can only contain Latin letters, numbers.'),
+  privateKey: yup.string().required('No password provided.'),
 });
 
 function Auth() {
@@ -41,7 +37,6 @@ function Auth() {
   const { error, isLoading } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  // const [login, { isLoading, isError }] = useLoginMutation();
 
   const {
     register,
@@ -51,29 +46,30 @@ function Auth() {
   } = useForm({
     defaultValues: {
       email: '',
-      password: '',
+      privateKey: '',
       rememberMe: false,
     },
     shouldUnregister: true,
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data) => {
-    dispatch(loginUser({ email: data.email, password: data.password }))
-      .unwrap()
-      .then(() => {
-        navigate('/message');
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    // // try {
-    //   const userData = await login({ email: data.email, password: data.password }).unwrap();
-    //   dispatch(setCredentials({ ...userData }));
-    //   navigate('/messages/t');
-    // } catch (error) {
-    //   console.log(error);
-    // }
+  const onSubmit = async (data) => {
+    try {
+      // encrypt timestamp before send
+      const currentTime = new Date();
+      const tokenKey = await 
+
+      await dispatch(loginUser({ email: data.email, tokenKey: data.privateKey }))
+        .unwrap()
+        .then(() => {
+          navigate('/message');
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -226,26 +222,25 @@ function Auth() {
                   </FormControl>
 
                   <FormControl required>
-                    <FormLabel sx={{ fontWeight: 500 }} error={!!errors['password']}>
-                      Password
+                    <FormLabel sx={{ fontWeight: 500 }} error={!!errors['privateKey']}>
+                      Private Key
                     </FormLabel>
                     <Controller
-                      name="password"
+                      name="privateKey"
                       control={control}
                       render={() => (
                         <>
                           <Inputv1
-                            name={'password'}
-                            type={'password'}
-                            id={'password'}
-                            autoFocus={true}
+                            name={'privateKey'}
+                            type={'privateKey'}
+                            id={'privateKey'}
                             register={register}
                             errors={errors}
                           />
                         </>
                       )}
                     />
-                    <FormHelperText error>{errors['password'] ? errors['password']?.message : ' '}</FormHelperText>
+                    <FormHelperText error>{errors['privateKey'] ? errors['privateKey']?.message : ' '}</FormHelperText>
                   </FormControl>
 
                   <Stack gap={4} sx={{ mt: 2 }}>

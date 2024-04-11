@@ -66,14 +66,14 @@ function Register() {
   const onSubmit = async (data) => {
     try {
       // generate private key
-      const { privKey, pubKey } = generateKey.generateRSAKey();
+      const { privateKey, publicKey } = await generateKey.generateRSAKey(2048);
 
-      console.log('priv key', privKey);
+      await dispatch(registerUser({ ...data, publicKey: publicKey.trim() }))
+        .unwrap()
+        .then(() => {
+          console.log(privateKey);
+        });
 
-      console.log('pub key', pubKey);
-
-      // const promise = await dispatch(registerUser({ ...data })).unwrap();
-      // promise.abort;
       // show private key and go to login page
     } catch (error) {
       console.log(error);
@@ -251,14 +251,7 @@ function Register() {
                     control={control}
                     render={() => (
                       <>
-                        <Inputv1
-                          name={'email'}
-                          type={''}
-                          id={'email'}
-                          autoFocus={true}
-                          register={register}
-                          errors={errors}
-                        />
+                        <Inputv1 name={'email'} type={''} id={'email'} register={register} errors={errors} />
                       </>
                     )}
                   />
