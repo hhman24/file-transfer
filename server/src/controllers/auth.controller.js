@@ -35,18 +35,18 @@ const login = async (req, res, next) => {
 
     const existUser = await userService.getOneUserByEmail(email);
 
-    if (!existUser) throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid email or password');
+    if (!existUser) throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid email');
 
-    const verifiedToken = await Algorithms.decryptToken(signature, existUser.publicKey);
+    const isValid = Algorithms.verifySignature(
+      message,
+      signature,
+      atob(existUser.publicKeyCredential),
+    );
 
-    if (verifiedToken < curTime - 3 || verifiedToken > curTime)
-      throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid email or password');
-
-    const isValid = Algorithms.verifySignature(message, signature, existUser.publicKey);
-
-    //if signature is valid and time is not expired (3s) => login
+    // if signature is valid and time is not expired (3s) => login
+    // why message which is time don't hash
     if (!isValid || curTime - new Date(message) > 3000) {
-      throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid email or password');
+      throw new ApiError(StatusCodes.UNAUTHORIZED, 'Wrong signature !!');
     }
 
     const accessToken = generateAccessToken({

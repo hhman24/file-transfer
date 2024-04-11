@@ -29,7 +29,8 @@ const signin = async (req, res, next) => {
     email: Joi.string().email().required().trim().strict().messages({
       'any.required': 'email is required (hhman)',
     }),
-    tokenKey: Joi.string(),
+    signature: Joi.string(),
+    message: Joi.string(),
   });
 
   try {
