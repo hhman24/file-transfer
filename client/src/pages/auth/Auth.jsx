@@ -55,18 +55,19 @@ function Auth() {
 
   const onSubmit = async (data) => {
     try {
-      // encrypt timestamp before send
-      const currentTime = new Date();
-      const tokenKey = await 
+      // encrypt timestamp before send and decode private key
+      // const currentTime = new Date();
+      // const tokenKey = await
+      console.log(data);
 
-      await dispatch(loginUser({ email: data.email, tokenKey: data.privateKey }))
-        .unwrap()
-        .then(() => {
-          navigate('/message');
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      // await dispatch(loginUser({ email: data.email, tokenKey: data.privateKey }))
+      //   .unwrap()
+      //   .then(() => {
+      //     navigate('/message');
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
     } catch (err) {
       console.log(err);
     }
@@ -232,7 +233,7 @@ function Auth() {
                         <>
                           <Inputv1
                             name={'privateKey'}
-                            type={'privateKey'}
+                            type={'password'}
                             id={'privateKey'}
                             register={register}
                             errors={errors}

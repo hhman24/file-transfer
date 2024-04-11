@@ -66,15 +66,16 @@ function Register() {
   const onSubmit = async (data) => {
     try {
       // generate private key
-      const { privateKey, publicKey } = await generateKey.generateRSAKey(2048);
+      const { privateKey, publicKey } = await generateKey.generateRSAKey(1024);
 
-      await dispatch(registerUser({ ...data, publicKey: publicKey.trim() }))
+      await dispatch(registerUser({ ...data, publicKey: btoa(publicKey).trim() }))
         .unwrap()
         .then(() => {
-          console.log(privateKey);
-        });
+          // show private key and go to login page
 
-      // show private key and go to login page
+          console.log(btoa(privateKey));
+          console.log(atob(btoa(privateKey)));
+        });
     } catch (error) {
       console.log(error);
     }
