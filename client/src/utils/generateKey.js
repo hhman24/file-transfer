@@ -85,9 +85,5 @@ export const generateKey = {
   decryptAESKey,
   encryptData,
   decryptData,
-<<<<<<< HEAD
   signMessage,
 };
-=======
-};
->>>>>>> 24809357159ef2031244e4b73b06caad8a7db70b
