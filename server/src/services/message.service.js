@@ -2,10 +2,12 @@
 import { ObjectId } from 'mongodb';
 import { messageModel } from '~/models/MessageModel';
 
+// get msg from date
 const getMsgById = async (req) => {
   const { id } = req.params;
   const page = parseInt(req.query.page);
   const limit = parseInt(req.query.limit);
+  const fromDate = req.query.date;
 
   const startIndex = (page - 1) * limit;
   const endIndex = page * limit;
@@ -27,7 +29,7 @@ const getMsgById = async (req) => {
   }
 
   try {
-    results.results = await messageModel.findById(id, startIndex, limit);
+    results.results = await messageModel.findById(id, startIndex, limit, fromDate);
     return results;
   } catch (error) {
     throw error;
