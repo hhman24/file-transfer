@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-catch */
 import bcrypt from 'bcrypt';
-import crypto from 'crypto';
+import forge from 'node-forge';
 import { env } from '~/config/environment';
 
 const hashPassword = async (plainPassword) => {
@@ -44,22 +44,18 @@ const mapOrder = (originalArray, orderArray, key) => {
 };
 
 //using public key to decrypt token
-const decryptToken = async (token, publicKey) => {
-  const symmetricKey = crypto.privateDecrypt(
-    {
-      key: publicKey,
-      padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
-      oaepHash: 'sha256',
-    },
-    Buffer.from(token, 'hex'),
-  );
-
-  return symmetricKey.toString();
-};
+function verifySignature(message, signature, publicKey) {
+  const publicKeyObject = forge.pki.publicKeyFromPem(publicKey);
+  const md = forge.md.sha256.create();
+  md.update(message, 'utf8');
+  const signatureBytes = forge.util.decode64(signature);
+  const isValid = publicKeyObject.verify(md.digest().bytes(), signatureBytes);
+  return isValid;
+}
 
 export const Algorithms = {
   hashPassword,
   comparePasswords,
   mapOrder,
-  decryptToken,
+  verifySignature,
 };

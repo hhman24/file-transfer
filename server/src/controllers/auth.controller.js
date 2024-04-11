@@ -29,17 +29,27 @@ const register = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    const { email, tokenKey } = req.body;
+    const curTime = new Date().getTime();
+
+    const { email, message, signature} = req.body;
 
     const existUser = await userService.getOneUserByEmail(email);
 
     if (!existUser) throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid email or password');
 
+
     const verifiedToken = await Algorithms.decryptToken(tokenKey, existUser.publicKey);
-    const curTime = new Date().getTime();
 
     if (verifiedToken < curTime - 3 || verifiedToken > curTime)
       throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid email or password');
+
+    const isValid = Algorithms.verifySignature(message, signature, existUser.publicKey);
+
+    //if signature is valid and time is not expired (3s) => login
+    if (!isValid || curTime - new Date(message) > 3000) {
+      throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid email or password');
+    }
+
 
     const accessToken = generateAccessToken({
       _id: existUser._id,

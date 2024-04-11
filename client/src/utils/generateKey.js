@@ -8,11 +8,13 @@ async function generateRSAKey(keyLength = 2048) {
   };
 }
 
-async function generateAESKey(publicKey) {
-  const symmetricKey = forge.random.getBytesSync(16).toString();
-  const encryptedSymmetricKey = forge.pki.publicKeyFromPem(publicKey).encrypt(symmetricKey);
+async function generateAESKey(publicKeyA, publicKeyB) {
+  const symmetricKey = forge.random.getBytesSync(32).toString();
+  const encryptedSymmetricKeyA = forge.pki.publicKeyFromPem(publicKeyA).encrypt(symmetricKey);
+  const encryptedSymmetricKeyB = forge.pki.publicKeyFromPem(publicKeyB).encrypt(symmetricKey);
   return {
-    encryptedSymmetricKey,
+    encryptedSymmetricKeyA,
+    encryptedSymmetricKeyB,
   };
 }
 
@@ -41,9 +43,21 @@ function decryptData(data, symmetricKey) {
   return decipher.output.toString();
 }
 
+function signMessage(privateKey) {
+  const privateKeyObject = forge.pki.privateKeyFromPem(privateKey);
+  const md = forge.md.sha256.create();
+  md.update(new Date().toString(), 'utf8');
+  const signature = privateKeyObject.sign(md);
+  return {
+    signature: forge.util.encode64(signature),
+    time: new Date().toString(),
+  };
+}
+
 //test
 // const { publicKey, privateKey } = generateRSAKey();
-// const { encryptedSymmetricKey } = generateAESKey(publicKey);
+// const { publicKey2, privateKey2 } = generateRSAKey();
+// const { encryptedSymmetricKey, encryptedSymmetricKey2 } = generateAESKey(publicKey, publicKey2);
 // const symmetricKey = decryptAESKey(encryptedSymmetricKey, privateKey);
 // const data = 'Hello World';
 // const encryptedData = encryptData(data, symmetricKey);
@@ -52,10 +66,23 @@ function decryptData(data, symmetricKey) {
 // console.log('Encrypted data:', encryptedData);
 // console.log('Decrypted data:', decryptedData);
 
+// function verifySignature(message, signature, publicKey){
+//   const publicKeyObject = forge.pki.publicKeyFromPem(publicKey);
+//   const md = forge.md.sha256.create();
+//   md.update(message, 'utf8');
+//   const signatureBytes = forge.util.decode64(signature);
+//   const isValid = publicKeyObject.verify(md.digest().bytes(), signatureBytes);
+//   return isValid;
+// };
+
+// const { signature, time } = signMessage(privateKey);
+// console.log('Decrypted time: ', verifySignature(time, signature, publicKey));
+
 export const generateKey = {
   generateRSAKey,
   generateAESKey,
   decryptAESKey,
   encryptData,
   decryptData,
+  signMessage,
 };
