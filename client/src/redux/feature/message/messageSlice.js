@@ -27,7 +27,7 @@ export const getMsg = createAsyncThunk(
     try {
       const state = thunkAPI.getState().auth.loginState;
 
-      if (!keyAES) throw new Error('No key AES');
+      // if (!keyAES) throw new Error('No key AES');
 
       const axios = useAxios(state.token, thunkAPI.dispatch);
       const res = await axios.get(`/message/${id}`, {
@@ -38,12 +38,14 @@ export const getMsg = createAsyncThunk(
       if (res.data.results.length < 1) return [];
 
       // decrypt msg here
-      const messages = res.data.results.map((msg) => {
-        const content = generateKey.decryptData(atob(msg.content), atob(keyAES));
-        return { ...msg, content: content };
-      });
+      // const messages = res.data.results.map((msg) => {
+      //   const content = generateKey.decryptData(msg.content, keyAES);
+      //   return { ...msg, content: content };
+      // });
 
-      return messages;
+      console.log(res.data.results);
+
+      return res.data.results;
     } catch (error) {
       if (error.response && error.response.data.message) {
         return thunkAPI.rejectWithValue(error.response.data.message);

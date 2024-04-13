@@ -37,42 +37,21 @@ export const ProtectedRoute = ({ children }) => {
 
         socket.on(EVENT.ACCEPT_FRIEND_REQUEST, (data) => {
           const f = data.conversataion;
-          if (!privateKey) {
-            console.log(privateKey);
-            return;
-          }
 
-          const enPublicKey = f.userA === userId ? f.enPrivateKeyA : f.enPrivateKeyB;
-          const keyAES = generateKey.decryptAESKey(atob(enPublicKey), atob(privateKey));
-
-          dispatch(acceptRequest({ ...f, keyAES: btoa(keyAES) }));
+          dispatch(acceptRequest({ ...f })); // encode base-64
         });
 
         socket.on(EVENT.SEEN_MESSAGE, (data) => {
           console.log('socket SEEN_MESSAGE', data.lastMessage);
 
-          if (!selectedChat && !selectedChat.keyAES) {
-            console.log(selectedChat);
-            return;
-          }
-
-          const content = generateKey.decryptData(atob(data.lastMessage.content), atob(selectedChat.keyAES));
-          dispatch(setLastMessageSelectedChat(data.lastMessage ? { ...data.lastMessage, content: content } : null));
+          dispatch(setLastMessageSelectedChat(data.lastMessage ? { ...data.lastMessage } : null));
         });
 
         socket.on(EVENT.NEW_MESSAGE, (data) => {
           console.log('socket NEW_MESSAGE', data.message);
 
-          if (!selectedChat && !selectedChat.keyAES) {
-            console.log(selectedChat);
-            return;
-          }
-
-          // decrypt message here
-          const content = generateKey.decryptData(atob(data.message.content), atob(selectedChat.keyAES));
-
-          dispatch(sendMsg({ ...data.message, content: content }));
-          dispatch(setLastMessageSelectedChat({ ...data.message, content: content }));
+          dispatch(sendMsg({ ...data.message }));
+          dispatch(setLastMessageSelectedChat({ ...data.message }));
         });
       }
     }

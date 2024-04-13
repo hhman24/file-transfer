@@ -28,11 +28,8 @@ function MessageInput() {
 
   const onSubmit = () => {
     // encrypt msg befor emit
-    if (!selectedChat && !selectedChat.keyAES) {
-      console.log(selectedChat);
-      return;
-    }
-    const encryptedContent = generateKey.encryptData(textAreaValue, atob(selectedChat.keyAES));
+
+    // const encryptedContent = generateKey.encryptData(textAreaValue, atob(selectedChat.keyAES));
 
     socket.emit(
       EVENT.SEND_TEXT_MESSAGE,
@@ -40,7 +37,7 @@ function MessageInput() {
         fromId: userInfo._id,
         toId: selectedChat.friend._id,
         conversation: selectedChat._id,
-        content: btoa(encryptedContent),
+        content: textAreaValue,
         metaURL: '',
       },
       (response) => {

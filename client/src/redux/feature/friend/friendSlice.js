@@ -27,25 +27,24 @@ export const getListFriends = createAsyncThunk('friend/getListFriends', async (_
     const axios = useAxios(state.token, thunkAPI.dispatch);
     const res = await axios.get(`/friend/getAll`, { signal: thunkAPI.signal });
 
-    console.log(res.data);
-
     // key aes
-    const friends = res.data.friends.map((f) => {
-      const enPublicKey = f.userA === state.userInfo._id ? f.enPrivateKeyA : f.enPrivateKeyB;
-      const keyAES = generateKey.decryptAESKey(atob(enPublicKey), atob(state.privateKey));
-      if (!f.lastMessage) return { ...f, keyAES: btoa(keyAES) };
+    // const friends = res.data.friends.map((f) => {
+    //   const enPublicKey = f.userA === state.userInfo._id ? f.enPrivateKeyA : f.enPrivateKeyB;
+    //   const keyAES = generateKey.decryptAESKey(atob(enPublicKey), atob(state.privateKey));
+    //   // if (!f.lastMessage) return { ...f, keyAES: btoa(keyAES) };
 
-      console.log(f.lastMessage.content);
-      console.log(btoa(keyAES));
-      const m = atob(f.lastMessage.content);
+    //   // console.log(f.lastMessage.content);
+    //   // console.log(btoa(keyAES));
 
-      const decryptContent = generateKey.decryptData(m, keyAES);
-      console.log(decryptContent);
+    //   // const decryptContent = generateKey.decryptData(f.lastMessage.content, keyAES);
+    //   // console.log(decryptContent);
 
-      return { ...f, keyAES: btoa(keyAES), lastMessage: { ...f.lastMessage, content: decryptContent } };
-    });
+    //   // return { ...f, keyAES: btoa(keyAES), lastMessage: { ...f.lastMessage, content: decryptContent } };
 
-    return friends;
+    //   return { ...f, keyAES: btoa(keyAES) };
+    // });
+
+    return res.data.friends;
   } catch (error) {
     if (error.response && error.response.data.message) {
       return thunkAPI.rejectWithValue(error.response.data.message);
