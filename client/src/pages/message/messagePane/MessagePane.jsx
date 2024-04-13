@@ -8,16 +8,16 @@ import ChatBubble from './ChatBubble';
 import MessageInput from './MessageInput';
 import NoChat from '~/components/noChat/NoChat';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMsg, reSetPageNum, reSetStateMsg, setPageNum } from '~/redux/feature/message/messageSlice';
+import { getMsg, reSetStateMsg, setPageNum } from '~/redux/feature/message/messageSlice';
 import { toast } from 'react-toastify';
 import { TOAST_ERROR_CSS } from '~/utils/constants';
 
 function MessagePane() {
   const dispatch = useDispatch();
   const selectedChat = useSelector((state) => state.friends.selectedChat);
-  const lastMsg = selectedChat.lastMessage;
+  const lastMsg = selectedChat?.lastMessage;
   const userInfo = useSelector((state) => state.auth.loginState.userInfo);
-  const { message, error, pageNum } = useSelector((state) => state.message);
+  const { message, pageNum } = useSelector((state) => state.message);
 
   const [hasNextPage, setHashNextPage] = useState(false);
   const [isFetching, setFetching] = useState(false);
@@ -54,33 +54,43 @@ function MessagePane() {
 
       const timestamp = selectedChat.lastMessage ? new Date(selectedChat.lastMessage.createdAt) : new Date();
       setFirstFetchTimeMsg(timestamp);
-      
-      dispatch(getMsg({ id: selectedChat._id, page: 1, limit: 10, date: timestamp }))
+
+      dispatch(getMsg({ id: selectedChat._id, page: 1, limit: 10, date: timestamp, keyAES: selectedChat.keyAES }))
         .unwrap()
         .then((data) => {
-          setHashNextPage(Boolean(data.results.length));
+          setHashNextPage(Boolean(data.length));
           refLastestMsg.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
         })
-        .catch(() => {
+        .catch((error) => {
           setFetching(false);
-          toast(`🔥🔥 ${error}!`, TOAST_ERROR_CSS);
+          toast(`🔥🔥 ${error} !`, TOAST_ERROR_CSS);
+          console.log(error);
         });
     }
-  }, [dispatch, selectedChat._id]);
+  }, [dispatch, selectedChat?._id]);
 
   useEffect(() => {
     if (selectedChat && pageNum > 1 && hasNextPage) {
       setFetching(true);
 
-      dispatch(getMsg({ id: selectedChat._id, page: pageNum, limit: 10, date: firstFetchTimeMsg }))
+      dispatch(
+        getMsg({
+          id: selectedChat._id,
+          page: pageNum,
+          limit: 10,
+          date: firstFetchTimeMsg,
+          keyAES: selectedChat.keyAES,
+        }),
+      )
         .unwrap()
         .then((data) => {
-          setHashNextPage(Boolean(data.results.length));
+          setHashNextPage(Boolean(data.length));
           setFetching(false);
         })
-        .catch(() => {
+        .catch((error) => {
           setFetching(false);
-          toast(`🔥🔥 ${error}!`, TOAST_ERROR_CSS);
+          toast(`🔥🔥 ${error} !`, TOAST_ERROR_CSS);
+          console.log(error);
         });
     }
   }, [pageNum]);

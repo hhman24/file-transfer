@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { useAxios } from '~/apis/axiosConfig';
+import { generateKey } from '~/utils/generateKey';
 
 /**
  * @type listFriend: [
@@ -25,7 +26,26 @@ export const getListFriends = createAsyncThunk('friend/getListFriends', async (_
     const state = thunkAPI.getState().auth.loginState;
     const axios = useAxios(state.token, thunkAPI.dispatch);
     const res = await axios.get(`/friend/getAll`, { signal: thunkAPI.signal });
-    return res.data;
+
+    console.log(res.data);
+
+    // key aes
+    const friends = res.data.friends.map((f) => {
+      const enPublicKey = f.userA === state.userInfo._id ? f.enPrivateKeyA : f.enPrivateKeyB;
+      const keyAES = generateKey.decryptAESKey(atob(enPublicKey), atob(state.privateKey));
+      if (!f.lastMessage) return { ...f, keyAES: btoa(keyAES) };
+
+      console.log(f.lastMessage.content);
+      console.log(btoa(keyAES));
+      const m = atob(f.lastMessage.content);
+
+      const decryptContent = generateKey.decryptData(m, keyAES);
+      console.log(decryptContent);
+
+      return { ...f, keyAES: btoa(keyAES), lastMessage: { ...f.lastMessage, content: decryptContent } };
+    });
+
+    return friends;
   } catch (error) {
     if (error.response && error.response.data.message) {
       return thunkAPI.rejectWithValue(error.response.data.message);
@@ -126,7 +146,7 @@ const friendSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(getListFriends.fulfilled, (state, action) => {
-        state.listFriend = action.payload.friends;
+        state.listFriend = action.payload;
         // state.selectedChat = state.listFriend.length > 0 ? state.listFriend[0] : undefined;
         state.isLoading = false;
         state.error = null;

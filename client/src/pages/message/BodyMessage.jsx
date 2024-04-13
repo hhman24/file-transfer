@@ -28,7 +28,6 @@ function BodyMessage() {
           backgroundColor: mode === 'light' ? 'white' : 'black',
         }}
       >
-        {/* chats={chats} selectedChatId={selectedChat.id} setSelectedChat={setSelectedChat} */}
         <ChatsPane />
       </Box>
       <Box

@@ -28,7 +28,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { FormHelperText } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginUser } from '~/redux/feature/auth/authSlice';
+import { loginUser, setPrivateKey } from '~/redux/feature/auth/authSlice';
 import { generateKey } from '~/utils/generateKey';
 import { useRef } from 'react';
 
@@ -87,6 +87,7 @@ function Auth() {
       await dispatch(loginUser({ email: data.email, message: signMsg.time, signature: signMsg.signature }))
         .unwrap()
         .then(() => {
+          dispatch(setPrivateKey(data.privateKey));
           navigate('/message');
         })
         .catch((err) => {

@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { useAxios } from '~/apis/axiosConfig';
+import { generateKey } from '~/utils/generateKey';
 
 /**
  * @type message
@@ -20,23 +21,38 @@ const initialState = {
   pageNum: 1,
 };
 
-export const getMsg = createAsyncThunk('message/getMsg', async ({ id, page = 1, limit = 10, date }, thunkAPI) => {
-  try {
-    const state = thunkAPI.getState().auth.loginState;
-    const axios = useAxios(state.token, thunkAPI.dispatch);
-    const res = await axios.get(`/message/${id}`, {
-      params: { page: page, limit: limit, date: date },
-      signal: thunkAPI.signal,
-    });
-    return res.data;
-  } catch (error) {
-    if (error.response && error.response.data.message) {
-      return thunkAPI.rejectWithValue(error.response.data.message);
-    } else {
-      return thunkAPI.rejectWithValue(error.message);
+export const getMsg = createAsyncThunk(
+  'message/getMsg',
+  async ({ id, page = 1, limit = 10, date, keyAES }, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState().auth.loginState;
+
+      if (!keyAES) throw new Error('No key AES');
+
+      const axios = useAxios(state.token, thunkAPI.dispatch);
+      const res = await axios.get(`/message/${id}`, {
+        params: { page: page, limit: limit, date: date },
+        signal: thunkAPI.signal,
+      });
+
+      if (res.data.results.length < 1) return [];
+
+      // decrypt msg here
+      const messages = res.data.results.map((msg) => {
+        const content = generateKey.decryptData(atob(msg.content), atob(keyAES));
+        return { ...msg, content: content };
+      });
+
+      return messages;
+    } catch (error) {
+      if (error.response && error.response.data.message) {
+        return thunkAPI.rejectWithValue(error.response.data.message);
+      } else {
+        return thunkAPI.rejectWithValue(error.message);
+      }
     }
-  }
-});
+  },
+);
 
 const messageSlice = createSlice({
   initialState,
@@ -75,7 +91,7 @@ const messageSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(getMsg.fulfilled, (state, action) => {
-        state.message = [...action.payload.results.reverse(), ...state.message];
+        state.message = [...action.payload.reverse(), ...state.message];
         state.isLoading = false;
         state.error = null;
       })
