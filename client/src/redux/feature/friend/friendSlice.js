@@ -136,7 +136,6 @@ const friendSlice = createSlice({
     setLastMessageSelectedChat: (state, action) => {
       const id = state.listFriend.findIndex((m) => m._id === action.payload.conversation);
       state.listFriend[id].lastMessage = id < 0 ? null : action.payload;
-      state.selectedChat.lastMessage = id < 0 ? null : action.payload;
     },
   },
   extraReducers(builder) {

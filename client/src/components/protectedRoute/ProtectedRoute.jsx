@@ -4,7 +4,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { acceptRequest, receiveRequest, setLastMessageSelectedChat } from '~/redux/feature/friend/friendSlice';
 import { sendMsg } from '~/redux/feature/message/messageSlice';
 import { EVENT } from '~/utils/constants';
-import { generateKey } from '~/utils/generateKey';
+// import { generateKey } from '~/utils/generateKey';
 import { connectSocket, socket } from '~/utils/socket';
 
 export const ProtectedRoute = ({ children }) => {
@@ -14,8 +14,8 @@ export const ProtectedRoute = ({ children }) => {
   const dispatch = useDispatch();
 
   const userId = useSelector((state) => state.auth.loginState.userInfo?._id);
-  const privateKey = useSelector((state) => state.auth.loginState.privateKey);
-  const selectedChat = useSelector((state) => state.friends.selectedChat);
+  // const privateKey = useSelector((state) => state.auth.loginState.privateKey);
+  // const selectedChat = useSelector((state) => state.friends.selectedChat);
 
   useEffect(() => {
     if (isLogin) {
@@ -51,18 +51,19 @@ export const ProtectedRoute = ({ children }) => {
           console.log('socket NEW_MESSAGE', data.message);
 
           dispatch(sendMsg({ ...data.message }));
-          dispatch(setLastMessageSelectedChat({ ...data.message }));
+          // dispatch(setLastMessageSelectedChat({ ...data.message }));
         });
       }
     }
 
     return () => {
+      console.log('off event');
       socket?.off(EVENT.SEND_FRIEND_REQUEST);
       socket?.off(EVENT.ACCEPT_FRIEND_REQUEST);
       socket?.off(EVENT.SEEN_MESSAGE);
       socket?.off(EVENT.NEW_MESSAGE);
     };
-  }, [isLogin, socket]);
+  }, [isLogin, dispatch, userId]);
 
   return token === '' && !isLogin ? <Navigate to={'/login'} replace state={{ from: location }} /> : children;
 };

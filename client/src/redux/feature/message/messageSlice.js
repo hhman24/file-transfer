@@ -19,6 +19,7 @@ const initialState = {
   isLoading: false,
   error: null,
   pageNum: 1,
+  newMsg: null,
 };
 
 export const getMsg = createAsyncThunk(
@@ -43,8 +44,6 @@ export const getMsg = createAsyncThunk(
       //   return { ...msg, content: content };
       // });
 
-      console.log(res.data.results);
-
       return res.data.results;
     } catch (error) {
       if (error.response && error.response.data.message) {
@@ -65,10 +64,12 @@ const messageSlice = createSlice({
       state.metaData = null;
       state.isLoading = false;
       state.error = null;
+      state.newMsg = null;
       state.pageNum = 1;
     },
     sendMsg: (state, action) => {
       state.message.push(action.payload);
+      state.newMsg = action.payload;
     },
     setPageNum: (state) => {
       state.pageNum += 1;

@@ -11,7 +11,7 @@ import moment from 'moment';
 import { socket } from '~/utils/socket';
 import { EVENT } from '~/utils/constants';
 import truncateText from '~/utils/truncate';
-import { reSetPageNum, reSetStateMsg } from '~/redux/feature/message/messageSlice';
+import { reSetStateMsg } from '~/redux/feature/message/messageSlice';
 
 function ChatsListItem(props) {
   const { chat, selectedChat } = props;
@@ -22,9 +22,7 @@ function ChatsListItem(props) {
   const handleClick = async () => {
     if (!selected) {
       dispatch(reSetStateMsg());
-      dispatch(reSetPageNum());
     }
-
     dispatch(setSelectedChat(chat));
 
     // emit start conversation
