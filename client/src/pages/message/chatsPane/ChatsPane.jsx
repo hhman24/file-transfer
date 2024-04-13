@@ -39,6 +39,8 @@ function ChatsPane() {
         theme: 'light',
         transition: Bounce,
       });
+
+      console.log(error);
     }
   }, [error]);
 

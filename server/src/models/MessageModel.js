@@ -46,11 +46,14 @@ const findOneById = async (id) => {
   }
 };
 
-const findById = async (id, startIndex, limit) => {
+const findById = async (id, startIndex, limit, fromDate) => {
   try {
     return await GET_DB()
       .collection(MESSAGE_COLLECTION_NAME)
-      .find({ conversation: new ObjectId(id) }, { sort: { createdAt: -1 } })
+      .find(
+        { conversation: new ObjectId(id), createdAt: { $lte: new Date(fromDate) } },
+        { sort: { createdAt: -1 } },
+      )
       .limit(limit)
       .skip(startIndex)
       .toArray();

@@ -11,7 +11,7 @@ import moment from 'moment';
 import { socket } from '~/utils/socket';
 import { EVENT } from '~/utils/constants';
 import truncateText from '~/utils/truncate';
-import { reSetPageNum, reSetStateMsg } from '~/redux/feature/message/messageSlice';
+import { reSetStateMsg } from '~/redux/feature/message/messageSlice';
 
 function ChatsListItem(props) {
   const { chat, selectedChat } = props;
@@ -19,25 +19,28 @@ function ChatsListItem(props) {
   const selected = selectedChat?._id === chat?._id;
   const { userInfo } = useSelector((state) => state.auth.loginState);
 
+  const handleClick = async () => {
+    if (!selected) {
+      dispatch(reSetStateMsg());
+    }
+    dispatch(setSelectedChat(chat));
+
+    // emit start conversation
+    socket.emit(
+      EVENT.START_CONVERSATION,
+      { fromId: userInfo._id, toId: chat.friend._id, conversation: chat._id },
+      (response) => {
+        console.log(response);
+      },
+    );
+  };
+
   return (
     <>
       <ListItemButton
         selected={selected}
         onClick={() => {
-          if (!selected) {
-            dispatch(reSetStateMsg());
-            dispatch(reSetPageNum());
-          }
-
-          dispatch(setSelectedChat(chat));
-          // emit start conversation
-          socket.emit(
-            EVENT.START_CONVERSATION,
-            { fromId: userInfo._id, toId: chat.friend._id, conversation: chat._id },
-            (response) => {
-              console.log(response);
-            },
-          );
+          handleClick();
         }}
         sx={{
           flexDirection: 'column',

@@ -5,6 +5,7 @@ const initialState = {
   loginState: {
     userInfo: null,
     token: '',
+    privateKey: '',
     isLogined: false,
   },
   registerState: {
@@ -75,6 +76,10 @@ const authSlice = createSlice({
       state.loginState.userInfo = null;
       state.loginState.token = '';
       state.loginState.isLogined = true;
+      state.loginState.privateKey = '';
+    },
+    setPrivateKey: (state, action) => {
+      state.loginState.privateKey = action.payload;
     },
   },
   extraReducers(builder) {
@@ -135,5 +140,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setLogin, setLogout, setRegister } = authSlice.actions;
+export const { setLogin, setLogout, setRegister, setPrivateKey } = authSlice.actions;
 export default authSlice.reducer;

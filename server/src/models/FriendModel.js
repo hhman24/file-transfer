@@ -66,7 +66,7 @@ const findOneFriendById = async (userA, userB) => {
   }
 };
 
-const findOneRelationUpdate = async (userA, userB, status) => {
+const findOneRelationUpdate = async (userA, userB, enPrivateKeyA, enPrivateKeyB, status) => {
   try {
     const res = await GET_DB()
       .collection(FRIEND_COLLECTION_NAME)
@@ -79,6 +79,8 @@ const findOneRelationUpdate = async (userA, userB, status) => {
         {
           $set: {
             status: status,
+            enPrivateKeyA: enPrivateKeyA,
+            enPrivateKeyB: enPrivateKeyB,
             updatedAt: new Date(),
           },
         },

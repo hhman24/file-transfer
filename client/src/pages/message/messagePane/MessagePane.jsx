@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import HeaderMessagePane from './HeaderMessagePane';
 import Stack from '@mui/material/Stack';
@@ -8,18 +8,22 @@ import ChatBubble from './ChatBubble';
 import MessageInput from './MessageInput';
 import NoChat from '~/components/noChat/NoChat';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMsg, reSetPageNum, setPageNum } from '~/redux/feature/message/messageSlice';
+import { getMsg, reSetStateMsg, sendMsg, setPageNum } from '~/redux/feature/message/messageSlice';
 import { toast } from 'react-toastify';
-import { TOAST_ERROR_CSS } from '~/utils/constants';
+import { EVENT, TOAST_ERROR_CSS } from '~/utils/constants';
+import { setLastMessageSelectedChat } from '~/redux/feature/friend/friendSlice';
+import { socket } from '~/utils/socket';
 
 function MessagePane() {
   const dispatch = useDispatch();
   const selectedChat = useSelector((state) => state.friends.selectedChat);
+  // const id = useMemo(() => selectedChat?._id, [selectedChat?._id]);
   const userInfo = useSelector((state) => state.auth.loginState.userInfo);
-  const { message, error, pageNum } = useSelector((state) => state.message);
+  const { message, pageNum, newMsg } = useSelector((state) => state.message);
 
   const [hasNextPage, setHashNextPage] = useState(false);
   const [isFetching, setFetching] = useState(false);
+  const [firstFetchTimeMsg, setFirstFetchTimeMsg] = useState(null);
 
   const refLastestMsg = useRef();
   const intObserver = useRef();
@@ -43,38 +47,66 @@ function MessagePane() {
 
   useEffect(() => {
     refLastestMsg.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  }, [message]);
+    if (newMsg) {
+      // decrypt message here
+      dispatch(setLastMessageSelectedChat(newMsg));
+    }
+  }, [newMsg, dispatch]);
 
   // For selectedChat change
   useEffect(() => {
     if (selectedChat) {
-      const timestamp = selectedChat.lastMessage ? new Date(selectedChat.lastMessage.createdAt) : new Date();
-      dispatch(getMsg({ id: selectedChat._id, page: pageNum, limit: 6, date: timestamp }))
+      dispatch(reSetStateMsg());
+
+      const timestamp = new Date();
+      setFirstFetchTimeMsg(timestamp);
+
+      dispatch(
+        getMsg({
+          id: selectedChat._id,
+          page: 1,
+          limit: 10,
+          date: timestamp,
+          keyAES: atob(selectedChat.keyAES),
+        }),
+      )
         .unwrap()
         .then((data) => {
-          setHashNextPage(Boolean(data.results.length));
+          console.log(data);
+          setHashNextPage(Boolean(data.length));
+          refLastestMsg.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
         })
-        .catch(() => {
+        .catch((error) => {
           setFetching(false);
-          toast(`🔥🔥 ${error}!`, TOAST_ERROR_CSS);
+          toast(`🔥🔥 ${error} !`, TOAST_ERROR_CSS);
+          console.log(error);
         });
     }
-  }, [dispatch, selectedChat]);
+  }, [dispatch, selectedChat?._id]);
 
   useEffect(() => {
-    if (selectedChat && pageNum > 1) {
+    if (selectedChat && pageNum > 1 && hasNextPage) {
       setFetching(true);
 
-      const timestamp = new Date(selectedChat.lastMessage.createdAt);
-      dispatch(getMsg({ id: selectedChat._id, page: pageNum, limit: 5, date: timestamp }))
+      dispatch(
+        getMsg({
+          id: selectedChat._id,
+          page: pageNum,
+          limit: 10,
+          date: firstFetchTimeMsg,
+          keyAES: atob(selectedChat.keyAES),
+        }),
+      )
         .unwrap()
         .then((data) => {
-          setHashNextPage(Boolean(data.results.length));
+          console.log(data);
+          setHashNextPage(Boolean(data.length));
           setFetching(false);
         })
-        .catch(() => {
+        .catch((error) => {
           setFetching(false);
-          toast(`🔥🔥 ${error}!`, TOAST_ERROR_CSS);
+          toast(`🔥🔥 ${error} !`, TOAST_ERROR_CSS);
+          console.log(error);
         });
     }
   }, [pageNum]);

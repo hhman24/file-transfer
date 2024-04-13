@@ -12,6 +12,7 @@ import { EVENT } from '~/utils/constants';
 import { Bounce, toast } from 'react-toastify';
 import FilePrev from './FilePrev';
 import { resetMetaData, setMetaData } from '~/redux/feature/message/messageSlice';
+import { generateKey } from '~/utils/generateKey';
 
 function MessageInput() {
   const { mode, setMode } = useColorScheme();
@@ -26,13 +27,20 @@ function MessageInput() {
   const selectFile = () => fileRef.current?.click();
 
   const onSubmit = () => {
+    // encrypt msg befor emit
+    if (!selectedChat.keyAES) {
+      console.log(selectedChat);
+      return;
+    }
+    const encryptedContent = generateKey.encryptData(textAreaValue, atob(selectedChat.keyAES));
+
     socket.emit(
       EVENT.SEND_TEXT_MESSAGE,
       {
         fromId: userInfo._id,
         toId: selectedChat.friend._id,
         conversation: selectedChat._id,
-        content: textAreaValue,
+        content: encryptedContent,
         metaURL: '',
       },
       (response) => {
@@ -55,7 +63,7 @@ function MessageInput() {
 
       if (!files) return;
 
-      const limit = 25000;
+      const limit = 5000;
 
       const size = files.size / 1024;
 
@@ -73,7 +81,6 @@ function MessageInput() {
           theme: 'light',
           transition: Bounce,
         });
-
         return;
       }
 

@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { useAxios } from '~/apis/axiosConfig';
+import { generateKey } from '~/utils/generateKey';
 
 /**
  * @type listFriend: [
@@ -25,7 +26,23 @@ export const getListFriends = createAsyncThunk('friend/getListFriends', async (_
     const state = thunkAPI.getState().auth.loginState;
     const axios = useAxios(state.token, thunkAPI.dispatch);
     const res = await axios.get(`/friend/getAll`, { signal: thunkAPI.signal });
-    return res.data;
+
+    // get key aes
+    const friends = res.data.friends.map((f) => {
+      const enPublicKey = f.userA === state.userInfo._id ? f.enPrivateKeyA : f.enPrivateKeyB;
+      const keyAES = generateKey.decryptAESKey(atob(enPublicKey), atob(state.privateKey));
+      if (!f.lastMessage) return { ...f, keyAES: btoa(keyAES) };
+
+      // console.log(f.lastMessage.content);
+      // console.log(keyAES);
+
+      const decryptContent = generateKey.decryptData(f.lastMessage.content, keyAES);
+      // console.log(decryptContent);
+
+      return { ...f, keyAES: btoa(keyAES), lastMessage: { ...f.lastMessage, content: decryptContent } };
+    });
+
+    return friends;
   } catch (error) {
     if (error.response && error.response.data.message) {
       return thunkAPI.rejectWithValue(error.response.data.message);
@@ -117,8 +134,10 @@ const friendSlice = createSlice({
     setLastMessageSelectedChat: (state, action) => {
       const id = state.listFriend.findIndex((m) => m._id === action.payload.conversation);
       state.listFriend[id].lastMessage = id < 0 ? null : action.payload;
-      console.log(state.listFriend[id].lastMessage);
-      // state.selectedChat.lastMessage = id < 0 ? null : action.payload;
+    },
+    setReadLastMessage: (state, action) => {
+      const id = state.listFriend.findIndex((m) => m._id === action.payload.conversation);
+      state.listFriend[id].lastMessage._unread = id < 0 ? null : action.payload._unread;
     },
   },
   extraReducers(builder) {
@@ -127,7 +146,7 @@ const friendSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(getListFriends.fulfilled, (state, action) => {
-        state.listFriend = action.payload.friends;
+        state.listFriend = action.payload;
         // state.selectedChat = state.listFriend.length > 0 ? state.listFriend[0] : undefined;
         state.isLoading = false;
         state.error = null;
@@ -152,6 +171,12 @@ const friendSlice = createSlice({
   },
 });
 
-export const { setSelectedChat, reSetStateFriend, receiveRequest, acceptRequest, setLastMessageSelectedChat } =
-  friendSlice.actions;
+export const {
+  setSelectedChat,
+  reSetStateFriend,
+  receiveRequest,
+  acceptRequest,
+  setLastMessageSelectedChat,
+  setReadLastMessage,
+} = friendSlice.actions;
 export default friendSlice.reducer;

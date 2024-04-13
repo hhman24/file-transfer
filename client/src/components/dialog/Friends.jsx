@@ -11,6 +11,7 @@ import { getListNotFriend } from '~/redux/feature/friend/friendSlice';
 import AvatarWithStatus from '../avatar/AvatarWithStatus';
 import { socket } from '~/utils/socket';
 import { EVENT } from '~/utils/constants';
+import { generateKey } from '~/utils/generateKey';
 // import { FetchFriendRequests, FetchFriends, FetchUsers } from '../../redux/slices/app';
 // import { FriendElement, FriendRequestElement, UserElement } from '../../components/UserElement';
 
@@ -27,6 +28,26 @@ const UsersList = () => {
   useEffect(() => {
     dispatch(getListNotFriend());
   }, [dispatch]);
+
+  const handleAcceptInvite = async (f) => {
+    if (f.conversation.userA === userInfo._id) return;
+
+    // encrypte key AES
+    const key = await generateKey.generateAESKey(atob(f.publicKeyCredential), atob(userInfo.publicKeyCredential));
+
+    socket.emit(
+      EVENT.ACCEPT_FRIEND_REQUEST,
+      {
+        to: f._id,
+        from: userInfo._id,
+        enPrivateKeyFrom: btoa(key.encryptedSymmetricKeyB), // base64
+        enPrivateKeyTo: btoa(key.encryptedSymmetricKeyA), // base64
+      },
+      () => {
+        alert('request sent');
+      },
+    );
+  };
 
   return (
     <>
@@ -54,10 +75,7 @@ const UsersList = () => {
                 <Button
                   disabled={f.conversation.userA === userInfo._id}
                   onClick={() => {
-                    if (f.conversation.userA === userInfo._id) return;
-                    socket.emit(EVENT.ACCEPT_FRIEND_REQUEST, { to: f._id, from: userInfo._id }, () => {
-                      alert('request sent');
-                    });
+                    handleAcceptInvite(f);
                   }}
                 >
                   {f.conversation.userA === userInfo._id ? 'Pending' : 'Accept'}
