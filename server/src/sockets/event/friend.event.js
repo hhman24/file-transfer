@@ -39,9 +39,14 @@ export const acceptFriendReqEvent = (io, userSocketMap) => async (payload, callb
   try {
     console.log(`accpet friend req event has been received with ${JSON.stringify(payload)} 🍅🍋`);
 
-    const { from, to } = payload;
+    const { from, to, enPrivateKeyFrom, enPrivateKeyTo } = payload;
 
-    const conversataion = await friendService.acceptedFriend({ userId: from, friendId: to });
+    const conversataion = await friendService.acceptedFriend({
+      userId: from,
+      friendId: to,
+      enPrivateKeyA: enPrivateKeyTo,
+      enPrivateKeyB: enPrivateKeyFrom,
+    });
 
     const res1 = await friendService.findContactById(conversataion._id, from);
     const res2 = await friendService.findContactById(conversataion._id, to);

@@ -41,7 +41,7 @@ const addFriend = async ({ userId, friendId }) => {
  * @dev accept a invite add friend of friendId
  * @returns {...} or null
  */
-const acceptedFriend = async ({ userId, friendId }) => {
+const acceptedFriend = async ({ userId, friendId, enPrivateKeyA, enPrivateKeyB }) => {
   try {
     const existRelation = await friendModel.findOneFriendById(friendId, userId);
     if (!existRelation) throw new ApiError(StatusCodes.BAD_REQUEST, 'Not exist request friends');
@@ -49,7 +49,13 @@ const acceptedFriend = async ({ userId, friendId }) => {
       throw new ApiError(StatusCodes.BAD_REQUEST, `${userId} & ${friendId} is friend`);
     }
 
-    return await friendModel.findOneRelationUpdate(friendId, userId, FRIEND_STATUS.ACCEPTED);
+    return await friendModel.findOneRelationUpdate(
+      friendId,
+      userId,
+      enPrivateKeyA,
+      enPrivateKeyB,
+      FRIEND_STATUS.ACCEPTED,
+    );
   } catch (error) {
     throw error;
   }
@@ -143,8 +149,8 @@ const findContactById = async (id, user) => {
       .map((f) => {
         f.friend = f.userA._id.toString() === user ? f.userB : f.userA;
 
-        delete f.userA;
-        delete f.userB;
+        f.userA = f.userA._id; // _id
+        f.userB = f.userB._id; // _id
         return f;
       })
       .find((r) => r._id.toString() === id.toString());
