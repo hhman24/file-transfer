@@ -19,7 +19,6 @@ async function generateAESKey(publicKeyA, publicKeyB) {
 }
 
 async function decryptAESKey(encryptedSymmetricKey, privateKey) {
-  forge.pki.privateKeyFromPem(privateKey);
   const symmetricKey = forge.pki.privateKeyFromPem(privateKey).decrypt(encryptedSymmetricKey);
   return symmetricKey;
 }
@@ -30,17 +29,20 @@ function encryptData(data, symmetricKey) {
   cipher.start({ iv });
   cipher.update(forge.util.createBuffer(data));
   cipher.finish();
-  return iv.toString('hex') + ':' + cipher.output.toHex();
+  const encryptedData = cipher.output.data;
+  return `${forge.util.encode64(iv)}:${forge.util.encode64(encryptedData)}`;
 }
 
 function decryptData(data, symmetricKey) {
   const parts = data.split(':');
-  const iv = forge.util.createBuffer(parts[0], 'hex');
+  const iv = forge.util.decode64(parts[0]);
+  const encryptedData = forge.util.decode64(parts[1]);
   const decipher = forge.cipher.createDecipher('AES-CBC', symmetricKey);
   decipher.start({ iv });
-  decipher.update(forge.util.createBuffer(forge.util.hexToBytes(parts[1])));
+  decipher.update(forge.util.createBuffer(encryptedData));
   decipher.finish();
-  return decipher.output.toString();
+  const decryptedData = decipher.output.data;
+  return decryptedData;
 }
 
 function signMessage(privateKey) {
@@ -55,10 +57,10 @@ function signMessage(privateKey) {
 }
 
 //test
-// const { publicKey, privateKey } = generateRSAKey();
-// const { publicKey2, privateKey2 } = generateRSAKey();
-// const { encryptedSymmetricKey, encryptedSymmetricKey2 } = generateAESKey(publicKey, publicKey2);
-// const symmetricKey = decryptAESKey(encryptedSymmetricKey, privateKey);
+// const keyA = await generateRSAKey();
+// const keyB = await generateRSAKey();
+// const { encryptedSymmetricKeyA, encryptedSymmetricKeyB } = await generateAESKey(keyA.publicKey, keyB.publicKey);
+// const symmetricKey = await decryptAESKey(encryptedSymmetricKeyA, keyA.privateKey);
 // const data = 'Hello World';
 // const encryptedData = encryptData(data, symmetricKey);
 // const decryptedData = decryptData(encryptedData, symmetricKey);
