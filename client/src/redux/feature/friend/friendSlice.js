@@ -27,24 +27,22 @@ export const getListFriends = createAsyncThunk('friend/getListFriends', async (_
     const axios = useAxios(state.token, thunkAPI.dispatch);
     const res = await axios.get(`/friend/getAll`, { signal: thunkAPI.signal });
 
-    // key aes
-    // const friends = res.data.friends.map((f) => {
-    //   const enPublicKey = f.userA === state.userInfo._id ? f.enPrivateKeyA : f.enPrivateKeyB;
-    //   const keyAES = generateKey.decryptAESKey(atob(enPublicKey), atob(state.privateKey));
-    //   // if (!f.lastMessage) return { ...f, keyAES: btoa(keyAES) };
+    // get key aes
+    const friends = res.data.friends.map((f) => {
+      const enPublicKey = f.userA === state.userInfo._id ? f.enPrivateKeyA : f.enPrivateKeyB;
+      const keyAES = generateKey.decryptAESKey(atob(enPublicKey), atob(state.privateKey));
+      if (!f.lastMessage) return { ...f, keyAES: btoa(keyAES) };
 
-    //   // console.log(f.lastMessage.content);
-    //   // console.log(btoa(keyAES));
+      // console.log(f.lastMessage.content);
+      // console.log(keyAES);
 
-    //   // const decryptContent = generateKey.decryptData(f.lastMessage.content, keyAES);
-    //   // console.log(decryptContent);
+      const decryptContent = generateKey.decryptData(f.lastMessage.content, keyAES);
+      // console.log(decryptContent);
 
-    //   // return { ...f, keyAES: btoa(keyAES), lastMessage: { ...f.lastMessage, content: decryptContent } };
+      return { ...f, keyAES: btoa(keyAES), lastMessage: { ...f.lastMessage, content: decryptContent } };
+    });
 
-    //   return { ...f, keyAES: btoa(keyAES) };
-    // });
-
-    return res.data.friends;
+    return friends;
   } catch (error) {
     if (error.response && error.response.data.message) {
       return thunkAPI.rejectWithValue(error.response.data.message);
@@ -137,6 +135,10 @@ const friendSlice = createSlice({
       const id = state.listFriend.findIndex((m) => m._id === action.payload.conversation);
       state.listFriend[id].lastMessage = id < 0 ? null : action.payload;
     },
+    setReadLastMessage: (state, action) => {
+      const id = state.listFriend.findIndex((m) => m._id === action.payload.conversation);
+      state.listFriend[id].lastMessage._unread = id < 0 ? null : action.payload._unread;
+    },
   },
   extraReducers(builder) {
     builder
@@ -169,6 +171,12 @@ const friendSlice = createSlice({
   },
 });
 
-export const { setSelectedChat, reSetStateFriend, receiveRequest, acceptRequest, setLastMessageSelectedChat } =
-  friendSlice.actions;
+export const {
+  setSelectedChat,
+  reSetStateFriend,
+  receiveRequest,
+  acceptRequest,
+  setLastMessageSelectedChat,
+  setReadLastMessage,
+} = friendSlice.actions;
 export default friendSlice.reducer;

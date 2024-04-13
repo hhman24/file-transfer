@@ -47,7 +47,10 @@ function MessagePane() {
 
   useEffect(() => {
     refLastestMsg.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-    if (newMsg) dispatch(setLastMessageSelectedChat(newMsg));
+    if (newMsg) {
+      // decrypt message here
+      dispatch(setLastMessageSelectedChat(newMsg));
+    }
   }, [newMsg, dispatch]);
 
   // For selectedChat change
@@ -58,7 +61,15 @@ function MessagePane() {
       const timestamp = new Date();
       setFirstFetchTimeMsg(timestamp);
 
-      dispatch(getMsg({ id: selectedChat._id, page: 1, limit: 10, date: timestamp, keyAES: selectedChat.keyAES }))
+      dispatch(
+        getMsg({
+          id: selectedChat._id,
+          page: 1,
+          limit: 10,
+          date: timestamp,
+          keyAES: atob(selectedChat.keyAES),
+        }),
+      )
         .unwrap()
         .then((data) => {
           console.log(data);
@@ -83,7 +94,7 @@ function MessagePane() {
           page: pageNum,
           limit: 10,
           date: firstFetchTimeMsg,
-          keyAES: selectedChat.keyAES,
+          keyAES: atob(selectedChat.keyAES),
         }),
       )
         .unwrap()

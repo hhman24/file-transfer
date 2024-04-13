@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
-import { acceptRequest, receiveRequest, setLastMessageSelectedChat } from '~/redux/feature/friend/friendSlice';
+import { acceptRequest, receiveRequest, setLastMessageSelectedChat, setReadLastMessage } from '~/redux/feature/friend/friendSlice';
 import { sendMsg } from '~/redux/feature/message/messageSlice';
 import { EVENT } from '~/utils/constants';
+import { generateKey } from '~/utils/generateKey';
 // import { generateKey } from '~/utils/generateKey';
 import { connectSocket, socket } from '~/utils/socket';
 
@@ -14,8 +15,8 @@ export const ProtectedRoute = ({ children }) => {
   const dispatch = useDispatch();
 
   const userId = useSelector((state) => state.auth.loginState.userInfo?._id);
-  // const privateKey = useSelector((state) => state.auth.loginState.privateKey);
-  // const selectedChat = useSelector((state) => state.friends.selectedChat);
+  const privateKey = useSelector((state) => state.auth.loginState.privateKey);
+  const selectedChat = useSelector((state) => state.friends.selectedChat);
 
   useEffect(() => {
     if (isLogin) {
@@ -36,21 +37,34 @@ export const ProtectedRoute = ({ children }) => {
         });
 
         socket.on(EVENT.ACCEPT_FRIEND_REQUEST, (data) => {
+          console.log('socket ACCEPT_FRIEND_REQUEST', data.conversataion);
           const f = data.conversataion;
+          if (!privateKey) {
+            console.log('No private key');
+            return;
+          }
 
-          dispatch(acceptRequest({ ...f })); // encode base-64
+          const enPublicKey = f.userA === userId ? f.enPrivateKeyA : f.enPrivateKeyB;
+          const keyAES = generateKey.decryptAESKey(atob(enPublicKey), atob(privateKey));
+
+          dispatch(acceptRequest({ ...f, keyAES: btoa(keyAES) })); // encode base-64
         });
 
         socket.on(EVENT.SEEN_MESSAGE, (data) => {
           console.log('socket SEEN_MESSAGE', data.lastMessage);
 
-          dispatch(setLastMessageSelectedChat(data.lastMessage ? { ...data.lastMessage } : null));
+          dispatch(setReadLastMessage(data.lastMessage ? { ...data.lastMessage } : null));
         });
 
         socket.on(EVENT.NEW_MESSAGE, (data) => {
           console.log('socket NEW_MESSAGE', data.message);
+          if (!selectedChat.keyAES) {
+            console.log('No key AES');
+            return;
+          }
 
-          dispatch(sendMsg({ ...data.message }));
+          const content = generateKey.decryptData(data.message.content, atob(selectedChat.keyAES));
+          dispatch(sendMsg({ ...data.message, content: content }));
           // dispatch(setLastMessageSelectedChat({ ...data.message }));
         });
       }

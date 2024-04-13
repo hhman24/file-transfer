@@ -18,7 +18,7 @@ async function generateAESKey(publicKeyA, publicKeyB) {
   };
 }
 
-async function decryptAESKey(encryptedSymmetricKey, privateKey) {
+function decryptAESKey(encryptedSymmetricKey, privateKey) {
   const symmetricKey = forge.pki.privateKeyFromPem(privateKey).decrypt(encryptedSymmetricKey);
   return symmetricKey;
 }
