@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "googleapis": "^134.0.0",
-    "mime-types": "^2.1.35"
-  }
-}
