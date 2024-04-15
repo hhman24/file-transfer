@@ -8,6 +8,9 @@ const Router = express.Router();
 //Router.use(verifyTokenMiddleware.verifyToken);
 
 
-Router.route('/upfile').post( uploadController.uploadFile);
+//Router.route('/revoke').post( uploadController.revokeToken);
+
+Router.route('/token').get( uploadController.getToken);
+
 
 export const uploadRoute = Router;
