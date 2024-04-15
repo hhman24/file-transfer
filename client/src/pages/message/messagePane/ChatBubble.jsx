@@ -27,7 +27,7 @@ function ChatBubble(props) {
           {moment(message?.createdAt).fromNow()}
         </Typography>
       </Stack>
-      {message.metaURL ? (
+      {message.metaData ? (
         <Box
           sx={{
             backgroundColor: (theme) =>
@@ -46,9 +46,9 @@ function ChatBubble(props) {
               <InsertDriveFileRoundedIcon />
             </Avatar>
             <div>
-              <Typography fontSize={'12px'}>{message.metaURL}</Typography>
+              <Typography fontSize={'12px'}>{message.metaData.fileName}</Typography>
               <Typography variant="body2" fontSize={'12px'}>
-                {message.metaURL}
+                {`${(message?.metaData?.size / (1024 * 1000)).toFixed(2)} MB`}
               </Typography>
             </div>
           </Stack>
@@ -74,6 +74,8 @@ function ChatBubble(props) {
                   : isSent
                     ? theme.devSchema.secondaryDark
                     : theme.palette.background.paper,
+              overflowWrap: 'break-word',
+              wordWrap: 'break-word',
             }}
           >
             <Typography

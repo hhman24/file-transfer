@@ -6,22 +6,20 @@ import IconButton from '@mui/material/IconButton';
 import Input from '@mui/material/Input';
 import SendIcon from '@mui/icons-material/Send';
 import AddIcon from '@mui/icons-material/Add';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { socket } from '~/utils/socket';
-import { EVENT } from '~/utils/constants';
+import { EVENT, TOAST_ERROR_CSS } from '~/utils/constants';
 import { Bounce, toast } from 'react-toastify';
 import FilePrev from './FilePrev';
-import { resetMetaData, setMetaData } from '~/redux/feature/message/messageSlice';
 import { generateKey } from '~/utils/generateKey';
 
 function MessageInput() {
   const { mode, setMode } = useColorScheme();
   const [textAreaValue, setTextAreaValue] = useState('');
+  const [metaData, setMetaData] = useState(null);
   const textAreaRef = useRef(null);
   const selectedChat = useSelector((state) => state.friends.selectedChat);
   const { userInfo } = useSelector((state) => state.auth.loginState);
-  const { metaData } = useSelector((state) => state.message);
-  const dispatch = useDispatch();
 
   const fileRef = useRef(null);
   const selectFile = () => fileRef.current?.click();
@@ -34,6 +32,10 @@ function MessageInput() {
     }
     const encryptedContent = generateKey.encryptData(textAreaValue, atob(selectedChat.keyAES));
 
+    // object metaData {url, fileName, size }
+    // update lên cloud....
+    const encryptedURL = metaData ? generateKey.encryptData(metaData.name, atob(selectedChat.keyAES)) : null;
+
     socket.emit(
       EVENT.SEND_TEXT_MESSAGE,
       {
@@ -41,7 +43,7 @@ function MessageInput() {
         toId: selectedChat.friend._id,
         conversation: selectedChat._id,
         content: encryptedContent,
-        metaURL: '',
+        metaData: metaData ? { fileName: metaData.name, url: encryptedURL, size: `${metaData.size}` } : null,
       },
       (response) => {
         console.log(response);
@@ -50,14 +52,14 @@ function MessageInput() {
   };
 
   const handleClick = () => {
-    if (textAreaValue.trim() !== '') {
+    if (textAreaValue.trim() !== '' || metaData) {
       onSubmit();
       setTextAreaValue('');
-      dispatch(resetMetaData());
+      setMetaData(null);
     }
   };
 
-  const handleFileChange = async (e) => {
+  const handleFileChange = (e) => {
     try {
       const files = e.target.files[0];
 
@@ -70,22 +72,13 @@ function MessageInput() {
       if (size > limit) {
         const err = new Error(`file too big: ${(size / 1000).toFixed(2)} MB`);
         // toast
-        toast(`🔥🔥 ${err.message}!`, {
-          position: 'top-center',
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: 'light',
-          transition: Bounce,
-        });
+        toast(`🔥🔥 ${err.message}!`, TOAST_ERROR_CSS);
         return;
       }
 
       // update file to state to render
-      dispatch(setMetaData(files));
+      // dispatch(setMetaData(files));
+      setMetaData(files);
       console.log(files);
     } catch (error) {
       console.log(error);
@@ -105,7 +98,13 @@ function MessageInput() {
             backgroundColor: (theme) => theme.palette.background.paper,
           }}
         >
-          <FilePrev filename={metaData.name} size={`${(metaData.size / (1024 * 1000)).toFixed(2)} MB`} />
+          <FilePrev
+            filename={metaData.name}
+            size={`${(metaData.size / (1024 * 1000)).toFixed(2)} MB`}
+            handleClose={() => {
+              setMetaData(null);
+            }}
+          />
         </Box>
       )}
       <Box

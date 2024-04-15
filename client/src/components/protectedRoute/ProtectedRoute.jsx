@@ -1,7 +1,12 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
-import { acceptRequest, receiveRequest, setLastMessageSelectedChat, setReadLastMessage } from '~/redux/feature/friend/friendSlice';
+import {
+  acceptRequest,
+  receiveRequest,
+  setLastMessageSelectedChat,
+  setReadLastMessage,
+} from '~/redux/feature/friend/friendSlice';
 import { sendMsg } from '~/redux/feature/message/messageSlice';
 import { EVENT } from '~/utils/constants';
 import { generateKey } from '~/utils/generateKey';
@@ -52,6 +57,7 @@ export const ProtectedRoute = ({ children }) => {
 
         socket.on(EVENT.SEEN_MESSAGE, (data) => {
           console.log('socket SEEN_MESSAGE', data.lastMessage);
+          if (!data.lastMessage) return;
 
           dispatch(setReadLastMessage(data.lastMessage ? { ...data.lastMessage } : null));
         });

@@ -6,12 +6,9 @@ import Avatar from '@mui/material/Avatar';
 import CloseIcon from '@mui/icons-material/Close';
 import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRounded';
 import truncateText from '~/utils/truncate';
-import { useDispatch } from 'react-redux';
-import { resetMetaData } from '~/redux/feature/message/messageSlice';
 
-function FilePrev({ filename = 'hhman test', size = '12.2MB test' }) {
+function FilePrev({ filename = 'hhman test', size = '12.2MB test', handleClose }) {
   const { mode, setMode } = useColorScheme();
-  const dispatch = useDispatch();
 
   return (
     <Box
@@ -41,7 +38,7 @@ function FilePrev({ filename = 'hhman test', size = '12.2MB test' }) {
         }}
         sizes="small"
         onClick={() => {
-          dispatch(resetMetaData());
+          handleClose();
         }}
       >
         <CloseIcon fontSize="inherit" />

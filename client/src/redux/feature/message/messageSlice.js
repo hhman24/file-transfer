@@ -15,7 +15,6 @@ import { generateKey } from '~/utils/generateKey';
 
 const initialState = {
   message: [],
-  metaData: null,
   isLoading: false,
   error: null,
   pageNum: 1,
@@ -82,12 +81,6 @@ const messageSlice = createSlice({
       const id = state.message.findIndex((m) => m.conversation === action.payload.conversation);
       state.message[id] = action.payload;
     },
-    setMetaData: (state, action) => {
-      state.metaData = action.payload;
-    },
-    resetMetaData: (state) => {
-      state.metaData = null;
-    },
   },
   extraReducers(builder) {
     builder
@@ -106,6 +99,5 @@ const messageSlice = createSlice({
   },
 });
 
-export const { sendMsg, reSetStateMsg, updateMsg, setMetaData, resetMetaData, setPageNum, reSetPageNum } =
-  messageSlice.actions;
+export const { sendMsg, reSetStateMsg, updateMsg, setPageNum, reSetPageNum } = messageSlice.actions;
 export default messageSlice.reducer;
