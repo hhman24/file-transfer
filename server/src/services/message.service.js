@@ -47,7 +47,7 @@ const sendMsg = async (data) => {
       conversation: data.conversation,
       sendById: data.sendById,
       content: data.content,
-      metaURL: data.metaURL,
+      metaData: data.metaData,
     });
     return await messageModel.findOneById(res.insertedId);
   } catch (error) {

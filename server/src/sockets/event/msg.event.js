@@ -38,7 +38,7 @@ export const sendMessageEvent = (io, userSocketMap) => async (payload, callback)
     // data: {fromId, toId, conversation, content, metaURL = ''}
     await messageValidation.sendMsgSocket(payload);
 
-    const { fromId, toId, conversation, content, metaURL } = payload;
+    const { fromId, toId, conversation, content, metaData } = payload;
 
     const existContact = await friendService.findConversation(conversation);
 
@@ -51,7 +51,7 @@ export const sendMessageEvent = (io, userSocketMap) => async (payload, callback)
       const msg = await messageService.sendMsg({
         conversation: conversation,
         content: content,
-        metaURL: metaURL,
+        metaData: metaData,
         sendById: fromId,
       });
 

@@ -22,7 +22,13 @@ const sendMsg = async (req, res, next) => {
     content: Joi.string().min(1).required().trim().strict().messages({
       'any.required': 'content is required (hhman)',
     }),
-    metaURL: Joi.string().trim().allow(''),
+    metaData: Joi.object({
+      url: Joi.string().required(),
+      fileName: Joi.string().required(),
+      size: Joi.string().required(),
+    })
+      .allow(null)
+      .required(),
   });
 
   try {
@@ -60,7 +66,13 @@ const sendMsgSocket = async (payload) => {
     content: Joi.string().min(1).required().trim().strict().messages({
       'any.required': 'content is required (hhman)',
     }),
-    metaURL: Joi.string().trim().allow(''),
+    metaData: Joi.object({
+      url: Joi.string().required(),
+      fileName: Joi.string().required(),
+      size: Joi.string().required(),
+    })
+      .allow(null)
+      .required(),
   });
 
   try {

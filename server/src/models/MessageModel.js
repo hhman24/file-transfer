@@ -8,7 +8,14 @@ const MESSAGE_COLLECTION_SCHEMA = Joi.object({
   conversation: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
   sendById: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
   content: Joi.string().required(),
-  metaURL: Joi.string().allow('').default(''),
+  metaData: Joi.object({
+    url: Joi.string().required(),
+    fileName: Joi.string().required(),
+    size: Joi.string().required(),
+  })
+    .allow(null)
+    .required()
+    .default(null),
   createdAt: Joi.date().default(() => new Date()),
   updatedAt: Joi.date().default(null),
   _unread: Joi.boolean().default(true),
