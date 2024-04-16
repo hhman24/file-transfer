@@ -79,7 +79,7 @@ function ChatBubble(props) {
               <InsertDriveFileRoundedIcon />
             </Avatar>
             <div>
-              <Typography fontSize={'12px'}>{truncateFileName(message.metaData.fileName, 5)}</Typography>
+              <Typography fontSize={'12px'}>{truncateFileName(message.metaData.fileName, 10)}</Typography>
               <Typography variant="body2" fontSize={'12px'}>
                 {`${(message?.metaData?.size / (1024 * 1000)).toFixed(2)} MB`}
               </Typography>
