@@ -19,7 +19,6 @@ Router.use('/friend', friendRoute);
 Router.use('/message', messageRoute);
 Router.use('/auth', authRoute);
 Router.use('/refresh', refreshRoute);
-
 Router.use('/upload', uploadRoute);
 
 export const API_v1 = Router;

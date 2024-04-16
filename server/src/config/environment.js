@@ -18,4 +18,9 @@ export const env = {
   REFRESH_TOKEN_PRIVATE_KEY: process.env.REFRESH_TOKEN_PRIVATE_KEY,
   TOKEN_LIFE: 60 * 60 * 2,
   REFRESH_TOKEN_LIFE: process.env.REFRESH_TOKEN_LIFE,
+
+  CLIENT_ID: process.env.CLIENT_ID,
+  CLIENT_SECRET: process.env.CLIENT_SECRET,
+  REFRESH_TOKEN: process.env.REFRESH_TOKEN,
+  REDIRECT_URI: process.env.REDIRECT_URI,
 };
