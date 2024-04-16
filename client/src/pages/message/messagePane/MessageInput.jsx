@@ -6,25 +6,31 @@ import IconButton from '@mui/material/IconButton';
 import Input from '@mui/material/Input';
 import SendIcon from '@mui/icons-material/Send';
 import AddIcon from '@mui/icons-material/Add';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { socket } from '~/utils/socket';
 import { EVENT, TOAST_ERROR_CSS } from '~/utils/constants';
-import { Bounce, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import FilePrev from './FilePrev';
 import { generateKey } from '~/utils/generateKey';
+import { useAxios } from '~/apis/axiosConfig';
+import { fileHandle } from '~/utils/file';
 
 function MessageInput() {
   const { mode, setMode } = useColorScheme();
   const [textAreaValue, setTextAreaValue] = useState('');
   const [metaData, setMetaData] = useState(null);
-  const textAreaRef = useRef(null);
-  const selectedChat = useSelector((state) => state.friends.selectedChat);
-  const { userInfo } = useSelector((state) => state.auth.loginState);
+  const [selectedFile, setSelectedFile] = useState(null);
 
+  const selectedChat = useSelector((state) => state.friends.selectedChat);
+  const { userInfo, token } = useSelector((state) => state.auth.loginState);
+  const dispatch = useDispatch();
+  const textAreaRef = useRef(null);
   const fileRef = useRef(null);
   const selectFile = () => fileRef.current?.click();
 
-  const onSubmit = () => {
+  const axios = useAxios(token, dispatch);
+
+  const onSubmit = (url) => {
     // encrypt msg befor emit
     if (!selectedChat.keyAES) {
       console.log(selectedChat);
@@ -34,7 +40,7 @@ function MessageInput() {
 
     // object metaData {url, fileName, size }
     // update lên cloud....
-    const encryptedURL = metaData ? generateKey.encryptData(metaData.name, atob(selectedChat.keyAES)) : null;
+    const encryptedURL = url ? generateKey.encryptData(url, atob(selectedChat.keyAES)) : null;
 
     socket.emit(
       EVENT.SEND_TEXT_MESSAGE,
@@ -43,7 +49,7 @@ function MessageInput() {
         toId: selectedChat.friend._id,
         conversation: selectedChat._id,
         content: encryptedContent,
-        metaData: metaData ? { fileName: metaData.name, url: encryptedURL, size: `${metaData.size}` } : null,
+        metaData: url ? { fileName: selectedFile.name, url: encryptedURL, size: `${selectedFile.size}` } : null,
       },
       (response) => {
         console.log(response);
@@ -51,11 +57,19 @@ function MessageInput() {
     );
   };
 
-  const handleClick = () => {
-    if (textAreaValue.trim() !== '' || metaData) {
-      onSubmit();
-      setTextAreaValue('');
-      setMetaData(null);
+  const handleClick = async () => {
+    try {
+      if (textAreaValue.trim() !== '' || selectedFile) {
+        // upload cloud if selectedFile not null
+        const url = selectedFile ? await handleUpload() : null;
+
+        console.log('url ', url);
+        onSubmit(url);
+        setTextAreaValue('');
+        setSelectedFile(null);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -77,17 +91,58 @@ function MessageInput() {
       }
 
       // update file to state to render
-      // dispatch(setMetaData(files));
-      setMetaData(files);
-      console.log(files);
+      setSelectedFile(files);
+      // Automatically create metadata JSON object with file name
+      const metadata = { name: files.name };
+      const metadataBlob = new Blob([JSON.stringify(metadata)], { type: 'application/json' });
+
+      setMetaData(metadataBlob);
     } catch (error) {
       console.log(error);
     }
   };
 
+  const handleUpload = async () => {
+    try {
+      if (!selectedFile) {
+        console.error('No file selected.');
+        return null;
+      }
+
+      const fileReader = new FileReader();
+      fileReader.readAsArrayBuffer(selectedFile);
+      const fileData = await new Promise((resolve, reject) => {
+        fileReader.onload = () => resolve(fileReader.result);
+        fileReader.onerror = (error) => reject(error);
+      });
+
+      // Send request to get auth token from server
+      const controller = new AbortController();
+      const response = await axios.get('/upload/token', { signal: controller.signal });
+
+      // Get auth token from server response
+      controller.abort();
+      const authToken = response.data.access_token || null;
+
+      // If auth token is available, proceed to upload the file to Google Drive
+      if (authToken) {
+        const driveResponse = await fileHandle.uploadToGoogleDrive(metaData, fileData, authToken);
+        console.log('File uploaded successfully:', driveResponse);
+        // Get sharable link
+        const link = await fileHandle.getSharableLink(driveResponse.id, authToken);
+        return link;
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      return null;
+    }
+  };
+
   return (
     <FormControl sx={{ width: '100%' }}>
-      {metaData && (
+      {selectedFile && (
         <Box
           sx={{
             px: 2,
@@ -99,10 +154,10 @@ function MessageInput() {
           }}
         >
           <FilePrev
-            filename={metaData.name}
-            size={`${(metaData.size / (1024 * 1000)).toFixed(2)} MB`}
+            filename={selectedFile.name}
+            size={`${(selectedFile.size / (1024 * 1000)).toFixed(2)} MB`}
             handleClose={() => {
-              setMetaData(null);
+              setSelectedFile(null);
             }}
           />
         </Box>

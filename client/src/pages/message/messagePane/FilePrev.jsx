@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import CloseIcon from '@mui/icons-material/Close';
 import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRounded';
-import truncateText from '~/utils/truncate';
+import { truncateFileName } from '~/utils/truncate';
 
 function FilePrev({ filename = 'hhman test', size = '12.2MB test', handleClose }) {
   const { mode, setMode } = useColorScheme();
@@ -48,7 +48,7 @@ function FilePrev({ filename = 'hhman test', size = '12.2MB test', handleClose }
           <InsertDriveFileRoundedIcon />
         </Avatar>
         <div>
-          <Typography fontSize={'12px'}>{truncateText(filename, 10)}</Typography>
+          <Typography fontSize={'12px'}>{truncateFileName(filename, 10)}</Typography>
           <Typography variant="body2" fontSize={'12px'}>
             {size}
           </Typography>

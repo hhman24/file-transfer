@@ -10,8 +10,8 @@ import { setSelectedChat } from '~/redux/feature/friend/friendSlice';
 import moment from 'moment';
 import { socket } from '~/utils/socket';
 import { EVENT } from '~/utils/constants';
-import truncateText from '~/utils/truncate';
 import { reSetStateMsg } from '~/redux/feature/message/messageSlice';
+import { truncateText } from '~/utils/truncate';
 
 function ChatsListItem(props) {
   const { chat, selectedChat } = props;

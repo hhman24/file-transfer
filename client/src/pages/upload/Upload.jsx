@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 
 function UploadForm() {
@@ -32,7 +32,7 @@ function UploadForm() {
 
         // Send request to get auth token from server
         const response = await axios.get('http://localhost:4000/v1/upload/token');
-        
+
         // Get auth token from server response
         const authToken = response.data.access_token;
         setAuthToken(authToken);
@@ -61,14 +61,14 @@ function UploadForm() {
       const response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${authToken}`,
+          Authorization: `Bearer ${authToken}`,
         },
-        body: formData
+        body: formData,
       });
       const responseBody = await response.text();
       console.log('Response body from Google Drive API:', responseBody);
       const responseObject = JSON.parse(responseBody);
-  
+
       return responseObject;
     } catch (error) {
       console.error('Error uploading file to Google Drive:', error);
@@ -76,49 +76,55 @@ function UploadForm() {
   }
 
   // Function to get sharable link for the uploaded file
-// Function to get sharable link for the uploaded file
-async function getSharableLink(fileId, authToken) {
-  try {
-    // Set file permissions to anyone with link
-    await setFilePermissions(fileId, authToken);
-    const link = `https://drive.google.com/file/d/${fileId}/edit?usp=sharing`;
-    setShareableLink(link);
-    console.log('Sharable link:', link);
-  } catch (error) {
-    console.error('Error getting sharable link:', error);
+  // Function to get sharable link for the uploaded file
+  async function getSharableLink(fileId, authToken) {
+    try {
+      // Set file permissions to anyone with link
+      await setFilePermissions(fileId, authToken);
+      const link = `https://drive.google.com/file/d/${fileId}/edit?usp=sharing`;
+      setShareableLink(link);
+      console.log('Sharable link:', link);
+    } catch (error) {
+      console.error('Error getting sharable link:', error);
+    }
   }
-}
 
-// Function to set file permissions to anyone with link
-async function setFilePermissions(fileId, authToken) {
-  try {
-    const permissionsEndpoint = `https://www.googleapis.com/drive/v3/files/${fileId}/permissions`;
-    const requestBody = {
-      role: 'reader',
-      type: 'anyone',
-    };
+  // Function to set file permissions to anyone with link
+  async function setFilePermissions(fileId, authToken) {
+    try {
+      const permissionsEndpoint = `https://www.googleapis.com/drive/v3/files/${fileId}/permissions`;
+      const requestBody = {
+        role: 'reader',
+        type: 'anyone',
+      };
 
-    await axios.post(permissionsEndpoint, requestBody, {
-      headers: {
-        'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json',
-      },
-    });
+      await axios.post(permissionsEndpoint, requestBody, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
 
-    console.log('File permissions set successfully.');
-  } catch (error) {
-    console.error('Error setting file permissions:', error);
+      console.log('File permissions set successfully.');
+    } catch (error) {
+      console.error('Error setting file permissions:', error);
+    }
   }
-}
 
-
-return (
-  <div>
-    <input type="file" onChange={handleFileInputChange} />
-    <button onClick={handleUploadButtonClick}>Upload</button>
-    {shareableLink && <p>Shareable Link: <a href={shareableLink} target="_blank" rel="noopener noreferrer">{shareableLink}</a></p>}
-  </div>
-);
+  return (
+    <div>
+      <input type="file" onChange={handleFileInputChange} />
+      <button onClick={handleUploadButtonClick}>Upload</button>
+      {shareableLink && (
+        <p>
+          Shareable Link:{' '}
+          <a href={shareableLink} target="_blank" rel="noopener noreferrer">
+            {shareableLink}
+          </a>
+        </p>
+      )}
+    </div>
+  );
 }
 
 export default UploadForm;
