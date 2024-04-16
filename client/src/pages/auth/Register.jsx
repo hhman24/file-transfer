@@ -22,10 +22,10 @@ import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FormHelperText } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
-import { registerUser, setRegister } from '~/redux/feature/auth/authSlice';
+import { useState } from 'react';
+import { registerUser } from '~/redux/feature/auth/authSlice';
 import { generateKey } from '~/utils/generateKey';
+import ShowPrivateKey from '~/components/dialog/ShowPrivateKey';
 
 const schema = yup.object().shape({
   email: yup.string().required('email is required').email(),
@@ -39,7 +39,8 @@ const schema = yup.object().shape({
 function Register() {
   const { mode, setMode } = useColorScheme();
   const { isLoading, error } = useSelector((state) => state.auth);
-  const navigate = useNavigate();
+  const [openDialog, setOpenDialog] = useState(false);
+  const [privKey, setPrivKey] = useState('hhman');
   const dispatch = useDispatch();
 
   const {
@@ -66,6 +67,8 @@ function Register() {
         .then(() => {
           // show private key and go to login page
           console.log(btoa(privateKey));
+          setPrivKey(btoa(privateKey));
+          setOpenDialog(true);
         });
     } catch (error) {
       console.log(error);
@@ -274,9 +277,20 @@ function Register() {
             </Box>
           </Box>
         </Box>
+
         <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={isLoading}>
           <CircularProgress color="inherit" />
         </Backdrop>
+
+        {openDialog && (
+          <ShowPrivateKey
+            open={openDialog}
+            handleClose={() => {
+              setOpenDialog(false);
+            }}
+            privateKey={privKey}
+          />
+        )}
       </Container>
     </>
   );

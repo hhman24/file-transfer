@@ -8,9 +8,6 @@ const initialState = {
     privateKey: '',
     isLogined: false,
   },
-  registerState: {
-    success: false,
-  },
   error: null,
   isLoading: false,
 };
@@ -69,9 +66,6 @@ const authSlice = createSlice({
       state.loginState.isLogined = true;
       state.error = null;
     },
-    setRegister: (state, action) => {
-      state.registerState.success = action.payload;
-    },
     setLogout: (state) => {
       state.loginState.userInfo = null;
       state.loginState.token = '';
@@ -107,14 +101,10 @@ const authSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(registerUser.fulfilled, (state) => {
-        state.registerState.success = true;
-
         state.isLoading = false;
         state.error = null;
       })
       .addCase(registerUser.rejected, (state, action) => {
-        state.registerState.success = false;
-
         state.isLoading = false;
         state.error = action.payload;
       })
@@ -141,5 +131,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setLogin, setLogout, setRegister, setPrivateKey } = authSlice.actions;
+export const { setLogin, setLogout, setPrivateKey } = authSlice.actions;
 export default authSlice.reducer;
