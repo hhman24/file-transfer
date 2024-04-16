@@ -38,6 +38,7 @@ export const ProtectedRoute = ({ children }) => {
 
         // new friend request
         socket.on(EVENT.RECEIVE_FRIEND_REQUEST, (data) => {
+          console.log('socket RECEIVE_FRIEND_REQUEST', data);
           dispatch(receiveRequest(data.conversataion));
         });
 

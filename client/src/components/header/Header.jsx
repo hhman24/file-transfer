@@ -16,6 +16,7 @@ import Workspaces from './menus/workspaces';
 import DrawerNav from './drawer/DrawerNav';
 import AvatarCus from './avatar/AvatarCus';
 import { useLocation, useNavigate } from 'react-router-dom';
+import NotifyButton from './notify/NotifyButton';
 
 function Header() {
   const { mode, setMode } = useColorScheme();
@@ -185,7 +186,7 @@ function Header() {
             },
           }}
         />
-        <Tooltip title="Notification">
+        {/* <Tooltip title="Notification">
           <IconButton
             color="inherit"
             size="small"
@@ -211,7 +212,8 @@ function Header() {
               <NotificationsNoneOutlinedIcon fontSize="inherit" />
             </Badge>
           </IconButton>
-        </Tooltip>
+        </Tooltip> */}
+        <NotifyButton />
 
         <ModeToggle border="none" radius="10px" />
 

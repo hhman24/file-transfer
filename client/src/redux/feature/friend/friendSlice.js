@@ -16,6 +16,7 @@ import { generateKey } from '~/utils/generateKey';
 const initialState = {
   listFriend: [],
   listNotFriend: [],
+  notify: [],
   selectedChat: undefined,
   isLoading: false,
   error: null,
@@ -121,8 +122,14 @@ const friendSlice = createSlice({
           if (u._id.toString() === req.userA.toString() || u._id.toString() === req.userB.toString()) return u;
         }
       });
-
+      if (id < 0) return;
       state.listNotFriend[id].conversation = req;
+      if (state.listNotFriend[id]._id === req.userA) {
+        state.notify.push({
+          message: `${state.listNotFriend[id].username} has sent you a friend request.`,
+          createAt: req.createAt,
+        });
+      }
     },
     acceptRequest: (state, action) => {
       state.listFriend.unshift(action.payload);
@@ -130,6 +137,13 @@ const friendSlice = createSlice({
         return !f.conversation || f.conversation._id !== action.payload._id;
       });
       state.listNotFriend = res;
+
+      if (action.payload.userB === action.payload.friend._id) {
+        state.notify.push({
+          message: `${action.payload.friend.username} has accepted your request.`,
+          createAt: action.payload.createAt,
+        });
+      }
     },
     setLastMessageSelectedChat: (state, action) => {
       const id = state.listFriend.findIndex((m) => m._id === action.payload.conversation);
