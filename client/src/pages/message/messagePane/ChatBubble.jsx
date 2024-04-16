@@ -14,8 +14,6 @@ import { truncateFileName } from '~/utils/truncate';
 import { useSelector } from 'react-redux';
 import { generateKey } from '~/utils/generateKey';
 import { fileHandle } from '~/utils/file';
-import axios from 'axios';
-import fs from 'fs';
 
 function ChatBubble(props) {
   const { variant, message, friend } = props;

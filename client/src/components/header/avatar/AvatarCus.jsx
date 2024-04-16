@@ -17,6 +17,7 @@ import { logoutUser } from '~/redux/feature/auth/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { reSetStateFriend } from '~/redux/feature/friend/friendSlice';
 import { reSetStateMsg } from '~/redux/feature/message/messageSlice';
+import { setClose } from '~/redux/feature/dialog/dialogSlice';
 
 function AvatarCus() {
   const { mode, setMode } = useColorScheme();
@@ -129,8 +130,9 @@ function AvatarCus() {
         <MenuItem
           onClick={() => {
             dispatch(logoutUser()).then(() => {
+              dispatch(setClose());
               dispatch(reSetStateFriend()); // friend;
-              dispatch(reSetStateMsg()); // friend;
+              dispatch(reSetStateMsg()); // message;
               navigate('/login');
             });
           }}

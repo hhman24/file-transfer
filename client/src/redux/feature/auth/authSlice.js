@@ -124,6 +124,7 @@ const authSlice = createSlice({
       .addCase(logoutUser.fulfilled, (state) => {
         state.loginState.userInfo = null;
         state.loginState.token = '';
+        state.loginState.privateKey = '';
         state.loginState.isLogined = false;
 
         state.isLoading = false;
