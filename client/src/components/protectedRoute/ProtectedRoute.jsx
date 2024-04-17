@@ -1,16 +1,10 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
-import {
-  acceptRequest,
-  receiveRequest,
-  setLastMessageSelectedChat,
-  setReadLastMessage,
-} from '~/redux/feature/friend/friendSlice';
+import { acceptRequest, receiveRequest, setReadLastMessage } from '~/redux/feature/friend/friendSlice';
 import { sendMsg } from '~/redux/feature/message/messageSlice';
 import { EVENT } from '~/utils/constants';
 import { generateKey } from '~/utils/generateKey';
-// import { generateKey } from '~/utils/generateKey';
 import { connectSocket, socket } from '~/utils/socket';
 
 export const ProtectedRoute = ({ children }) => {
@@ -21,7 +15,6 @@ export const ProtectedRoute = ({ children }) => {
 
   const userId = useSelector((state) => state.auth.loginState.userInfo?._id);
   const privateKey = useSelector((state) => state.auth.loginState.privateKey);
-  const selectedChat = useSelector((state) => state.friends.selectedChat);
 
   useEffect(() => {
     if (isLogin) {
@@ -34,6 +27,7 @@ export const ProtectedRoute = ({ children }) => {
 
       if (!socket) {
         if (!userId) return;
+        console.log('connect socket');
         connectSocket(userId);
 
         // new friend request
@@ -52,7 +46,7 @@ export const ProtectedRoute = ({ children }) => {
 
           const enPublicKey = f.userA === userId ? f.enPrivateKeyA : f.enPrivateKeyB;
           const keyAES = generateKey.decryptAESKey(atob(enPublicKey), atob(privateKey));
-
+          console.log('key AES', btoa(keyAES));
           dispatch(acceptRequest({ ...f, keyAES: btoa(keyAES) })); // encode base-64
         });
 
@@ -64,26 +58,25 @@ export const ProtectedRoute = ({ children }) => {
         });
 
         socket.on(EVENT.NEW_MESSAGE, (data) => {
-          console.log('socket NEW_MESSAGE', data.message);
-          if (!selectedChat.keyAES) {
-            console.log('No key AES');
-            return;
-          }
+          console.log('socket NEW_MESSAGE', data);
+          const f = data.conversation;
+          const enPublicKey = f.userA === userId ? f.enPrivateKeyA : f.enPrivateKeyB;
+          const keyAES = generateKey.decryptAESKey(atob(enPublicKey), atob(privateKey));
 
-          const content = generateKey.decryptData(data.message.content, atob(selectedChat.keyAES));
+          console.log('key AES', btoa(keyAES));
+          const content = generateKey.decryptData(data.message.content, keyAES);
           dispatch(sendMsg({ ...data.message, content: content }));
-          // dispatch(setLastMessageSelectedChat({ ...data.message }));
         });
       }
     }
 
-    return () => {
-      console.log('off event');
-      socket?.off(EVENT.SEND_FRIEND_REQUEST);
-      socket?.off(EVENT.ACCEPT_FRIEND_REQUEST);
-      socket?.off(EVENT.SEEN_MESSAGE);
-      socket?.off(EVENT.NEW_MESSAGE);
-    };
+    // return () => {
+    //   console.log('off event');
+    //   socket?.off(EVENT.SEND_FRIEND_REQUEST);
+    //   socket?.off(EVENT.ACCEPT_FRIEND_REQUEST);
+    //   socket?.off(EVENT.SEEN_MESSAGE);
+    //   socket?.off(EVENT.NEW_MESSAGE);
+    // };
   }, [isLogin, dispatch, userId]);
 
   return token === '' && !isLogin ? <Navigate to={'/login'} replace state={{ from: location }} /> : children;

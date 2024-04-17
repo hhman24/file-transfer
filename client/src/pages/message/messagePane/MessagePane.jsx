@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import HeaderMessagePane from './HeaderMessagePane';
 import Stack from '@mui/material/Stack';
@@ -8,11 +8,10 @@ import ChatBubble from './ChatBubble';
 import MessageInput from './MessageInput';
 import NoChat from '~/components/noChat/NoChat';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMsg, reSetStateMsg, sendMsg, setPageNum } from '~/redux/feature/message/messageSlice';
+import { getMsg, reSetStateMsg, setPageNum } from '~/redux/feature/message/messageSlice';
 import { toast } from 'react-toastify';
-import { EVENT, TOAST_ERROR_CSS } from '~/utils/constants';
+import { TOAST_ERROR_CSS } from '~/utils/constants';
 import { setLastMessageSelectedChat } from '~/redux/feature/friend/friendSlice';
-import { socket } from '~/utils/socket';
 
 function MessagePane() {
   const dispatch = useDispatch();
@@ -48,7 +47,6 @@ function MessagePane() {
   useEffect(() => {
     refLastestMsg.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
     if (newMsg) {
-      // decrypt message here
       dispatch(setLastMessageSelectedChat(newMsg));
     }
   }, [newMsg, dispatch]);

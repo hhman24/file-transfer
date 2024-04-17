@@ -63,7 +63,6 @@ function MessageInput() {
         // upload cloud if selectedFile not null
         const url = selectedFile ? await handleUpload() : null;
 
-        console.log('url ', url);
         onSubmit(url);
         setTextAreaValue('');
         setSelectedFile(null);

@@ -71,6 +71,9 @@ const messageSlice = createSlice({
       state.message.push(action.payload);
       state.newMsg = action.payload;
     },
+    setNewMsg: (state, action) => {
+      state.newMsg = action.payload;
+    },
     setPageNum: (state) => {
       state.pageNum += 1;
     },
@@ -99,5 +102,5 @@ const messageSlice = createSlice({
   },
 });
 
-export const { sendMsg, reSetStateMsg, updateMsg, setPageNum, reSetPageNum } = messageSlice.actions;
+export const { sendMsg, setNewMsg, reSetStateMsg, updateMsg, setPageNum, reSetPageNum } = messageSlice.actions;
 export default messageSlice.reducer;

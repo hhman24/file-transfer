@@ -108,12 +108,14 @@ const friendSlice = createSlice({
     reSetStateFriend: (state) => {
       state.listFriend = [];
       state.listNotFriend = [];
+      state.notify = [];
       state.selectedChat = undefined;
       state.isLoading = false;
       state.error = null;
     },
     setSelectedChat: (state, action) => {
       state.selectedChat = action.payload;
+      console.log('selected chat', state.selectedChat);
     },
     receiveRequest: (state, action) => {
       const req = action.payload;
@@ -151,7 +153,8 @@ const friendSlice = createSlice({
     },
     setReadLastMessage: (state, action) => {
       const id = state.listFriend.findIndex((m) => m._id === action.payload.conversation);
-      state.listFriend[id].lastMessage._unread = id < 0 ? null : action.payload._unread;
+      if (id < 0) return;
+      state.listFriend[id].lastMessage._unread = action.payload._unread;
     },
   },
   extraReducers(builder) {

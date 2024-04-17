@@ -110,15 +110,15 @@ function NotifyButton() {
       >
         {notify.map((n, index) => {
           return (
-            <>
-              <MenuItem onClick={handleClose} disableRipple key={index}>
+            <div key={index}>
+              <MenuItem onClick={handleClose} disableRipple>
                 <Typography>{n.message}</Typography>
                 <Stack direction={'row'} flexDirection={'row-reverse'} alignSelf={'flex-end'}>
                   <Typography variant="caption">{moment(n.createAt).fromNow()}</Typography>
                 </Stack>
               </MenuItem>
-              <Divider sx={{ marginBottom: '0 !important', marginTop: '0 !important' }} key={index} />
-            </>
+              <Divider sx={{ marginBottom: '0 !important', marginTop: '0 !important' }} />
+            </div>
           );
         })}
       </Menu>
