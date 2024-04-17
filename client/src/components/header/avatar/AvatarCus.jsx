@@ -54,11 +54,9 @@ function AvatarCus() {
           <Avatar
             // src="https://i.pravatar.cc/40?img=2"
             // srcSet="https://i.pravatar.cc/80?img=2"
-            {...stringAvatar(userInfo?.username || 'Minh An')}
+            {...stringAvatar(userInfo?.username)}
             sx={{ maxWidth: '32px', maxHeight: '32px', bgcolor: stringToColor(userInfo?.username || 'Minh An') }}
-          >
-            M
-          </Avatar>
+          />
         </IconButton>
       </Tooltip>
 

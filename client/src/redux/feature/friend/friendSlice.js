@@ -125,13 +125,14 @@ const friendSlice = createSlice({
         }
       });
       if (id < 0) return;
-      state.listNotFriend[id].conversation = req;
       if (state.listNotFriend[id]._id === req.userA) {
         state.notify.push({
           message: `${state.listNotFriend[id].username} has sent you a friend request.`,
           createAt: req.createAt,
         });
       }
+
+      state.listNotFriend[id].conversation = req;
     },
     acceptRequest: (state, action) => {
       state.listFriend.unshift(action.payload);
