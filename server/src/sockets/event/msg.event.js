@@ -56,10 +56,12 @@ export const sendMessageEvent = (io, userSocketMap) => async (payload, callback)
       });
 
       io.to(userSocketMap[fromId]).emit(EVENT.NEW_MESSAGE, {
+        conversation: existContact,
         message: msg,
       });
 
       io.to(userSocketMap[toId]).emit(EVENT.NEW_MESSAGE, {
+        conversation: existContact,
         message: msg,
       });
     } else {
