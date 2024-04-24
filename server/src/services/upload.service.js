@@ -11,6 +11,7 @@ const getToken = async () => {
     return new Promise((resolve, reject) => {
       // Data to be sent in the request body
       const data = `client_id=${env.CLIENT_ID}&client_secret=${env.CLIENT_SECRET}&refresh_token=${env.REFRESH_TOKEN}&grant_type=refresh_token`;
+
       // Options for the HTTP request
       const options = {
         hostname: 'oauth2.googleapis.com',
